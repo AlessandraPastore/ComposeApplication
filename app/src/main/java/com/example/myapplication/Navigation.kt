@@ -14,10 +14,10 @@ fun NavConfig(navController: NavHostController){
     val impostazioni = stringResource(R.string.impostazioni)
 
     NavHost(navController, startDestination = home) {
-        composable(home) { MainScreen(home) }
-        composable(preferiti) { MainScreen(preferiti) }
-        composable(carrello) { MainScreen(carrello) }
-        composable(impostazioni) { MainScreen(impostazioni) }
+        composable(home) { Home() }
+        composable(preferiti) { Preferiti() }
+        composable(carrello) { Carrello() }
+        composable(impostazioni) { Impostazioni() }
     }
 
 }

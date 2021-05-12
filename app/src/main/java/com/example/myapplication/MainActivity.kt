@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
 
-                MainScreen(stringResource(R.string.home))
+                MainScreen()
             }
         }
     }

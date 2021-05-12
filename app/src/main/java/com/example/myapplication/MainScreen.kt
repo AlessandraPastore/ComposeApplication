@@ -23,12 +23,10 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainScreen( page : String){
+fun MainScreen( ){
     val navController = rememberNavController()
-    NavConfig(navController)
     Scaffold(
-        topBar = { TopBar(page) },
-
+        //topBar = { TopBar(page) },
         floatingActionButton = {
             FloatingActionButton(onClick = {  }) {
                 Icon( Icons.Filled.Add, "")
@@ -36,29 +34,13 @@ fun MainScreen( page : String){
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = { BottomBar(navController, page) },
-        content = {
+        bottomBar = { BottomBar(navController) },
 
-            when(page){
-                stringResource(R.string.home) -> Home()
-                stringResource(R.string.preferiti) -> Preferiti()
-                stringResource(R.string.carrello) -> Carrello()
-                stringResource(R.string.impostazioni) -> Impostazioni()
-            }
+    ){
+        NavConfig(navController)
+    }
 
 
-
-        }
-    )
-
-
-}
-
-@Preview
-@Composable
-fun Prova(){
-    Text("ciao")
-    MainScreen(stringResource(R.string.home))
 }
 
 
@@ -76,12 +58,15 @@ private fun TopBar(page : String){
 
 
 @Composable
-private fun BottomBar(navController: NavHostController, page : String){
-    var selectedItem by remember { mutableStateOf(page)}
+private fun BottomBar(navController: NavHostController){
+
     val home = stringResource(R.string.home)
     val preferiti = stringResource(R.string.preferiti)
     val carrello = stringResource(R.string.carrello)
     val impostazioni = stringResource(R.string.impostazioni)
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     BottomAppBar(
         cutoutShape = CircleShape,
@@ -99,11 +84,12 @@ private fun BottomBar(navController: NavHostController, page : String){
                             textAlign = TextAlign.Justify
                         )
                     },
-                    selected = selectedItem == home,
+                    selected = currentRoute == home,
                     onClick = {
-                        navController.navigate(home)
-                        selectedItem = home
-
+                        navController.navigate(home) {
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
                     },
                     alwaysShowLabel = false
                 )
@@ -120,18 +106,16 @@ private fun BottomBar(navController: NavHostController, page : String){
                             textAlign = TextAlign.Justify
                         )
                     },
-                    selected = selectedItem == preferiti,
+                    selected = currentRoute == preferiti,
                     onClick = {
-                        Log.d("TAG", "cliccato preferiti")
-                        navController.navigate(preferiti)
-                        if(selectedItem != preferiti){
-
-                            selectedItem = preferiti
-                        }
-
+                            navController.navigate(preferiti) {
+                                popUpTo = navController.graph.startDestination
+                                launchSingleTop = true
+                            }
                     },
                     alwaysShowLabel = false
                 )
+
                 Box(modifier = Modifier.weight(1f))
 
                 BottomNavigationItem(
@@ -146,12 +130,15 @@ private fun BottomBar(navController: NavHostController, page : String){
                             textAlign = TextAlign.Justify
                         )
                     },
-                    selected = selectedItem == carrello,
+                    selected = currentRoute == carrello,
                     onClick = {
-                        selectedItem = carrello
+                        navController.navigate(carrello) {
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
+
                     },
                     alwaysShowLabel = false,
-
                 )
 
                 BottomNavigationItem(
@@ -167,9 +154,12 @@ private fun BottomBar(navController: NavHostController, page : String){
                             modifier = Modifier.offset(x = (-15).dp)  //non mi piace
                         )
                     },
-                    selected =  selectedItem == impostazioni,
+                    selected =  currentRoute == impostazioni,
                     onClick = {
-                        selectedItem = impostazioni
+                        navController.navigate(impostazioni) {
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
                     },
                     alwaysShowLabel = false
                 )
