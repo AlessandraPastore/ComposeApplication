@@ -1,19 +1,17 @@
 package com.example.myapplication
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.KEY_ROUTE
@@ -29,7 +27,7 @@ fun MainScreen( ){
         //topBar = { TopBar(page) },
         floatingActionButton = {
             FloatingActionButton(onClick = {  }) {
-                Icon( Icons.Filled.Add, "")
+                Icon( Icons.Rounded.Add, "")
             }
         },
         isFloatingActionButtonDocked = true,
@@ -74,7 +72,7 @@ private fun BottomBar(navController: NavHostController){
             BottomNavigation {
                 BottomNavigationItem(
                     icon = {
-                        Icon(Icons.Filled.Home , "")
+                        Icon(Icons.Rounded.Home , "")
                     },
                     label = {
                         Text(
@@ -96,7 +94,7 @@ private fun BottomBar(navController: NavHostController){
 
                 BottomNavigationItem(
                     icon = {
-                        Icon(Icons.Filled.Favorite , "")
+                        Icon(Icons.Rounded.Favorite , "")
                     },
                     label = {
                         Text(
@@ -120,7 +118,7 @@ private fun BottomBar(navController: NavHostController){
 
                 BottomNavigationItem(
                     icon = {
-                        Icon(Icons.Filled.ShoppingCart , "")
+                        Icon(Icons.Rounded.ShoppingCart , "")
                     },
                     label = {
                         Text(
@@ -143,7 +141,7 @@ private fun BottomBar(navController: NavHostController){
 
                 BottomNavigationItem(
                     icon = {
-                        Icon(Icons.Filled.Settings ,  "")
+                        Icon(Icons.Rounded.Settings ,  "")
                     },
                     label = {
                         Text(
