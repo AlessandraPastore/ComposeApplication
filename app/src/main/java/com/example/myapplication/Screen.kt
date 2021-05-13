@@ -10,3 +10,5 @@ sealed class Screen(val route: String, @StringRes val resId: Int) {
     object Impostazioni: Screen("Impostazioni",R.string.impostazioni)
     object Ricetta: Screen("Ricetta",R.string.ricetta)
 }
+
+class State(val isDark: Boolean){}

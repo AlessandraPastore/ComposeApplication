@@ -1,20 +1,16 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun Impostazioni(){
+fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -30,6 +26,10 @@ fun Impostazioni(){
             Text(
                 text = "clicca per cambiare modalità",
                 textAlign = TextAlign.Center
+                )
+            Switch(
+                checked = enableDarkMode.value,
+                onCheckedChange= { enableDarkMode.value = !enableDarkMode.value  }
                 )
         }
     }

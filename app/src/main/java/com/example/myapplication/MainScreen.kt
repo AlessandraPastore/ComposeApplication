@@ -21,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun MainScreen( ){
+fun MainScreen(enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()
     Scaffold(
         //topBar = { TopBar(page) },
@@ -35,7 +35,7 @@ fun MainScreen( ){
         bottomBar = { BottomBar(navController) },
 
     ){
-        NavConfig(navController)
+        NavConfig(navController,enableDarkMode)
     }
 
 
