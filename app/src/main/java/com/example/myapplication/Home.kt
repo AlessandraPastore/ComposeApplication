@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @Composable
 fun Home() {
@@ -33,7 +35,7 @@ fun Home() {
 
         LazyColumn() {
             items(50) {
-                var checked = rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
+                var checked by rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
                 Row(modifier = Modifier.fillParentMaxWidth()) {
                     Card(
                         backgroundColor = MaterialTheme.colors.surface,
@@ -81,9 +83,9 @@ fun Home() {
                                     .align(Alignment.CenterVertically)
                             ) {
                                 IconToggleButton(
-                                    checked = checked.value,
-                                    onCheckedChange = { checked.value = it }) {
-                                    if (!checked.value) Icon(Icons.Filled.FavoriteBorder, "")
+                                    checked = checked,
+                                    onCheckedChange = { checked = it }) {
+                                    if (!checked) Icon(Icons.Filled.FavoriteBorder, "")
                                     else Icon(Icons.Filled.Favorite, "")
 
 

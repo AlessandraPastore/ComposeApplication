@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="home">Home</string>
-    <string name="carrello">Carrello</string>
     <string name="preferiti">Preferiti</string>
+    <string name="carrello">Carrello</string>
     <string name="impostazioni">Impostazioni</string>
+    <string name="ricetta">Ricetta</string>
 </resources>
