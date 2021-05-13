@@ -14,7 +14,7 @@ fun NavConfig(navController: NavHostController, enableDarkMode: MutableState<Boo
         composable(Screen.Preferiti.route) { Preferiti() }
         composable(Screen.Carrello.route) { Carrello() }
         composable(Screen.Impostazioni.route) { Impostazioni(enableDarkMode) }
-        //composable(Screen.NuovaRicetta.route) { NuovaRicetta() }
+        composable(Screen.NuovaRicetta.route) { NuovaRicetta(navController) }
         //composable(Screen.Ricetta.route,
         // arguments = listOf(navArgument("name") { type = NavType.StringType}){
 

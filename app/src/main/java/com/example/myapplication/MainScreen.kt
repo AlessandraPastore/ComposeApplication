@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,16 +23,46 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MainScreen(enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
     Scaffold(
-        //topBar = { TopBar(page) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*navController.navigate(Screen.NuovaRicetta.route)*/ }) {
-                Icon( Icons.Rounded.Add, "")
+            FloatingActionButton(
+                onClick = {
+
+                    if(currentRoute != Screen.NuovaRicetta.route) {
+                        navController.navigate(Screen.NuovaRicetta.route){
+
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+
+                        }
+
+                    }
+                    else{
+                        navController.navigate(Screen.Home.route){
+
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+
+                        }
+                    }
+
+                },
+            )
+            {
+                if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
+                else Icon( Icons.Rounded.Check, "")
+
+
             }
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = { BottomBar(navController) },
+        bottomBar = {
+
+            if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
+        },
 
     ){
         NavConfig(navController,enableDarkMode)
@@ -44,27 +74,14 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
 
 
 @Composable
-private fun TopBar(page : String){
-    TopAppBar(
-        title = {
-            Text(text = page)
-        }
-    )
-}
-
-
-
-
-@Composable
-private fun BottomBar(navController: NavHostController){
+private fun BottomBar(navController: NavHostController, currentRoute: String?){
 
     val home = Screen.Home.route
     val preferiti = Screen.Preferiti.route
     val carrello = Screen.Carrello.route
     val impostazioni = Screen.Impostazioni.route
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+
 
     BottomAppBar(
         cutoutShape = CircleShape,
