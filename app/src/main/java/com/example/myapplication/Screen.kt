@@ -9,6 +9,7 @@ sealed class Screen(val route: String, @StringRes val resId: Int) {
     object Carrello: Screen("Carrello",R.string.carrello)
     object Impostazioni: Screen("Impostazioni",R.string.impostazioni)
     object Ricetta: Screen("Ricetta",R.string.ricetta)
+    object NuovaRicetta : Screen("NuovaRicetta",R.string.nuova )
 }
 
 class State(val isDark: Boolean){}

@@ -26,7 +26,7 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
     Scaffold(
         //topBar = { TopBar(page) },
         floatingActionButton = {
-            FloatingActionButton(onClick = {  }) {
+            FloatingActionButton(onClick = { /*navController.navigate(Screen.NuovaRicetta.route)*/ }) {
                 Icon( Icons.Rounded.Add, "")
             }
         },
@@ -58,10 +58,10 @@ private fun TopBar(page : String){
 @Composable
 private fun BottomBar(navController: NavHostController){
 
-    val home = stringResource(R.string.home)
-    val preferiti = stringResource(R.string.preferiti)
-    val carrello = stringResource(R.string.carrello)
-    val impostazioni = stringResource(R.string.impostazioni)
+    val home = Screen.Home.route
+    val preferiti = Screen.Preferiti.route
+    val carrello = Screen.Carrello.route
+    val impostazioni = Screen.Impostazioni.route
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
