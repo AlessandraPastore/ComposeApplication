@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -27,35 +26,7 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-
-                    if(currentRoute != Screen.NuovaRicetta.route) {
-                        navController.navigate(Screen.NuovaRicetta.route){
-
-                            popUpTo = navController.graph.startDestination
-                            launchSingleTop = true
-
-                        }
-
-                    }
-                    else{
-                        navController.navigate(Screen.Home.route){
-
-                            popUpTo = navController.graph.startDestination
-                            launchSingleTop = true
-
-                        }
-                    }
-
-                },
-            )
-            {
-                if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
-                else Icon( Icons.Rounded.Check, "")
-
-
-            }
+            FAB(navController, currentRoute)
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
@@ -71,6 +42,38 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
 
 }
 
+@Composable
+private fun FAB(navController: NavHostController, currentRoute: String?) {
+    FloatingActionButton(
+        onClick = {
+
+            if(currentRoute != Screen.NuovaRicetta.route) {
+                navController.navigate(Screen.NuovaRicetta.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+
+                }
+
+            }
+            else{
+                navController.navigate(Screen.Home.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+
+                }
+            }
+
+        },
+    )
+    {
+        if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
+        else Icon( Icons.Rounded.Check, "")
+
+
+    }
+}
 
 
 @Composable
