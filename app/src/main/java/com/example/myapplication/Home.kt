@@ -7,13 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,18 +19,57 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Home() {
+    val expanded = remember { mutableStateOf(false)}
+    val items = getFilters()
     Scaffold(
         topBar = { TopAppBar(
             title = {
                 Text(text = stringResource(R.string.home))
-            })
+            },
+            actions = {
+                IconButton(onClick = {  }) {
+                    Icon(Icons.Rounded.Search, contentDescription = "")
+                }
+                IconButton(onClick = { expanded.value = true }) {
+                    Icon(Icons.Rounded.FilterAlt, contentDescription = "")
+                }
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                    modifier = Modifier.wrapContentSize()
+
+                ) {
+                    items.forEach{
+                        val checked = remember { mutableStateOf(it.checked) }
+
+                        DropdownMenuItem(onClick = {
+                            checked.value = !checked.value
+                            it.checked = checked.value
+                            //chiama viewmodel per una query?
+                        }) {
+                            Row(){
+                                Checkbox(
+                                    checked = checked.value,
+                                    onCheckedChange = { checked.value = it }
+                                )
+                                Text(it.name)
+                            }
+                        }
+
+
+                        Divider()
+                    }
+
+                }
+            }
+            )
         }
     )
     {
 
         LazyColumn() {
             items(50) {
-                var checked by rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
+                val checked = rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
                 Row(modifier = Modifier.fillParentMaxWidth()) {
                     Card(
                         backgroundColor = MaterialTheme.colors.surface,
@@ -82,9 +117,9 @@ fun Home() {
                                     .align(Alignment.CenterVertically)
                             ) {
                                 IconToggleButton(
-                                    checked = checked,
-                                    onCheckedChange = { checked = it }) {
-                                    if (!checked) Icon(Icons.Rounded.FavoriteBorder, "")
+                                    checked = checked.value,
+                                    onCheckedChange = { checked.value = it }) {
+                                    if (!checked.value) Icon(Icons.Rounded.FavoriteBorder, "")
                                     else Icon(Icons.Rounded.Favorite, "")
 
 
