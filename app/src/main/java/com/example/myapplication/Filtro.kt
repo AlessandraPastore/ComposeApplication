@@ -1,13 +1,14 @@
 package com.example.myapplication
 
-data class Filtro (val name : String, var checked: Boolean = false ){}
+sealed class Filtro (val name : String, var checked: Boolean = false ){
+    object primo : Filtro("Primi piatti")
+    object secondo : Filtro("Secondi piatti")
+    object vegetariano : Filtro("Vegetariano")
+    object dessert : Filtro("Dessert")
+}
 
 fun getFilters() : List<Filtro>{
-    val primo = Filtro("Primi piatti")
-    val secondo = Filtro("Secondi piatti")
-    val vegetariano = Filtro("Vegetariano")
-    val dessert = Filtro("Dessert")
-    val list = listOf<Filtro>(primo, secondo, vegetariano, dessert);
+    val list = listOf<Filtro>(Filtro.primo, Filtro.secondo, Filtro.vegetariano, Filtro.dessert);
 
     return list
 }
