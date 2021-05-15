@@ -2,9 +2,12 @@ package com.example.myapplication
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -13,7 +16,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.navigate
@@ -94,19 +99,30 @@ fun DropDown(expanded: MutableState<Boolean>) {
 
 @Composable
 fun Searching(searching: MutableState<Boolean>) {
-    TopAppBar(
-        title = { TextField(
-            value = "Ricerca",
-            onValueChange = {  },
-            label = { Text("") }
-        ) },
-        navigationIcon = {
+    val input = remember{ mutableStateOf(TextFieldValue())}
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.background(Color.Transparent)
+        ){
             IconButton(onClick = { searching.value = false })
             {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
-        },
-    )
+            OutlinedTextField(
+                value = input.value,
+                onValueChange = {
+                    if(it.text.length <= 20) input.value = it
+                                },
+                placeholder = {Text(text = "Search")},
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                trailingIcon = {Icon(Icons.Rounded.Search, contentDescription = "")},
+                singleLine = true,
+
+            )
+        }
 }
 
 @Composable
@@ -121,7 +137,14 @@ fun ScrollableLIst(){
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(10.dp)
-                        .clickable { }
+                        .clickable {  }
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {},
+                                onLongPress = {}
+                            )
+
+                        }
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
