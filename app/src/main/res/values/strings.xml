@@ -6,4 +6,11 @@
     <string name="impostazioni">Impostazioni</string>
     <string name="ricetta">Ricetta</string>
     <string name="nuova">Nuova Ricetta</string>
+    <string name="selected">Ricetta selezionata</string>
+    <string name="titolo">Titolo</string>
+    <string name="ingredienti">Ingredienti</string>
+    <string name="grammi">g</string>
+    <string name="ml">ml</string>
+    <string name="unità">unità</string>
+    <string name="descrizione">Descrizione</string>
 </resources>

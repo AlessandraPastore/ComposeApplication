@@ -2,12 +2,10 @@ package com.example.myapplication
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -21,36 +19,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.navigate
 
 @Composable
 fun Home() {
     val expanded = remember { mutableStateOf(false)}
     val searching = remember {mutableStateOf(false)}
+    val longPressed = remember {mutableStateOf(false)}
 
     Scaffold(
         topBar = {
-            if(!searching.value) TopBar(expanded, searching)    //searching.value si aggiorna al click dell'icona di search
-            else Searching(searching)
+            when{
+                longPressed.value -> LongPress(longPressed)
+                searching.value -> Searching(searching)
+                else -> TopBar(expanded, searching)
+            }
 
         }
     )
     {
-        ScrollableLIst()
+        ScrollableLIst(longPressed)
     }
 }
 
 @Composable
-fun TopBar(expanded: MutableState<Boolean>, searching: MutableState<Boolean>) {
+fun TopBar(
+    expanded: MutableState<Boolean>,
+    searching: MutableState<Boolean>
+) {
 
     TopAppBar(
         title = {
             Text(text = stringResource(R.string.home))
         },
         actions = {
-            IconButton(onClick = {
-                searching.value = true
-            }) {
+            IconButton(onClick = { searching.value = true }) {
                 Icon(Icons.Rounded.Search, contentDescription = "")
             }
             IconButton(onClick = { expanded.value = true }) {
@@ -126,7 +128,31 @@ fun Searching(searching: MutableState<Boolean>) {
 }
 
 @Composable
-fun ScrollableLIst(){
+fun LongPress(longPressed: MutableState<Boolean>) {
+    TopAppBar(
+        title = {
+            Text(text = stringResource(R.string.selected))
+        },
+        backgroundColor = MaterialTheme.colors.primaryVariant,
+        navigationIcon = {
+            IconButton(onClick = { longPressed.value = false }) {
+                Icon(Icons.Rounded.Close, contentDescription = "")
+            }
+        },
+        actions = {
+            IconButton(onClick = {  }) {
+                Icon(Icons.Rounded.Create, contentDescription = "")
+            }
+            IconButton(onClick = {  }) {
+                Icon(Icons.Rounded.Delete, contentDescription = "")
+            }
+        }
+    )
+
+}
+
+@Composable
+fun ScrollableLIst(longPressed: MutableState<Boolean>) {
     LazyColumn() {
         items(50) {
             val checked = rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
@@ -137,11 +163,12 @@ fun ScrollableLIst(){
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(10.dp)
-                        .clickable {  }
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = {},
-                                onLongPress = {}
+                                onLongPress = {
+                                    longPressed.value = !longPressed.value
+                                }
                             )
 
                         }
