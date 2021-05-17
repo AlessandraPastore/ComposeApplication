@@ -9,7 +9,7 @@
     <string name="selected">Ricetta selezionata</string>
     <string name="titolo">Titolo</string>
     <string name="ingredienti">Ingredienti</string>
-    <string name="grammi">g</string>
+    <string name="grammi">gr</string>
     <string name="ml">ml</string>
     <string name="unità">unità</string>
     <string name="descrizione">Descrizione</string>

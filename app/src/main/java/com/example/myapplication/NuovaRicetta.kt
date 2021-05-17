@@ -4,21 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowDropDown
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
@@ -62,24 +61,7 @@ fun Content(){
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ){
-            val title = remember{ mutableStateOf(TextFieldValue()) }
-            OutlinedTextField(
-                value = title.value,
-                onValueChange = {
-                    if(it.text.length <= 20) title.value = it
-                },
-                placeholder = {Text(text = "Inserisci il titolo")},
-                label = {Text(stringResource(R.string.titolo))},
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                singleLine = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colors.primary,
-                    unfocusedLabelColor = MaterialTheme.colors.primary
-                )
-
-            )
+            myTextField(stringResource(R.string.titolo), 20, true)
         }
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -103,11 +85,11 @@ fun Content(){
 
             LazyColumn() {
                 item{
-                    NewRecipe()
+                    NewIngredient()
                 }
             }
-            Button(onClick = { }){
-                Text("prova")
+            IconButton(onClick =  {/*aggiunge ingrediente() a una lista */}){
+                Icon(Icons.Rounded.Add, contentDescription = "", tint = MaterialTheme.colors.primary)
             }
         }
         Divider(
@@ -118,24 +100,7 @@ fun Content(){
             verticalAlignment = Alignment.Top,
             modifier = Modifier.weight(3f)
         ){
-            val description = remember{ mutableStateOf(TextFieldValue()) }
-            OutlinedTextField(
-                value = description.value,
-                onValueChange = {
-                    if(it.text.length <= 200) description.value = it
-                },
-                placeholder = {Text(text = "Inserisci la descrizione")},
-                label = {Text(stringResource(R.string.descrizione))},
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                maxLines = 10,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colors.primary,
-                    unfocusedLabelColor = MaterialTheme.colors.primary
-                )
-
-            )
+            myTextField(stringResource(R.string.descrizione), 200, false)
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -144,28 +109,98 @@ fun Content(){
     }
 }
 
-
 @Composable
-fun NewRecipe(){
+fun NewIngredient(){
+    var str = "empty ingredient"
+    val openDialog = remember { mutableStateOf(false)  }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth(),
     ){
-        Row(){
-            //menù ingredienti a tendina
-        }
-        Row(
-            modifier = Modifier.weight(1f)
-        ){
-            Unit()
-        }
-        Box(){
-            //quantità ingredienti
+        Button(
+            onClick = { openDialog.value = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            Text(str)
         }
         IconButton(onClick =  {}){
             Icon(Icons.Rounded.Delete, contentDescription = "")
         }
     }
+    if (openDialog.value) {
+
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "") },
+            text = { AddIngredient(str) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text("Fatto")
+                }
+            },
+            backgroundColor = MaterialTheme.colors.background
+        )
+    }
+}
+
+
+@Composable
+fun AddIngredient(str: String) {
+    val isGr = remember { mutableStateOf(true) }
+    var quantity : Int
+    //al click di fatto invii al viewModel un nuovo ingrediente fatto con str, isGr e quantity
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        //verticalArrangement = Arrangement.Bottom,
+    ){
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Unit(isGr)  //menù ingredienti a tendina, preferisco farlo quando abbiamo la view così gli passo anche la str da mostrare
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Box(
+                modifier = Modifier.weight(1f)
+            ){
+                Unit(isGr)
+            }
+            Box(
+                modifier = Modifier.weight(1f),
+            ){
+                val quantity = remember{ mutableStateOf(TextFieldValue()) }
+                OutlinedTextField(
+                    value = quantity.value,
+                    onValueChange = {
+                        if(it.text.length <= 20) quantity.value = it
+                    },
+                    label = {Text("Quantità")},
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedBorderColor = MaterialTheme.colors.primary,
+                        unfocusedLabelColor = MaterialTheme.colors.primary
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -174,7 +209,7 @@ fun Ingrediente(){
 }
 
 @Composable
-fun Unit(){
+fun Unit(isGr: MutableState<Boolean>) {
     //menù gr ml a tendina
     val expanded = remember { mutableStateOf(false)}
     val unit = remember{ mutableStateOf("") }
@@ -183,14 +218,14 @@ fun Unit(){
         onValueChange = {
             unit.value = it
         },
-        //label = {Text(stringResource(R.string.unità))},
+        label = {Text(stringResource(R.string.unità))},
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),
         readOnly = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = MaterialTheme.colors.primary,
-            //unfocusedLabelColor = MaterialTheme.colors.primary,
+            unfocusedLabelColor = MaterialTheme.colors.primary,
         ),
         trailingIcon = {
             Icon(
@@ -207,21 +242,45 @@ fun Unit(){
             .wrapContentSize()
             .background(MaterialTheme.colors.background)
     ) {
-        val g = stringResource(R.string.grammi)
+        val gr = stringResource(R.string.grammi)
         val ml = stringResource(R.string.ml)
         DropdownMenuItem(
             onClick = {
-                unit.value = g
+                isGr.value = true
+                unit.value = gr
                 expanded.value = false
             },
-            content = {Text(text = g)}
+            content = {Text(text = gr)}
         )
         DropdownMenuItem(
             onClick = {
+                isGr.value = false
                 unit.value = ml
                 expanded.value = false
             },
             content = {Text(text = ml)}
         )
     }
+}
+
+@Composable
+fun myTextField(str: String, max: Int, singleLine : Boolean){
+    val title = remember{ mutableStateOf(TextFieldValue()) }
+    OutlinedTextField(
+        value = title.value,
+        onValueChange = {
+            if(it.text.length <= max) title.value = it
+        },
+        placeholder = {Text(text = "Inserire $str")},
+        label = {Text(str)},
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
+        singleLine = singleLine,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            unfocusedBorderColor = MaterialTheme.colors.primary,
+            unfocusedLabelColor = MaterialTheme.colors.primary
+        )
+
+    )
 }
