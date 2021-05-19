@@ -154,7 +154,7 @@ fun LongPress(longPressed: MutableState<Boolean>) {
 @Composable
 fun ScrollableLIst(longPressed: MutableState<Boolean>) {
     LazyColumn() {
-        items(50) {
+        items(10) {
             val checked = rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
             Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
@@ -225,6 +225,13 @@ fun ScrollableLIst(longPressed: MutableState<Boolean>) {
 
                 }
             }
+        }
+        item(){
+            Box(modifier = Modifier
+                .background(Color.Transparent)
+                .height(100.dp)
+                .fillMaxWidth()
+            ){}
         }
     }
 }
