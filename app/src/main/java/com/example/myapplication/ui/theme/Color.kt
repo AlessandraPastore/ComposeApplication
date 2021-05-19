@@ -9,10 +9,10 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)*/
 
-val Purple200 = Color(0xFFB3E5FC)
-val Purple500 = Color(0xFF042A2B)
-val Purple700 = Color(0xFF031C1D)
-val Teal200 = Color(0xFF00796B) //bleah
+val Purple200 = Color(0xFFFFF9C4)
+val Purple500 = Color(0xFF6A1B9A)
+val Purple700 = Color(0xFF4A148C)
+val Teal200 = Color(0xFFF9A825) //bleah
 
 
 
