@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +20,7 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 
 
+@ExperimentalAnimationApi
 @Composable
 fun MainScreen(enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()
@@ -31,12 +33,13 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-
             if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
         },
 
     ){
+
         NavConfig(navController,enableDarkMode)
+
     }
 
 

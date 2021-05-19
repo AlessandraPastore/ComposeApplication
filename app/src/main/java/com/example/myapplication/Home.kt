@@ -2,7 +2,6 @@ package com.example.myapplication
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,10 +33,11 @@ fun Home() {
                 else -> TopBar(expanded, searching)
             }
 
-        }
+        },
     )
     {
         ScrollableLIst(longPressed)
+
     }
 }
 
@@ -159,7 +159,7 @@ fun ScrollableLIst(longPressed: MutableState<Boolean>) {
             Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = MaterialTheme.colors.surface,
-                    elevation = 5.dp,
+                    elevation = 10.dp,
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(10.dp)
