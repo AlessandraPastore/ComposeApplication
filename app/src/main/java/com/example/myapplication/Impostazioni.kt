@@ -40,7 +40,7 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
             else Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(2F))
 
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             Text(
                 text = "clicca per cambiare modalità",
                 textAlign = TextAlign.Center

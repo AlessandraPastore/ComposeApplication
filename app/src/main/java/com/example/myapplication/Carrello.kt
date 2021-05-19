@@ -18,3 +18,4 @@ fun Carrello(){
         Text(stringResource(R.string.carrello))
     }
 }
+
