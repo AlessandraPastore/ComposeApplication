@@ -22,5 +22,5 @@ data class IngredienteRIcetta(
     val ricetta:String,
     val ingrediente: String,
     @ColumnInfo(name="qta")
-    val qta:Int
+    val qta:String
 )

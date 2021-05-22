@@ -9,8 +9,6 @@ interface DaoRicette {
     suspend fun insertIngrediente(ingrediente: Ingrediente)
     //sia per aggiungere che per eliminare
  
-    @Query("UPDATE Ingrediente set inCarrello=:isIn where ingrediente=:ingr")
-    suspend fun modficaCarrello(isIn:Boolean,ingr:String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRicettaPreview(ricettePreview: RicettePreview)
@@ -30,6 +28,8 @@ interface DaoRicette {
     @Update
     suspend fun updateRicettaCompleta(ric:RicettaCompleta)
 
+    @Update
+    suspend fun updateCarrello(ingrediente: Ingrediente)
     @Delete
     suspend fun deleteIngr(ingrediente: Ingrediente)
     @Delete
@@ -46,8 +46,8 @@ interface DaoRicette {
     @Query("Select count(*) from Ingrediente")
     suspend fun countIngredienti():Int
 
-     @Query("Select *from Ingrediente")
-      fun getAllIngr():LiveData<List<Ingrediente>?>
+     @Query("Select *from Ingrediente where inCarrello=:inCarrello")
+      fun getAllIngrIncarrello(inCarrello :Boolean=true):LiveData<List<Ingrediente>?>
 
     @Query("select * from RicettaCompleta where titolo=:titolo")
     suspend fun showRicettaCompleta(titolo:String) : RicettaCompleta

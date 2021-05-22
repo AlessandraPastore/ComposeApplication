@@ -13,11 +13,11 @@ class RicetteViewModel (application: Application):AndroidViewModel(application) 
 
      val ricDao :DaoRicette
 
-    val ingr:LiveData<List<Ingrediente>?>
+
     init {
         ricDao = RicetteDataBase.getDataBase(application,viewModelScope).dao()
 
-        ingr=ricDao.getAllIngr()
+
     }
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
     ricDao.insertIngrediente(ingrediente)
