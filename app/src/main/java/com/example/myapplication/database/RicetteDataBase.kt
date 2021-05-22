@@ -58,11 +58,8 @@ abstract class RicetteDataBase : RoomDatabase() {
 
                 INSTANCE?.let { database->
                     Log.d("test","let")
-                    scope.launch (Dispatchers.IO){
-
-
+                    scope.launch {
                         prepopulateDatabase(database.dao())
-
                     }
                 }
                if(INSTANCE==null)
