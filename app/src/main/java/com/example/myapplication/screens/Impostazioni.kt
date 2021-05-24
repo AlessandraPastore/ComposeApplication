@@ -17,6 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.R
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.example.myapplication.database.RicetteViewModel
+
+/*
+@Composable
+fun ImpostazioniManager(enableDarkMode: Boolean,model: RicetteViewModel){
+
+    Impostazioni(enableDarkMode = enableDarkMode,onDarkModeChange = {model.onDarkModeChange(it)})
+}
+*/
 
 @Composable
 fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
@@ -27,15 +38,11 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
             })
         }
     ){
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-
-
-
         ){
             if(enableDarkMode.value)    Icon(Icons.Rounded.ModeNight, contentDescription = "", modifier = Modifier.scale(2F))
             else Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(2F))
@@ -48,8 +55,12 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
                 )
             Switch(
                 checked = enableDarkMode.value,
-                onCheckedChange= { enableDarkMode.value = !enableDarkMode.value  }
-                )
+                onCheckedChange= {
+                    if (enableDarkMode.value == true)
+                        enableDarkMode.value = false
+                    else
+                        enableDarkMode.value = true
+                })
         }
     }
 }

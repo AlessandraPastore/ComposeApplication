@@ -6,72 +6,88 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import com.example.myapplication.R
+import com.example.myapplication.Screen
+import com.example.myapplication.database.RicettePreview
+import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.getFilters
+import kotlinx.coroutines.launch
+
 
 @Composable
-fun Home() {
-    val expanded = remember { mutableStateOf(false)}
-    val searching = remember {mutableStateOf(false)}
-    val longPressed = remember {mutableStateOf(false)}
+fun Home(model: RicetteViewModel, navController: NavController) {
+
+    val ricette by model.ricette.observeAsState()
+
+    val expanded by model.expanded.observeAsState(false)
+    val searching by model.searching.observeAsState(false)
+    val longPressed by model.longPressed.observeAsState(false)
 
     Scaffold(
         topBar = {
             when{
-                longPressed.value -> LongPress(longPressed)
-                searching.value -> Searching(searching)
-                else -> TopBar(expanded, searching)
+                longPressed -> LongPress(onLongPress = {model.onLongPress(false)})
+                searching -> Searching(onSearch = {model.onSearch(false)})
+                else -> TopBar(expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
-
         },
     )
     {
-        ScrollableLIst(longPressed)
-
+        if(ricette != null)
+            ScrollableLIst(model, navController, ricette as List<RicettePreview>, onLongPress = {model.onInvertPress()})
     }
 }
 
+// Funzione che gestisce l'AppBar "ad alto livello"
 @Composable
 fun TopBar(
-    expanded: MutableState<Boolean>,
-    searching: MutableState<Boolean>
+    expanded: Boolean,
+    onExpand: () -> Unit,
+    onDeExpand: () -> Unit,
+    onSearch: () -> Unit
 ) {
-
     TopAppBar(
         title = {
             Text(text = stringResource(R.string.home))
         },
         actions = {
-            IconButton(onClick = { searching.value = true }) {
+            IconButton(onClick = onSearch) {
                 Icon(Icons.Rounded.Search, contentDescription = "")
             }
-            IconButton(onClick = { expanded.value = true }) {
+            IconButton(onClick = onExpand) {
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
-            DropDown(expanded)
-
+            DropDown(expanded, onDeExpand = onDeExpand)
         }
     )
 }
 
+// Funzione che gestisce l'icona del filtro
 @Composable
-fun DropDown(expanded: MutableState<Boolean>) {
+fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
     DropdownMenu(
-        expanded = expanded.value,
-        onDismissRequest = { expanded.value = false },
+        expanded = expanded,
+        onDismissRequest = onDeExpand,
         modifier = Modifier
             .wrapContentSize()
             .background(MaterialTheme.colors.background)
@@ -91,26 +107,25 @@ fun DropDown(expanded: MutableState<Boolean>) {
                 Row(){
                     Checkbox(
                         checked = checked.value,
-                        onCheckedChange = { checked.value = it }
+                        onCheckedChange = { checked.value= it }
                     )
                     Text(item.name)
                 }
             }
-
         }
-
     }
 }
 
+// Funzione che gestisce l'icona della ricerca
 @Composable
-fun Searching(searching: MutableState<Boolean>) {
+fun Searching(onSearch: () -> Unit) {
     val input = remember{ mutableStateOf(TextFieldValue())}
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.background(Color.Transparent)
         ){
-            IconButton(onClick = { searching.value = false })
+            IconButton(onClick = onSearch)
             {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
@@ -125,20 +140,22 @@ fun Searching(searching: MutableState<Boolean>) {
                     .fillMaxWidth(),
                 trailingIcon = {Icon(Icons.Rounded.Search, contentDescription = "")},
                 singleLine = true,
-
             )
         }
 }
 
+// Funzione che gestisce il longPress di una determinaata ricetta.
+// Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
+// se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
-fun LongPress(longPressed: MutableState<Boolean>) {
+fun LongPress(onLongPress: () -> Unit) {
     TopAppBar(
         title = {
             Text(text = stringResource(R.string.selected))
         },
         backgroundColor = MaterialTheme.colors.primaryVariant,
         navigationIcon = {
-            IconButton(onClick = { longPressed.value = false }) {
+            IconButton(onClick = onLongPress) {
                 Icon(Icons.Rounded.Close, contentDescription = "")
             }
         },
@@ -151,14 +168,19 @@ fun LongPress(longPressed: MutableState<Boolean>) {
             }
         }
     )
-
 }
 
+// Funzione che gestisce la lista delle ricette
 @Composable
-fun ScrollableLIst(longPressed: MutableState<Boolean>) {
-    LazyColumn() {
-        items(10) {
-            val checked = rememberSaveable { mutableStateOf(false) }    //devo farlo per ogni index qualcosa
+fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, onLongPress: (Offset) -> Unit) {
+
+    val scope = rememberCoroutineScope()
+
+    LazyColumn {
+        items(ricette) {   ricetta ->
+
+            val checked = ricetta.preferito
+
             Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = MaterialTheme.colors.surface,
@@ -167,13 +189,15 @@ fun ScrollableLIst(longPressed: MutableState<Boolean>) {
                         .fillParentMaxWidth()
                         .padding(10.dp)
                         .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = {},
-                                onLongPress = {
-                                    longPressed.value = !longPressed.value
-                                }
-                            )
-
+                            // Forse coroutine inutile qua
+                            scope.launch {
+                                detectTapGestures(
+                                    onTap = {
+                                        navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
+                                    },
+                                    onLongPress = onLongPress
+                                )
+                            }
                         }
                 ) {
                     Row(
@@ -197,16 +221,15 @@ fun ScrollableLIst(longPressed: MutableState<Boolean>) {
                                 .align(Alignment.CenterVertically)
                         ) {
                             Text(
+                                text = ricetta.titolo,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(15.dp)
+                            )
+                            Text(   // probabilmente inutile
                                 text = "item",
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(15.dp)
                             )
-                            Text(
-                                text = "item",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(15.dp)
-                            )
-
                         }
                         Column(
                             modifier = Modifier
@@ -214,18 +237,13 @@ fun ScrollableLIst(longPressed: MutableState<Boolean>) {
                                 .align(Alignment.CenterVertically)
                         ) {
                             IconToggleButton(
-                                checked = checked.value,
-                                onCheckedChange = { checked.value = it }) {
-                                if (!checked.value) Icon(Icons.Rounded.FavoriteBorder, "")
+                                checked = checked,
+                                onCheckedChange = {model.onPreferitoChange(ric = RicettePreview(ricetta.titolo,!checked))}) {
+                                if (!checked) Icon(Icons.Rounded.FavoriteBorder, "")
                                 else Icon(Icons.Rounded.Favorite, "")
-
-
                             }
                         }
-
                     }
-
-
                 }
             }
         }

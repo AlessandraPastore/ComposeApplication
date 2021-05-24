@@ -16,12 +16,12 @@ import kotlinx.coroutines.launch
 @Database(
     entities =
     [
-      Categoria::class,
-      Ingrediente::class,
-     IngredienteRIcetta::class,
-    RicettaCategorie::class,
-    RicettaCompleta::class,
-    RicettePreview::class
+        Categoria::class,
+        Ingrediente::class,
+        IngredienteRIcetta::class,
+        RicettaCategorie::class,
+        RicettaCompleta::class,
+        RicettePreview::class
     ],
     version = 3,
     exportSchema = true

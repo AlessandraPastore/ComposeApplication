@@ -18,14 +18,16 @@ import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.database.RicetteViewModel
 
 
 @ExperimentalAnimationApi
 @Composable
-fun MainScreen(enableDarkMode: MutableState<Boolean>) {
+fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+
     Scaffold(
         floatingActionButton = {
             FAB(navController, currentRoute)
@@ -35,14 +37,10 @@ fun MainScreen(enableDarkMode: MutableState<Boolean>) {
         bottomBar = {
             if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
         },
-
     ){
 
-        NavConfig(navController,enableDarkMode)
-
+        NavConfig(navController,enableDarkMode,model)
     }
-
-
 }
 
 @Composable
@@ -73,12 +71,10 @@ private fun FAB(navController: NavHostController, currentRoute: String?) {
     {
         if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
         else Icon( Icons.Rounded.Check, "")
-
-
     }
 }
 
-
+// Funzione che gestisce la BottomBar e la navigazione delle icone
 @Composable
 private fun BottomBar(navController: NavHostController, currentRoute: String?){
 
@@ -86,8 +82,6 @@ private fun BottomBar(navController: NavHostController, currentRoute: String?){
     val preferiti = Screen.Preferiti.route
     val carrello = Screen.Carrello.route
     val impostazioni = Screen.Impostazioni.route
-
-
 
     BottomAppBar(
         cutoutShape = CircleShape,

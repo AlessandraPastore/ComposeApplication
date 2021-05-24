@@ -1,11 +1,11 @@
 package com.example.myapplication.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 
-
+// Perchè State<Boolean?> in darkTheme
 @Composable
 fun MyApplicationTheme(
     darkTheme: MutableState<Boolean>,
