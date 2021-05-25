@@ -38,7 +38,6 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
             if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
         },
     ){
-
         NavConfig(navController,enableDarkMode,model)
     }
 }
