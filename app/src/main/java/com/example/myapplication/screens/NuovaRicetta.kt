@@ -7,6 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,12 +22,22 @@ import com.example.myapplication.R
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
 import com.example.myapplication.database.IngredienteRIcetta
+import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
 
 
 // Cornice per lo schermo
 @Composable
-fun NuovaRicetta(navController: NavHostController, ricettaVuota: RicettaSample) {
+fun NuovaRicetta(
+    model: RicetteViewModel,
+    navController: NavHostController,
+    ricettaVuota: RicettaSample
+) {
+    /*
+    val titolo = model.titolo.observeAsState("")
+    val ingrediente = model.ingrediente.observeAsState("")
+    val quantità = model.quantità.observeAsState("")
+     */
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,13 +58,14 @@ fun NuovaRicetta(navController: NavHostController, ricettaVuota: RicettaSample) 
             )
         },
     ){
-        Content(ricettaVuota)
+        Content(model ,ricettaVuota)
     }
 }
 
+//, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
 @Composable
-fun Content(ricettaVuota: RicettaSample) {
+fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -71,7 +84,7 @@ fun Content(ricettaVuota: RicettaSample) {
                     .background(Color.Red)
                     .size(58.dp)
             )
-            MyTextField(stringResource(R.string.titolo), 20, true, ricettaVuota)
+            MyTextField(model, stringResource(R.string.titolo), 20, true)
         }
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -112,7 +125,7 @@ fun Content(ricettaVuota: RicettaSample) {
             verticalAlignment = Alignment.Top,
             modifier = Modifier.weight(3f)
         ){
-            MyTextField(stringResource(R.string.descrizione), 200, false, ricettaVuota)
+            MyTextField(model, stringResource(R.string.descrizione), 200, false)
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -123,7 +136,7 @@ fun Content(ricettaVuota: RicettaSample) {
 
 
 @Composable
-fun MyTextField(str: String, max: Int, singleLine: Boolean, ricettaVuota: RicettaSample){
+fun MyTextField(model: RicetteViewModel ,str: String, max: Int, singleLine: Boolean){
 
     val titolo = stringResource(R.string.titolo)
 
@@ -131,9 +144,13 @@ fun MyTextField(str: String, max: Int, singleLine: Boolean, ricettaVuota: Ricett
     OutlinedTextField(
         value = title.value,
         onValueChange = {
-            if(it.text.length <= max) title.value = it
-            //if(str.equals(titolo)) ricettaVuota.titolo = title.value
-            //else ricettaVuota.descrizione = title.value
+            if(it.text.length <= max)
+                title.value = it
+
+            if(str.equals(titolo))
+                model.onTitoloInsert(title.value.text)
+            else
+                model.onDescrizioneInsert(title.value.text)
         },
         placeholder = {Text(text = "Inserire $str")},
         label = {Text(str)},

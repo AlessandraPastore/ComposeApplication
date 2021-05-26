@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaSample
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,8 +23,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     var ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
-
-    val ricettaVuota: LiveData<RicettaSample> = MutableLiveData(RicettaSample("","", mutableListOf()))
 
     // Viene premuto il cuore -> Ricetta aggiunta o eliminata dai preferiti
     fun onPreferitoChange(ric: RicettePreview)=viewModelScope.launch (Dispatchers.IO){
@@ -43,6 +42,33 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onPreferitiClick(){
         ricette = ricDao.getPreferiti()
     }
+
+    fun onFiltroChecked(filtro: Filtro){
+        ricette = ricDao.getFilterRic(listOf(filtro.name))
+    }
+
+    private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf()))
+    val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
+
+    fun onTitoloInsert(titolo: String){
+        _ricettaVuota.value!!.titolo = titolo
+    }
+
+    fun onDescrizioneInsert(descrizione: String){
+        _ricettaVuota.value!!.descrizione = descrizione
+    }
+
+
+    /*
+    private val _titolo = MutableLiveData("")
+    val titolo: LiveData<String> = _titolo
+
+    private val _ingrediente = MutableLiveData("")
+    val ingrediente: LiveData<String> = _ingrediente
+
+    private val _quantità = MutableLiveData("")
+    val quantità: LiveData<String> = _quantità
+     */
 
 
     /*

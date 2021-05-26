@@ -39,7 +39,8 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            if(currentRoute != Screen.NuovaRicetta.route && currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")   BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
+            if(currentRoute != Screen.NuovaRicetta.route && currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
+                BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta e su RicettaDetail
         },
     ){
         NavConfig(navController, enableDarkMode, model, ricettaVuota)

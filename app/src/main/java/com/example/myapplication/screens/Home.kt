@@ -2,9 +2,7 @@ package com.example.myapplication.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,9 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -51,7 +48,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
             when{
                 longPressed -> LongPress(model, onLongPress = {model.onLongPress(false)})
                 searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
+                else -> TopBar(model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
         },
     )
@@ -64,6 +61,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
 // Funzione che gestisce l'AppBar "ad alto livello"
 @Composable
 fun TopBar(
+    model: RicetteViewModel,
     tipologia: String,
     expanded: Boolean,
     onExpand: () -> Unit,
@@ -81,14 +79,14 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
-            DropDown(expanded, onDeExpand = onDeExpand)
+            DropDown(model, expanded, onDeExpand = onDeExpand)
         }
     )
 }
 
 // Funzione che gestisce l'icona del filtro
 @Composable
-fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
+fun DropDown(model: RicetteViewModel, expanded: Boolean, onDeExpand: () -> Unit) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDeExpand,
@@ -98,23 +96,27 @@ fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
 
     ) {
         //mi tiene i checked anche quando cambio pagina
-        val items = getFilters()
-        for(item in items.listIterator()){
+        val filters by rememberSaveable {
+            mutableStateOf(getFilters())
+        }
+        for(filter in filters.listIterator()){
 
             // capire come sono gestiti i filtri
-            val checked = remember { mutableStateOf(item.checked) }
+            // val checked = remember { mutableStateOf(filter.checked) }
 
             DropdownMenuItem(onClick = {
-                item.checked = !item.checked
-                checked.value = item.checked
-                //chiama viewmodel per una query?
+                filter.checked = !filter.checked
+                //checked.value = filter.checked
             }) {
-                Row(){
+                Row{
                     Checkbox(
-                        checked = checked.value,
-                        onCheckedChange = { checked.value= it }
+                        checked = filter.checked, //checked.value
+                        onCheckedChange = {
+                            filter.checked = it        // checked.value
+                            model.onFiltroChecked(filter)
+                        }
                     )
-                    Text(item.name)
+                    Text(filter.name)
                 }
             }
         }

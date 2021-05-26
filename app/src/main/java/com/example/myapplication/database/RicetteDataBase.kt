@@ -68,13 +68,13 @@ abstract class RicetteDataBase : RoomDatabase() {
         suspend fun prepopulateDatabase(dao:DaoRicette)
         {
             if(dao.countIngredienti()==0) {
-                dao.insertCategoria(Categoria("antipasto"))
-                dao.insertCategoria(Categoria("primo"))
-                dao.insertCategoria(Categoria("secondo"))
-                dao.insertCategoria(Categoria("dolce"))
-                dao.insertCategoria(Categoria("vegetariano"))
-                dao.insertCategoria(Categoria("vegano"))
-                dao.insertCategoria(Categoria("gluten free"))
+                dao.insertCategoria(Categoria("Antipasto"))
+                dao.insertCategoria(Categoria("Primo piatto"))
+                dao.insertCategoria(Categoria("Secondo piatto"))
+                dao.insertCategoria(Categoria("Dolce"))
+                dao.insertCategoria(Categoria("Vegetariano"))
+                dao.insertCategoria(Categoria("Vegano"))
+                dao.insertCategoria(Categoria("Gluten free"))
 
                 dao.insertIngrediente(Ingrediente("VONGOLA",false))
                 dao.insertIngrediente(Ingrediente("WURSTEL",false))

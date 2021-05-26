@@ -24,7 +24,7 @@ fun NavConfig(
         composable(Screen.Preferiti.route) { Preferiti(model, navController) }
         composable(Screen.Carrello.route) { Carrello() }
         composable(Screen.Impostazioni.route) { Impostazioni(enableDarkMode) }
-        composable(Screen.NuovaRicetta.route) { NuovaRicetta(navController, ricettaVuota) }
+        composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController, ricettaVuota) }
         composable(
             "${Screen.RicettaDetail.route}/{ricetta}",
             arguments = listOf(navArgument("ricetta") { type = NavType.StringType })) {
