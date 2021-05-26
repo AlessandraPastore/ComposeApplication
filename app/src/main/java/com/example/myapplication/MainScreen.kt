@@ -35,13 +35,14 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
+            if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
         },
     ){
         NavConfig(navController,enableDarkMode,model)
     }
 }
 
+// Funzione che gestisce il bottone centrale
 @Composable
 private fun FAB(navController: NavHostController, currentRoute: String?) {
     FloatingActionButton(
@@ -75,7 +76,7 @@ private fun FAB(navController: NavHostController, currentRoute: String?) {
 
 // Funzione che gestisce la BottomBar e la navigazione delle icone
 @Composable
-private fun BottomBar(navController: NavHostController, currentRoute: String?){
+private fun BottomBar(model: RicetteViewModel, navController: NavHostController, currentRoute: String?){
 
     val home = Screen.Home.route
     val preferiti = Screen.Preferiti.route
@@ -100,6 +101,9 @@ private fun BottomBar(navController: NavHostController, currentRoute: String?){
                     },
                     selected = currentRoute == home,
                     onClick = {
+
+                        // model.onHomeClick()
+
                         navController.navigate(home) {
                             popUpTo = navController.graph.startDestination
                             launchSingleTop = true
@@ -122,7 +126,9 @@ private fun BottomBar(navController: NavHostController, currentRoute: String?){
                     },
                     selected = currentRoute == preferiti,
                     onClick = {
-                            navController.navigate(preferiti) {
+                        model.onPreferitiClick()
+
+                        navController.navigate(preferiti) {
                                 popUpTo = navController.graph.startDestination
                                 launchSingleTop = true
                             }
@@ -150,7 +156,6 @@ private fun BottomBar(navController: NavHostController, currentRoute: String?){
                             popUpTo = navController.graph.startDestination
                             launchSingleTop = true
                         }
-
                     },
                     alwaysShowLabel = false,
                 )

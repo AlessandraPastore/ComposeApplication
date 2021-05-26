@@ -75,7 +75,7 @@ fun RicettaDetail(navController: NavController, ricetta: String?){
                         //for(item in listIngredient) o qualcosa del genere
 
                         repeat(4){
-                            ingredientItem()
+                            IngredientItem()
                         }
 
 
@@ -149,7 +149,7 @@ fun FadingTopBar(
 
 //mostra il singolo ingrediente comprendendo l'icona aggiungi a carrello
 @Composable
-fun ingredientItem(){
+fun IngredientItem(){
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()

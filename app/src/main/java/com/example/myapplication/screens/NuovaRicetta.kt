@@ -71,7 +71,7 @@ fun Content(){
                     .background(Color.Red)
                     .size(58.dp)
             )
-            myTextField(stringResource(R.string.titolo), 20, true)
+            MyTextField(stringResource(R.string.titolo), 20, true)
         }
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -113,7 +113,7 @@ fun Content(){
             verticalAlignment = Alignment.Top,
             modifier = Modifier.weight(3f)
         ){
-            myTextField(stringResource(R.string.descrizione), 200, false)
+            MyTextField(stringResource(R.string.descrizione), 200, false)
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -178,7 +178,7 @@ fun Unit(isGr: MutableState<Boolean>) {
 }
 
 @Composable
-fun myTextField(str: String, max: Int, singleLine : Boolean){
+fun MyTextField(str: String, max: Int, singleLine : Boolean){
     val title = remember{ mutableStateOf(TextFieldValue()) }
     OutlinedTextField(
         value = title.value,

@@ -14,17 +14,31 @@ import kotlinx.coroutines.launch
 // AndroidViewModel è sottoclasse di ViewModel
 class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
-    // Recupero della reference al Dao
-    val ricDao :DaoRicette
+    // Recupero della reference al Dao, non accessibile all'esterno di RicetteViewModel
+    private val ricDao :DaoRicette
     init {
         ricDao = RicetteDataBase.getDataBase(application,viewModelScope).dao()
     }
 
-    val ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
+    var ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
 
     fun onPreferitoChange(ric: RicettePreview)=viewModelScope.launch (Dispatchers.IO){
         ricDao.updateRicettaPreview(ric)
     }
+
+    /*
+
+    Funzione utilizzata in MainScreen -> BottomBar -> primo onClick che si trova
+
+    fun onHomeClick(){
+        ricette = ricDao.getAllPreview()
+    }
+    */
+
+    fun onPreferitiClick()=viewModelScope.launch (Dispatchers.IO){
+        ricette = ricDao.getPreferiti()
+    }
+
 
     /*
      Instance state per la gestione della App Bar in schermata Home (Home.kt)

@@ -70,8 +70,9 @@ interface DaoRicette {
     @Query ("SELECT Distinct RicettePreview.* from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.ricetta where RicettaCategorie.categoria in (:lista)")
     fun getFilterRic(lista:List<String>):LiveData<List<RicettePreview>>
 
-    @Query("SELECT * from RicettePreview where preferito =:liked")
-    fun getPreferiti(liked:Boolean=true):LiveData<List<RicettePreview>>
+    @Query("SELECT * from RicettePreview where preferito =1")
+    suspend fun getPreferiti():LiveData<List<RicettePreview>>
+
 
     @Query("SELECT * From RicettePreview")
     fun getAllPreview():LiveData<List<RicettePreview>>

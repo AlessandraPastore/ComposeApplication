@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
 fun GeneralManager(model: RicetteViewModel)
 {
     val actual = isSystemInDarkTheme()
-    var enableDarkMode = remember { mutableStateOf(false) }
+    val enableDarkMode = remember { mutableStateOf(false) }
 
     //val enableDarkMode: Boolean by model.enableDarkMode.observeAsState(false)
 

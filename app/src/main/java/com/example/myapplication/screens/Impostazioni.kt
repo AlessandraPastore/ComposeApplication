@@ -56,7 +56,7 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
             Switch(
                 checked = enableDarkMode.value,
                 onCheckedChange= {
-                    if (enableDarkMode.value == true)
+                    if (enableDarkMode.value)
                         enableDarkMode.value = false
                     else
                         enableDarkMode.value = true

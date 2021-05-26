@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 
 @ExperimentalAnimationApi
 @Composable
-fun removeCarrello() {
+fun RemoveCarrello() {
 
     var ingredientList = mutableListOf<String>("a","b","c","d","e","f","g","h","i","l")    //me la dovrà dare il viewModel
     val deletedIngredientList = remember { mutableStateListOf<String>() }

@@ -97,6 +97,7 @@ fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
         val items = getFilters()
         for(item in items.listIterator()){
 
+            // capire come sono gestiti i filtri
             val checked = remember { mutableStateOf(item.checked) }
 
             DropdownMenuItem(onClick = {
@@ -119,6 +120,8 @@ fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
 // Funzione che gestisce l'icona della ricerca
 @Composable
 fun Searching(onSearch: () -> Unit) {
+
+    // Forse hoisting?
     val input = remember{ mutableStateOf(TextFieldValue())}
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

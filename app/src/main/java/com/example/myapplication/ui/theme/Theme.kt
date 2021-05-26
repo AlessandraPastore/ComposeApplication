@@ -9,7 +9,7 @@ import androidx.compose.runtime.State
 @Composable
 fun MyApplicationTheme(
     darkTheme: MutableState<Boolean>,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme.value) {
         DarkColors
