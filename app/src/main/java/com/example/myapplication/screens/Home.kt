@@ -188,7 +188,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
 
             //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
-                    //backgroundColor = MaterialTheme.colors.surface,
+                    //backgroundColor = MaterialTheme.colors.primary,
                     elevation = 5.dp,
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
@@ -208,9 +208,6 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .background(MaterialTheme.colors.surface)
-
                     ) {
 
                         Surface(

@@ -12,7 +12,10 @@ val Teal200 = Color(0xFF03DAC5)*/
 val Purple200 = Color(0xFFFFF9C4)
 val Purple500 = Color(0xFF6A1B9A)
 val Purple700 = Color(0xFF4A148C)
-val Teal200 = Color(0xFFF9A825) //bleah
+val Teal200 = Color(0xFFF9A825)
+
+val Gray700 = Color(0xFF616161)
+
 
 
 
@@ -33,9 +36,9 @@ val LightColors = lightColors(
     */
 )
 
-//da sistemare
+
 val DarkColors = darkColors(
-    primary = Purple200,
+    primary = Gray700,
     primaryVariant = Purple700,
-    secondary = Teal200
+    secondary = Teal200,
 )

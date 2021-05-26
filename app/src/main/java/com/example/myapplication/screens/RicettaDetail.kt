@@ -36,7 +36,7 @@ fun RicettaDetail(navController: NavController, ricetta: String?){
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .fillMaxSize()
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colors.background)
             ){
                 //al posto della box andrà l'immagine
                 Box(
