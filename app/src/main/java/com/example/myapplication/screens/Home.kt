@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -185,10 +186,11 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
 
             val checked = ricetta.preferito
 
-            Row(modifier = Modifier.fillParentMaxWidth()) {
+            //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    elevation = 10.dp,
+                    //backgroundColor = MaterialTheme.colors.surface,
+                    elevation = 5.dp,
+                    shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(10.dp)
@@ -249,7 +251,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                         }
                     }
                 }
-            }
+            //}
         }
         item(){
             Box(modifier = Modifier

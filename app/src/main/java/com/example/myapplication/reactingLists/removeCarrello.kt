@@ -41,7 +41,7 @@ fun RemoveCarrello() {
                     exit = shrinkVertically()
                 ) {
                     Card(
-                        backgroundColor = MaterialTheme.colors.surface,
+                        //backgroundColor = MaterialTheme.colors.surface,
                         elevation = 5.dp,
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier
