@@ -36,7 +36,7 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
 @Composable
 fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: IngredienteRIcetta) {
-    var str = "empty ingredient"
+    //var str = "empty ingredient"
     val openDialog = remember { mutableStateOf(false)  }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -91,6 +91,7 @@ fun dialogIngredient(str: IngredienteRIcetta) {
             value = ingredient.value,
             onValueChange = {
                 if (it.text.length <= 15) ingredient.value = it
+                //str.ingrediente = ingredient.value.text
             },
             placeholder = { Text(text = "Inserire ingrediente") },
             label = { Text("Ingrediente") },
@@ -108,6 +109,7 @@ fun dialogIngredient(str: IngredienteRIcetta) {
             value = quantity.value,
             onValueChange = {
                 if (it.text.length <= 8) quantity.value = it
+                //str.quantity = quantity.value.text
             },
             placeholder = { Text(text = "Inserire quantità") },
             label = { Text("Quantità") },

@@ -19,6 +19,7 @@ import androidx.navigation.compose.navigate
 import com.example.myapplication.R
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
+import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.reactingLists.addIngredientCard
 
 
@@ -70,7 +71,7 @@ fun Content(ricettaVuota: RicettaSample) {
                     .background(Color.Red)
                     .size(58.dp)
             )
-            MyTextField(stringResource(R.string.titolo), 20, true)
+            MyTextField(stringResource(R.string.titolo), 20, true, ricettaVuota)
         }
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -93,12 +94,12 @@ fun Content(ricettaVuota: RicettaSample) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ){
-            addIngredientCard(ingredientList)
+                addIngredientCard(ingredientList)
         }
         IconButton(
             // Aggiunge un elemento a ingredientList
             onClick = {
-                ingredientList.add("empty ingredient")
+                    ingredientList.add(IngredienteRIcetta("","",""))
             }
         ) {
             Icon(Icons.Rounded.Add,"")
@@ -111,7 +112,7 @@ fun Content(ricettaVuota: RicettaSample) {
             verticalAlignment = Alignment.Top,
             modifier = Modifier.weight(3f)
         ){
-            MyTextField(stringResource(R.string.descrizione), 200, false)
+            MyTextField(stringResource(R.string.descrizione), 200, false, ricettaVuota)
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -120,70 +121,19 @@ fun Content(ricettaVuota: RicettaSample) {
     }
 }
 
-/*
-@Composable
-fun Unit(isGr: MutableState<Boolean>) {
-    //menù gr ml a tendina
-    val expanded = remember { mutableStateOf(false)}
-    val unit = remember{ mutableStateOf("") }
-    OutlinedTextField(
-        value = unit.value,
-        onValueChange = {
-            unit.value = it
-        },
-        label = {Text(stringResource(R.string.unità))},
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth(),
-        readOnly = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = MaterialTheme.colors.primary,
-            unfocusedLabelColor = MaterialTheme.colors.primary,
-        ),
-        trailingIcon = {
-            Icon(
-                Icons.Rounded.ArrowDropDown,
-                contentDescription = "",
-                Modifier.clickable { expanded.value = !expanded.value }
-            )
-        }
-    )
-    DropdownMenu(
-        expanded = expanded.value,
-        onDismissRequest = { expanded.value = false },
-        modifier = Modifier
-            .wrapContentSize()
-            .background(MaterialTheme.colors.background)
-    ) {
-        val gr = stringResource(R.string.grammi)
-        val ml = stringResource(R.string.ml)
-        DropdownMenuItem(
-            onClick = {
-                isGr.value = true
-                unit.value = gr
-                expanded.value = false
-            },
-            content = {Text(text = gr)}
-        )
-        DropdownMenuItem(
-            onClick = {
-                isGr.value = false
-                unit.value = ml
-                expanded.value = false
-            },
-            content = {Text(text = ml)}
-        )
-    }
-}
-*/
 
 @Composable
-fun MyTextField(str: String, max: Int, singleLine : Boolean){
+fun MyTextField(str: String, max: Int, singleLine: Boolean, ricettaVuota: RicettaSample){
+
+    val titolo = stringResource(R.string.titolo)
+
     val title = remember{ mutableStateOf(TextFieldValue()) }
     OutlinedTextField(
         value = title.value,
         onValueChange = {
             if(it.text.length <= max) title.value = it
+            //if(str.equals(titolo)) ricettaVuota.titolo = title.value
+            //else ricettaVuota.descrizione = title.value
         },
         placeholder = {Text(text = "Inserire $str")},
         label = {Text(str)},
