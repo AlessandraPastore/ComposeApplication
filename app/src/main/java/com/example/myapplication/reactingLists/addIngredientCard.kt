@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.screens.Unit
 
 
 @Composable
@@ -51,7 +50,7 @@ fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String)
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            Text(str)
+            Text(ingredient)
         }
         IconButton(onClick =  {ingredientList.remove(ingredient)}){
             Icon(Icons.Rounded.Delete, contentDescription = "")
@@ -62,7 +61,7 @@ fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String)
         AlertDialog(
             onDismissRequest = { openDialog.value = false },
             title = { Text(text = "") },
-            text = { dialogIngredient(str) },
+            text = { dialogIngredient(ingredient) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -76,54 +75,49 @@ fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String)
     }
 }
 
-
+//al posto di str prob ci andrà un oggetto di tipo ingrediente o la lista stessa degli ingredienti? una ref
 @Composable
 fun dialogIngredient(str: String) {
-    val isGr = remember { mutableStateOf(true) }
-    var quantity : Int
-    //al click di fatto invii al viewModel un nuovo ingrediente fatto con str, isGr e quantity
+
+    val ingredient = remember { mutableStateOf(TextFieldValue()) }
+    val quantity = remember { mutableStateOf(TextFieldValue()) }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        //verticalArrangement = Arrangement.Bottom,
-    ){
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Unit(isGr)  //menù ingredienti a tendina, preferisco farlo quando abbiamo la view così gli passo anche la str da mostrare
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Box(
-                modifier = Modifier.weight(1f)
-            ){
-                Unit(isGr)
-            }
-            Box(
-                modifier = Modifier.weight(1f),
-            ){
-                val quantity = remember{ mutableStateOf(TextFieldValue()) }
-                OutlinedTextField(
-                    value = quantity.value,
-                    onValueChange = {
-                        if(it.text.length <= 20) quantity.value = it
-                    },
-                    label = {Text("Quantità")},
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = MaterialTheme.colors.primary,
-                        unfocusedLabelColor = MaterialTheme.colors.primary
-                    ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        verticalArrangement = Arrangement.Center
+    )
+    {
 
-                )
-            }
-        }
+        OutlinedTextField(
+            value = ingredient.value,
+            onValueChange = {
+                if (it.text.length <= 15) ingredient.value = it
+            },
+            placeholder = { Text(text = "Inserire ingrediente") },
+            label = { Text("Ingrediente") },
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .fillMaxWidth(),
+            singleLine = true,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = MaterialTheme.colors.primary,
+                unfocusedLabelColor = MaterialTheme.colors.primary
+            )
+        )
+
+        OutlinedTextField(
+            value = quantity.value,
+            onValueChange = {
+                if (it.text.length <= 8) quantity.value = it
+            },
+            placeholder = { Text(text = "Inserire quantità") },
+            label = { Text("Quantità") },
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .fillMaxWidth(),
+            singleLine = true,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = MaterialTheme.colors.primary,
+                unfocusedLabelColor = MaterialTheme.colors.primary
+            )
+        )
     }
-
 }

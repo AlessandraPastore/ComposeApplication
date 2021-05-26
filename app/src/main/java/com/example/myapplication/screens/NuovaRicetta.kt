@@ -80,7 +80,6 @@ fun Content(){
             text = stringResource(R.string.ingredienti),
             style = MaterialTheme.typography.subtitle1,
             color = MaterialTheme.colors.primary,
-            //textAlign = Alignment.Start,
             modifier = Modifier
                 .padding(start = 15.dp)
                 .fillMaxWidth()
@@ -98,9 +97,9 @@ fun Content(){
             addIngredientCard(ingredientList)
         }
         IconButton(
-            // When this button is clicked, we add the person to deletedPersonList.
+            // Aggiunge un elemento a ingredientList
             onClick = {
-                ingredientList.add("dummy") //boh??
+                ingredientList.add("empty ingredient")
             }
         ) {
             Icon(Icons.Rounded.Add,"")
@@ -122,6 +121,7 @@ fun Content(){
     }
 }
 
+/*
 @Composable
 fun Unit(isGr: MutableState<Boolean>) {
     //menù gr ml a tendina
@@ -176,6 +176,8 @@ fun Unit(isGr: MutableState<Boolean>) {
         )
     }
 }
+*/
+
 
 @Composable
 fun MyTextField(str: String, max: Int, singleLine : Boolean){
