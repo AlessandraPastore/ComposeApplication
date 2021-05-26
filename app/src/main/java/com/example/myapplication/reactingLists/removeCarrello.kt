@@ -37,11 +37,9 @@ fun RemoveCarrello() {
 
                 AnimatedVisibility(
                     visible = !deletedIngredientList.contains(ingredient),
-                    //enter = expandVertically(),
                     exit = shrinkVertically()
                 ) {
                     Card(
-                        //backgroundColor = MaterialTheme.colors.surface,
                         elevation = 5.dp,
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier
@@ -54,11 +52,12 @@ fun RemoveCarrello() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                ingredient, style = TextStyle(
-                                    color = Color.Black,
+                                ingredient,
+                                style = TextStyle(
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center
-                                ), modifier = Modifier.padding(16.dp)
+                                ),
+                                modifier = Modifier.padding(16.dp)
                             )
                             IconButton(
                                 onClick = {

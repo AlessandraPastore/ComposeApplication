@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -159,6 +161,7 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
             Text(text = stringResource(R.string.selected))
         },
         backgroundColor = MaterialTheme.colors.primaryVariant,
+        contentColor = MaterialTheme.colors.onPrimary,
         navigationIcon = {
             IconButton(onClick = onLongPress) {
                 Icon(Icons.Rounded.Close, contentDescription = "")
@@ -209,15 +212,13 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-
+                        //sarebbe l'immagine, poi da cambiare
                         Surface(
                             color = MaterialTheme.colors.onSurface,
                             elevation = 19.dp,
                             border = BorderStroke(1.dp, Color.Gray),
                             modifier = Modifier.size(130.dp),
-                        ) {
-
-                        }
+                        ) {}
                         Column(
                             modifier = Modifier
                                 .padding(start = 12.dp)
@@ -226,12 +227,8 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             Text(
                                 text = ricetta.titolo,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(15.dp)
-                            )
-                            Text(   // probabilmente inutile
-                                text = "item",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(15.dp)
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(15.dp),
                             )
                         }
                         Column(

@@ -19,9 +19,7 @@ fun Carrello(){
             })
         }
     ){
-
         RemoveCarrello()
-
     }
 }
 
