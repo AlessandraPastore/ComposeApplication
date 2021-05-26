@@ -3,6 +3,9 @@ package com.example.myapplication.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
+// LiveData gestisce autonomamente le operazioni in background:
+// non servono coroutine/suspend function
+
 @Dao
 interface DaoRicette {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -37,7 +40,7 @@ interface DaoRicette {
     suspend fun deleteIngr(ingrediente: Ingrediente)
 
     @Delete
-    suspend fun eliminaRicetta(ric:RicettePreview)
+    suspend fun deleteRicetta(ric:RicettePreview)
 
     @Delete
     suspend fun eliminaIngredienteRicetta(ricettaIng: IngredienteRIcetta)
@@ -71,8 +74,7 @@ interface DaoRicette {
     fun getFilterRic(lista:List<String>):LiveData<List<RicettePreview>>
 
     @Query("SELECT * from RicettePreview where preferito =1")
-     fun getPreferiti():LiveData<List<RicettePreview>>
-
+    fun getPreferiti():LiveData<List<RicettePreview>>
 
     @Query("SELECT * From RicettePreview")
     fun getAllPreview():LiveData<List<RicettePreview>>

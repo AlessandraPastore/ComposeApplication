@@ -11,9 +11,9 @@ import com.example.myapplication.database.RicetteViewModel
 
 
 @Composable
-fun Preferiti(model: RicetteViewModel, navController: NavController){
+fun Preferiti(model: RicetteViewModel, navController: NavController, tipologia: String = "Preferiti"){
 
-    Home(model, navController)
+    Home(model, navController, tipologia)
 
     /*
     Scaffold(

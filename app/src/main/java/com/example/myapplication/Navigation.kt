@@ -28,7 +28,7 @@ fun NavConfig(
         composable(Screen.NuovaRicetta.route) { NuovaRicetta(navController) }
         composable(
             "${Screen.RicettaDetail.route}/{ricetta}",
-            arguments = listOf(navArgument("ricetta") { type = NavType.StringType })){
+            arguments = listOf(navArgument("ricetta") { type = NavType.StringType })) {
             backStackEntry ->
 
             RicettaDetail(navController, backStackEntry.arguments?.getString("ricetta"))

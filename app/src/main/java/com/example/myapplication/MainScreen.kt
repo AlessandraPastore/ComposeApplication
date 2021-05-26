@@ -102,7 +102,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     selected = currentRoute == home,
                     onClick = {
 
-                        // model.onHomeClick()
+                        model.onHomeClick()
 
                         navController.navigate(home) {
                             popUpTo = navController.graph.startDestination

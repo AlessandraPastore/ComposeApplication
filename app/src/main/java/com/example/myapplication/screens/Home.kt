@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun Home(model: RicetteViewModel, navController: NavController) {
+fun Home(model: RicetteViewModel, navController: NavController, tipologia: String = "Home") {
 
     val ricette by model.ricette.observeAsState()
 
@@ -46,9 +46,9 @@ fun Home(model: RicetteViewModel, navController: NavController) {
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress(onLongPress = {model.onLongPress(false)})
+                longPressed -> LongPress(model, onLongPress = {model.onLongPress(false)})
                 searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
+                else -> TopBar(tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
         },
     )
@@ -61,6 +61,7 @@ fun Home(model: RicetteViewModel, navController: NavController) {
 // Funzione che gestisce l'AppBar "ad alto livello"
 @Composable
 fun TopBar(
+    tipologia: String,
     expanded: Boolean,
     onExpand: () -> Unit,
     onDeExpand: () -> Unit,
@@ -68,7 +69,7 @@ fun TopBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = stringResource(R.string.home))
+            Text(text = tipologia)
         },
         actions = {
             IconButton(onClick = onSearch) {
@@ -151,7 +152,7 @@ fun Searching(onSearch: () -> Unit) {
 // Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
 // se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
-fun LongPress(onLongPress: () -> Unit) {
+fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
     TopAppBar(
         title = {
             Text(text = stringResource(R.string.selected))

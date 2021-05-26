@@ -22,26 +22,28 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     var ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
 
+    // Viene premuto il cuore -> Ricetta aggiunta o eliminata dai preferiti
     fun onPreferitoChange(ric: RicettePreview)=viewModelScope.launch (Dispatchers.IO){
         ricDao.updateRicettaPreview(ric)
     }
 
-    /*
+    fun onRicettaDelete(ric: RicettePreview)=viewModelScope.launch (Dispatchers.IO){
+        ricDao.deleteRicetta(ric)
+    }
 
-    Funzione utilizzata in MainScreen -> BottomBar -> primo onClick che si trova*/
-
-   /* fun onHomeClick(){
+    // Quando viene schiacciato il tasto Home, carica la lista di tutte le ricette
+    fun onHomeClick(){
         ricette = ricDao.getAllPreview()
-    }*/
+    }
 
-
+    // Quando viene schiacciato il tasto Preferiti, carica la lista delle ricette classificate come tali
     fun onPreferitiClick(){
         ricette = ricDao.getPreferiti()
     }
 
 
     /*
-     Instance state per la gestione della App Bar in schermata Home (Home.kt)
+     Instance state per la gestione della App Bar in schermate Home e Preferiti
      e relative funzioni per la gestione degli eventi (non richiedono uso di coroutine)
      */
     private val _expanded = MutableLiveData(false)
@@ -66,30 +68,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     fun onInvertPress(){
-        if(_longPressed.value == true)
-            _longPressed.value = false
-        else
-            _longPressed.value = true
+        _longPressed.value = _longPressed.value != true
     }
-
-    // Instance state per gestire la DarkMode (Forse dovrebbe essere Persistent?)
-    /*
-    private val _enableDarkMode = MutableLiveData(false)
-    val enableDarkMode: LiveData<Boolean> = _enableDarkMode
-    fun onDarkModeChange(mode: Boolean)
-    {
-        _enableDarkMode.value = !mode
-    }
-    */
-
-    /*
-    init {
-        viewModelScope.launch(Dispatchers.IO){
-            val _ricette = ricDao.getAllPreview()
-        }
-    }
-    */
-
 
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
         ricDao.insertIngrediente(ingrediente)
