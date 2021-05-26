@@ -7,11 +7,11 @@ import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 
 @Entity(
-    primaryKeys=["ricetta","ingrediente"],
+    primaryKeys=["titolo","ingrediente"],
     foreignKeys = [
     ForeignKey(entity = RicettePreview::class,
      parentColumns = ["titolo"],
-     childColumns = ["ricetta"],
+     childColumns = ["titolo"],
         onDelete = CASCADE
     ),
     ForeignKey(entity = Ingrediente::class,
@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
         childColumns = ["ingrediente"])
 ])
 data class IngredienteRIcetta(
-    val ricetta:String,
+    val titolo:String,
     val ingrediente: String,
     @ColumnInfo(name="qta")
     val qta:String

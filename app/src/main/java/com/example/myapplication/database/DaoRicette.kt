@@ -64,14 +64,14 @@ interface DaoRicette {
     fun getRicByName(nome:String):LiveData<List<RicettePreview>?>
 
     //lista ingredienti di una ricetta
-    @Query("Select Distinct * from IngredienteRIcetta where ricetta=:ricetta")
+    @Query("Select Distinct * from IngredienteRIcetta where titolo=:ricetta")
     suspend fun IngrOfRecipe(ricetta:String):List<IngredienteRIcetta>
 
-    @Query ("SELECT Distinct RicettePreview.* from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.ricetta where RicettaCategorie.categoria in (:lista)")
+    @Query ("SELECT Distinct RicettePreview.* from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.titolo where RicettaCategorie.categoria in (:lista)")
     fun getFilterRic(lista:List<String>):LiveData<List<RicettePreview>>
 
     @Query("SELECT * from RicettePreview where preferito =1")
-    suspend fun getPreferiti():LiveData<List<RicettePreview>>
+     fun getPreferiti():LiveData<List<RicettePreview>>
 
 
     @Query("SELECT * From RicettePreview")

@@ -28,14 +28,14 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     /*
 
-    Funzione utilizzata in MainScreen -> BottomBar -> primo onClick che si trova
+    Funzione utilizzata in MainScreen -> BottomBar -> primo onClick che si trova*/
 
-    fun onHomeClick(){
+   /* fun onHomeClick(){
         ricette = ricDao.getAllPreview()
-    }
-    */
+    }*/
 
-    fun onPreferitiClick()=viewModelScope.launch (Dispatchers.IO){
+
+    fun onPreferitiClick(){
         ricette = ricDao.getPreferiti()
     }
 

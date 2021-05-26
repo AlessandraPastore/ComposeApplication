@@ -44,8 +44,11 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
             modifier = Modifier
                 .fillMaxSize()
         ){
-            if(enableDarkMode.value)    Icon(Icons.Rounded.ModeNight, contentDescription = "", modifier = Modifier.scale(2F))
-            else Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(2F))
+            if(enableDarkMode.value)   {
+
+                Icon(Icons.Rounded.ModeNight, contentDescription = "", modifier = Modifier.scale(2F))}
+            else {
+                Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(2F))}
 
             Spacer(modifier = Modifier.height(20.dp))
 
