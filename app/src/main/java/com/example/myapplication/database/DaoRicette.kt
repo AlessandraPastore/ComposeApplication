@@ -27,6 +27,7 @@ interface DaoRicette {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIngredienteRicetta(ingrRic: IngredienteRIcetta)
 
+    // Update del campo preferiti
     @Update
     suspend fun updateRicettaPreview(ric: RicettePreview)
 

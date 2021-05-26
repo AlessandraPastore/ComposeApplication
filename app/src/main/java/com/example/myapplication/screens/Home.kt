@@ -51,7 +51,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
             when{
                 longPressed -> LongPress(model, onLongPress = {model.onLongPress(false)})
                 searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
+                else -> TopBar(tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
         },
     )
@@ -125,8 +125,9 @@ fun DropDown(expanded: Boolean, onDeExpand: () -> Unit) {
 @Composable
 fun Searching(onSearch: () -> Unit) {
 
-    // Forse hoisting?
+    // Forse hoisting? Provare stringa
     val input = remember{ mutableStateOf(TextFieldValue())}
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,

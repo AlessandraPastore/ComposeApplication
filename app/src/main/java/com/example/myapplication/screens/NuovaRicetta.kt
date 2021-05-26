@@ -1,8 +1,6 @@
 package com.example.myapplication.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -19,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.R
+import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
 import com.example.myapplication.reactingLists.addIngredientCard
 
 
-
+// Cornice per lo schermo
 @Composable
-fun NuovaRicetta(navController: NavHostController) {
+fun NuovaRicetta(navController: NavHostController, ricettaVuota: RicettaSample) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,13 +45,13 @@ fun NuovaRicetta(navController: NavHostController) {
             )
         },
     ){
-        Content()
+        Content(ricettaVuota)
     }
 }
 
-
+// Funzione che gestisce il contenuto
 @Composable
-fun Content(){
+fun Content(ricettaVuota: RicettaSample) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -85,7 +84,7 @@ fun Content(){
                 .fillMaxWidth()
         )
 
-        val ingredientList = remember { mutableStateListOf<String>() }
+        val ingredientList = ricettaVuota.ingredienti
 
         Column(
             modifier = Modifier
@@ -177,7 +176,6 @@ fun Unit(isGr: MutableState<Boolean>) {
     }
 }
 */
-
 
 @Composable
 fun MyTextField(str: String, max: Int, singleLine : Boolean){

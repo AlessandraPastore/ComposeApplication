@@ -16,10 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.database.IngredienteRIcetta
 
 
 @Composable
-fun addIngredientCard(ingredientList: SnapshotStateList<String>) {
+fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
     //val ingredientList = remember { mutableStateListOf<String>() }
 
@@ -34,7 +35,7 @@ fun addIngredientCard(ingredientList: SnapshotStateList<String>) {
 }
 
 @Composable
-fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String) {
+fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: IngredienteRIcetta) {
     var str = "empty ingredient"
     val openDialog = remember { mutableStateOf(false)  }
     Row(
@@ -50,7 +51,7 @@ fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String)
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            Text(ingredient)
+            //Text(ingredient)
         }
         IconButton(onClick =  {ingredientList.remove(ingredient)}){
             Icon(Icons.Rounded.Delete, contentDescription = "")
@@ -77,7 +78,7 @@ fun NewIngredient(ingredientList: SnapshotStateList<String>, ingredient: String)
 
 //al posto di str prob ci andrà un oggetto di tipo ingrediente o la lista stessa degli ingredienti? una ref
 @Composable
-fun dialogIngredient(str: String) {
+fun dialogIngredient(str: IngredienteRIcetta) {
 
     val ingredient = remember { mutableStateOf(TextFieldValue()) }
     val quantity = remember { mutableStateOf(TextFieldValue()) }

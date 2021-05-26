@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,23 +29,27 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
+    val ricettaVuota by model.ricettaVuota.observeAsState(RicettaSample("","", mutableListOf()))
+
     Scaffold(
         floatingActionButton = {
-            FAB(navController, currentRoute)
+            if(currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
+                FAB(navController, currentRoute)
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            if(currentRoute != Screen.NuovaRicetta.route)   BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
+            if(currentRoute != Screen.NuovaRicetta.route && currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")   BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta
         },
     ){
-        NavConfig(navController,enableDarkMode,model)
+        NavConfig(navController, enableDarkMode, model, ricettaVuota)
     }
 }
 
 // Funzione che gestisce il bottone centrale
 @Composable
 private fun FAB(navController: NavHostController, currentRoute: String?) {
+
     FloatingActionButton(
         onClick = {
 
