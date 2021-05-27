@@ -3,17 +3,14 @@ package com.example.myapplication.reactingLists
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.database.IngredienteRIcetta
@@ -22,7 +19,6 @@ import com.example.myapplication.database.IngredienteRIcetta
 @Composable
 fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
-    //val ingredientList = remember { mutableStateListOf<String>() }
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
@@ -36,7 +32,6 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
 @Composable
 fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: IngredienteRIcetta) {
-    //var str = "empty ingredient"
     val openDialog = remember { mutableStateOf(false)  }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -51,7 +46,7 @@ fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: I
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            //Text(ingredient)
+            Text(ingredient.ingrediente)
         }
         IconButton(onClick =  {ingredientList.remove(ingredient)}){
             Icon(Icons.Rounded.Delete, contentDescription = "")
