@@ -1,6 +1,7 @@
 package com.example.myapplication.database
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,8 +38,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         // Si deve aggiungere anche la categoria
 
-        ricDao.insertRicettaPreview(RicettePreview(ric.titolo, false))
-        ricDao.insertRicettaCompleta(RicettaCompleta(ric.titolo, ric.descrizione))
+        ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
+        ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , ric.descrizione))
 
         val lista = ric.ingredienti
 
@@ -71,6 +72,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
+        Log.d("doge", _ricettaVuota.value!!.titolo )
     }
 
     fun onDescrizioneInsert(descrizione: String){
