@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
     //in caso contrario mostriamo le cose di default
     var enable= mutableStateOf(false)
     private fun requestStoragePermission() {
-       /* if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE))*/
+       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE))
             requestResult.launch( android.Manifest.permission.READ_EXTERNAL_STORAGE)
     }
     private val requestResult=registerForActivityResult(ActivityResultContracts.RequestPermission())
