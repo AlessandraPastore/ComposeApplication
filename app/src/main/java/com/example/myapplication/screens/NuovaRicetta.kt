@@ -1,5 +1,13 @@
 package com.example.myapplication.screens
-
+import androidx.activity.*
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,8 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
@@ -60,10 +70,12 @@ fun NuovaRicetta(
     }
 }
 
+private val pickImgCode = 100
 //, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
 @Composable
 fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -82,7 +94,10 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
                     .background(Color.Red)
                     .size(58.dp)
             ){
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                   val main=MainActivity.get()
+                    main!!.ImageSelection()
+                }) {
                     Icon(Icons.Rounded.Camera, "")
                 }
             }
