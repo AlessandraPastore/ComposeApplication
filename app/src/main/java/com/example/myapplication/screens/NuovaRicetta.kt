@@ -81,7 +81,11 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
                     .clip(CircleShape)
                     .background(Color.Red)
                     .size(58.dp)
-            )
+            ){
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(Icons.Rounded.Camera, "")
+                }
+            }
             MyTextField(model, stringResource(R.string.titolo), 20, true)
         }
         Divider(
