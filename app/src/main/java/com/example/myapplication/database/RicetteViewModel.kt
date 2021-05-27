@@ -63,16 +63,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     // Quando viene schiacciato il tasto Preferiti, carica la lista delle ricette classificate come tali
     fun onPreferitiClick(){
-        //ricette = ricDao.getPreferiti()
+        ricette = ricDao.getPreferiti()
 
-        ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
+        //ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
     }
-    /*
+
     fun onFiltroChecked(filtro: Filtro){
         ricette = ricDao.getFilterRic(listOf(filtro.name))
     }
 
-     */
+
 
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf()))
     val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
