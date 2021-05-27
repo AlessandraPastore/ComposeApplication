@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.database.RicetteViewModel
@@ -24,7 +26,19 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-
+    //enable dovrà esser posto dentro il view model in modo tale da verificare se l'utente ha dato i permessi
+    //in caso contrario mostriamo le cose di default
+    var enable= mutableStateOf(false)
+    private fun requestStoragePermission() {
+       /* if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE))*/
+            requestResult.launch( android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+    private val requestResult=registerForActivityResult(ActivityResultContracts.RequestPermission())
+    {
+            permission ->
+        enable.value = permission
+    }
 
 companion object  {
     var inst: MainActivity? = null
@@ -50,6 +64,13 @@ companion object  {
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED)
+        {
+            requestStoragePermission()
+        }
+        else
+            enable.value=true
         inst=this
         setContent {
             val model: RicetteViewModel = ViewModelProvider(this).get(RicetteViewModel::class.java)
