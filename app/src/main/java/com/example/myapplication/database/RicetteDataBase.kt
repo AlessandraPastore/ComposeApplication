@@ -54,8 +54,6 @@ abstract class RicetteDataBase : RoomDatabase() {
             {
                 super.onOpen(db)
 
-
-
                 INSTANCE?.let { database->
 
                     scope.launch {
@@ -85,15 +83,15 @@ abstract class RicetteDataBase : RoomDatabase() {
                 dao.insertRicettaCompleta(RicettaCompleta("pietanza 1","la si cucina quando si è a casa da soli"))
                 dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 1","VONGOLA","2"))
                 dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 1","WURSTEL","200"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","secondo"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","vegano"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","Secondo piatto"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","Vegano"))
 
                 dao.insertRicettaPreview(RicettePreview("pietanza 2",false))
                 dao.insertRicettaCompleta(RicettaCompleta("pietanza 2","la si cucina quando si è ad una festa"))
                 dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 2","ZAFFERANO","200"))
                 dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 2","ZUCCHINE","200"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","antipasto"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","vegano"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","Antipasto"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","Vegano"))
             }
         }
     }

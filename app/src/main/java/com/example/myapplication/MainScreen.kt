@@ -34,7 +34,7 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     Scaffold(
         floatingActionButton = {
             if(currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
-                FAB(navController, currentRoute)
+                FAB(model, navController, currentRoute, ricettaVuota)
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
@@ -49,7 +49,7 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
 
 // Funzione che gestisce il bottone centrale
 @Composable
-private fun FAB(navController: NavHostController, currentRoute: String?) {
+private fun FAB(model: RicetteViewModel, navController: NavHostController, currentRoute: String?, ricettaVuota: RicettaSample) {
 
     FloatingActionButton(
         onClick = {
@@ -64,6 +64,9 @@ private fun FAB(navController: NavHostController, currentRoute: String?) {
 
             }
             else{
+
+                model.onRicettaAdd(ricettaVuota)
+
                 navController.navigate(Screen.Home.route){
 
                     popUpTo = navController.graph.startDestination
@@ -108,7 +111,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     selected = currentRoute == home,
                     onClick = {
 
-                        model.onHomeClick()
+                        model.onHomeClick()     // Carico tutte le ricette
 
                         navController.navigate(home) {
                             popUpTo = navController.graph.startDestination
@@ -132,7 +135,8 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     },
                     selected = currentRoute == preferiti,
                     onClick = {
-                        model.onPreferitiClick()
+
+                        model.onPreferitiClick()    // Carico solo le ricette dei preferiti
 
                         navController.navigate(preferiti) {
                                 popUpTo = navController.graph.startDestination

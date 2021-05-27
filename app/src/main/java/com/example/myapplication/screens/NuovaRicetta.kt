@@ -96,10 +96,9 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
                 .fillMaxWidth()
         )
 
-        val ingredientList = ricettaVuota.ingredienti
+        // val ingredientList = ricettaVuota.ingredienti
+
         val listState = remember { mutableStateListOf<IngredienteRIcetta>() }
-
-
 
         Column(
             modifier = Modifier
@@ -110,6 +109,10 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
         ){
                 addIngredientCard(listState)
         }
+
+        ricettaVuota.ingredienti = listState
+
+        // Tasto +
         IconButton(
             // Aggiunge un elemento a ingredientList
             onClick = {
@@ -119,6 +122,8 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
         ) {
             Icon(Icons.Rounded.Add,"")
         }
+
+
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
         )

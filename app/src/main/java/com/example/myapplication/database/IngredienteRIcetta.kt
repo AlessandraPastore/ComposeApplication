@@ -19,8 +19,8 @@ import androidx.room.PrimaryKey
         childColumns = ["ingrediente"])
 ])
 data class IngredienteRIcetta(
-    val titolo:String,
-    val ingrediente: String,
+    var titolo:String,
+    var ingrediente: String,
     @ColumnInfo(name="qta")
-    val qta:String
+    var qta:String
 )

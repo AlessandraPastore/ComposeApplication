@@ -19,7 +19,6 @@ import com.example.myapplication.database.IngredienteRIcetta
 @Composable
 fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
-
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -32,7 +31,10 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
 @Composable
 fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: IngredienteRIcetta) {
+
+    // Stato interno, gestisce il pop up dell'ingrediente per l'inserimento dei dati da parte dell'utente
     val openDialog = remember { mutableStateOf(false)  }
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -73,20 +75,20 @@ fun NewIngredient(ingredientList: MutableList<IngredienteRIcetta>, ingredient: I
 
 //al posto di str prob ci andrà un oggetto di tipo ingrediente o la lista stessa degli ingredienti? una ref
 @Composable
-fun dialogIngredient(str: IngredienteRIcetta) {
+fun dialogIngredient(ingrediente: IngredienteRIcetta) {
 
-    val ingredient = remember { mutableStateOf(TextFieldValue()) }
-    val quantity = remember { mutableStateOf(TextFieldValue()) }
+    val ingVal = remember { mutableStateOf(ingrediente.ingrediente) }
+    val quantity = remember { mutableStateOf(ingrediente.qta) }
     Column(
         verticalArrangement = Arrangement.Center
     )
     {
 
         OutlinedTextField(
-            value = ingredient.value,
+            value = ingVal.value,
             onValueChange = {
-                if (it.text.length <= 15) ingredient.value = it
-                //str.ingrediente = ingredient.value.text
+                if (it.length <= 15) ingVal.value = it
+                ingrediente.ingrediente = ingVal.value
             },
             placeholder = { Text(text = "Inserire ingrediente") },
             label = { Text("Ingrediente") },
@@ -103,8 +105,8 @@ fun dialogIngredient(str: IngredienteRIcetta) {
         OutlinedTextField(
             value = quantity.value,
             onValueChange = {
-                if (it.text.length <= 8) quantity.value = it
-                //str.quantity = quantity.value.text
+                if (it.length <= 8) quantity.value = it
+                ingrediente.qta = quantity.value
             },
             placeholder = { Text(text = "Inserire quantità") },
             label = { Text("Quantità") },

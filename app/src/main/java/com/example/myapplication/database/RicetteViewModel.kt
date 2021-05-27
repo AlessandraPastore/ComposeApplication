@@ -33,6 +33,25 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.deleteRicetta(ric)
     }
 
+    fun onRicettaAdd(ric: RicettaSample)=viewModelScope.launch (Dispatchers.IO){
+
+        // Si deve aggiungere anche la categoria
+
+        ricDao.insertRicettaPreview(RicettePreview(ric.titolo, false))
+        ricDao.insertRicettaCompleta(RicettaCompleta(ric.titolo, ric.descrizione))
+
+        val lista = ric.ingredienti
+
+        lista.forEach{ ingrediente ->
+            ingrediente.titolo = ric.titolo
+
+            ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
+            ricDao.insertIngredienteRicetta(ingrediente)
+        }
+    }
+
+
+
     // Quando viene schiacciato il tasto Home, carica la lista di tutte le ricette
     fun onHomeClick(){
         ricette = ricDao.getAllPreview()
