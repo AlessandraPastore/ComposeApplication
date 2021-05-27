@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaSample
+import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -49,6 +50,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
             ricDao.insertIngredienteRicetta(ingrediente)
         }
+
+        Log.d("test",ric.titolo)
     }
 
 
@@ -60,12 +63,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     // Quando viene schiacciato il tasto Preferiti, carica la lista delle ricette classificate come tali
     fun onPreferitiClick(){
-        ricette = ricDao.getPreferiti()
-    }
+        //ricette = ricDao.getPreferiti()
 
+        ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
+    }
+    /*
     fun onFiltroChecked(filtro: Filtro){
         ricette = ricDao.getFilterRic(listOf(filtro.name))
     }
+
+     */
 
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf()))
     val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
@@ -91,6 +98,20 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     val quantità: LiveData<String> = _quantità
      */
 
+    private val _filtri = MutableLiveData(getFilters())
+    val filtri: LiveData<List<Filtro>> = _filtri
+
+    fun onFiltroChecked(){
+        val lista: MutableList<String> = mutableListOf()
+
+        for(filtro in _filtri.value!!){
+            if(filtro.checked)
+                lista.add(filtro.name)
+                Log.d("Test",filtro.checked.toString() + filtro.name)
+        }
+
+        ricette = ricDao.getFilterRic(lista)
+    }
 
     /*
      Instance state per la gestione della App Bar in schermate Home e Preferiti

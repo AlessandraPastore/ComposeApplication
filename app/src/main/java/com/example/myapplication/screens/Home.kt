@@ -1,5 +1,6 @@
 package com.example.myapplication.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.example.myapplication.Filtro
 import com.example.myapplication.R
 import com.example.myapplication.Screen
 import com.example.myapplication.database.RicettePreview
@@ -68,6 +70,8 @@ fun TopBar(
     onDeExpand: () -> Unit,
     onSearch: () -> Unit
 ) {
+    val filtri by model.filtri.observeAsState(getFilters())
+
     TopAppBar(
         title = {
             Text(text = tipologia)
@@ -79,14 +83,19 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
-            DropDown(model, expanded, onDeExpand = onDeExpand)
+            DropDown(model, filtri, expanded, onDeExpand = onDeExpand)
         }
     )
 }
 
 // Funzione che gestisce l'icona del filtro
 @Composable
-fun DropDown(model: RicetteViewModel, expanded: Boolean, onDeExpand: () -> Unit) {
+fun DropDown(
+    model: RicetteViewModel,
+    filtri: List<Filtro>,
+    expanded: Boolean,
+    onDeExpand: () -> Unit
+) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDeExpand,
@@ -96,27 +105,33 @@ fun DropDown(model: RicetteViewModel, expanded: Boolean, onDeExpand: () -> Unit)
 
     ) {
         //mi tiene i checked anche quando cambio pagina
-        val filters by rememberSaveable {
-            mutableStateOf(getFilters())
-        }
-        for(filter in filters.listIterator()){
+        //val filters = getFilters()
+
+        for(filtro in filtri.listIterator()){
+
+            var selected by remember { mutableStateOf(filtro.checked) }
 
             // capire come sono gestiti i filtri
-            // val checked = remember { mutableStateOf(filter.checked) }
+             //val checked = remember { mutableStateOf(filter.checked) }
 
             DropdownMenuItem(onClick = {
-                filter.checked = !filter.checked
+                filtro.checked  = !selected
+
+                model.onFiltroChecked()
+                Log.d("Test",filtro.checked.toString() + filtro.name)
                 //checked.value = filter.checked
+
             }) {
                 Row{
                     Checkbox(
-                        checked = filter.checked, //checked.value
+                        checked = selected, //checked.value
                         onCheckedChange = {
-                            filter.checked = it        // checked.value
-                            model.onFiltroChecked(filter)
+                            model.onFiltroChecked()
+                            //selected = it        // checked.value
+                            filtro.checked = it
                         }
                     )
-                    Text(filter.name)
+                    Text(filtro.name)
                 }
             }
         }
