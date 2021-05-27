@@ -9,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,6 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.database.RicetteViewModel
+import com.example.myapplication.reactingLists.dialogIngredient
 
 
 @ExperimentalAnimationApi
@@ -29,12 +29,11 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
-    val ricettaVuota by model.ricettaVuota.observeAsState(RicettaSample("","", mutableListOf()))
 
     Scaffold(
         floatingActionButton = {
             if(currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
-                FAB(model, navController, currentRoute, ricettaVuota)
+                FAB(model, navController, currentRoute)
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
@@ -43,13 +42,15 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
                 BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta e su RicettaDetail
         },
     ){
-        NavConfig(navController, enableDarkMode, model, ricettaVuota)
+        NavConfig(navController, enableDarkMode, model)
     }
 }
 
 // Funzione che gestisce il bottone centrale
 @Composable
-private fun FAB(model: RicetteViewModel, navController: NavHostController, currentRoute: String?, ricettaVuota: RicettaSample) {
+private fun FAB(model: RicetteViewModel, navController: NavHostController, currentRoute: String?) {
+
+    val openDialog = remember { mutableStateOf(false)  }
 
     FloatingActionButton(
         onClick = {
@@ -65,13 +66,16 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
             }
             else{
 
-                model.onRicettaAdd(ricettaVuota)
+                if(!model.onRicettaAddVerify()) openDialog.value = true
+                else {
+                    model.onRicettaAdd()
 
-                navController.navigate(Screen.Home.route){
+                    navController.navigate(Screen.Home.route){
 
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
 
+                    }
                 }
             }
 
@@ -81,6 +85,26 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
         if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
         else Icon( Icons.Rounded.Check, "")
     }
+
+    if(openDialog.value) AlertError(openDialog)
+}
+
+@Composable
+fun AlertError(openDialog: MutableState<Boolean>) {
+    AlertDialog(
+        onDismissRequest = { openDialog.value = false },
+        title = { Text(text = "Errore nei dati inseriti") },
+        text = { Text(text="Uno o più campi risultano vuoti") },
+        confirmButton = {
+            Button(
+                onClick = {
+                    openDialog.value = false
+                }) {
+                Text("Capito")
+            }
+        },
+        backgroundColor = MaterialTheme.colors.background
+    )
 }
 
 // Funzione che gestisce la BottomBar e la navigazione delle icone

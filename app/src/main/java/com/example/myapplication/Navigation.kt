@@ -16,15 +16,14 @@ import com.example.myapplication.screens.*
 fun NavConfig(
     navController: NavHostController,
     enableDarkMode: MutableState<Boolean>,
-    model: RicetteViewModel,
-    ricettaVuota: RicettaSample
+    model: RicetteViewModel
 ){
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) { Home(model, navController) }
         composable(Screen.Preferiti.route) { Preferiti(model, navController) }
         composable(Screen.Carrello.route) { Carrello() }
         composable(Screen.Impostazioni.route) { Impostazioni(enableDarkMode) }
-        composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController, ricettaVuota) }
+        composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController) }
         composable(
             "${Screen.RicettaDetail.route}/{ricetta}",
             arguments = listOf(navArgument("ricetta") { type = NavType.StringType })) {

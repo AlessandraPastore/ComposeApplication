@@ -35,23 +35,38 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.deleteRicetta(ric)
     }
 
-    fun onRicettaAdd(ric: RicettaSample)=viewModelScope.launch (Dispatchers.IO){
+    //aggiunge la ricetta salvata in _ricettaVuota
+    fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO){
 
         // Si deve aggiungere anche la categoria
 
+
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
-        ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , ric.descrizione))
+        ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
 
-        val lista = ric.ingredienti
 
-        lista.forEach{ ingrediente ->
-            ingrediente.titolo = ric.titolo
+        _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
+            //ingrediente.titolo = _ricettaVuota.value!!.titolo
 
             ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
             ricDao.insertIngredienteRicetta(ingrediente)
         }
+    }
 
-        Log.d("test",ric.titolo)
+    fun onRicettaAddVerify():Boolean{
+
+        if(_ricettaVuota.value!!.titolo.isBlank()) return false
+        if(_ricettaVuota.value!!.descrizione.isBlank()) return false
+        if(_ricettaVuota.value!!.ingredienti.isEmpty()) return false
+
+        _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
+
+            if(ingrediente.ingrediente.isBlank() || ingrediente.qta.isBlank()) return false
+            ingrediente.titolo = _ricettaVuota.value!!.titolo
+
+        }
+
+        return true
     }
 
 
@@ -84,6 +99,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onDescrizioneInsert(descrizione: String){
         _ricettaVuota.value!!.descrizione = descrizione
+    }
+
+    fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
+        _ricettaVuota.value!!.ingredienti = ingList
     }
 
 

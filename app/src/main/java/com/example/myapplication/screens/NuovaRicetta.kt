@@ -39,7 +39,6 @@ import com.example.myapplication.reactingLists.addIngredientCard
 fun NuovaRicetta(
     model: RicetteViewModel,
     navController: NavHostController,
-    ricettaVuota: RicettaSample
 ) {
     /*
     val titolo = model.titolo.observeAsState("")
@@ -66,7 +65,7 @@ fun NuovaRicetta(
             )
         },
     ){
-        Content(model ,ricettaVuota)
+        Content(model)
     }
 }
 
@@ -74,7 +73,7 @@ private val pickImgCode = 100
 //, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
 @Composable
-fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
+fun Content(model: RicetteViewModel) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +114,6 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
                 .fillMaxWidth()
         )
 
-        // val ingredientList = ricettaVuota.ingredienti
 
         val listState = remember { mutableStateListOf<IngredienteRIcetta>() }
 
@@ -129,7 +127,7 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
                 addIngredientCard(listState)
         }
 
-        ricettaVuota.ingredienti = listState
+
 
         // Tasto +
         IconButton(
@@ -137,6 +135,7 @@ fun Content(model: RicetteViewModel, ricettaVuota: RicettaSample) {
             onClick = {
                     //ingredientList.add(IngredienteRIcetta("","",""))
                     listState.add(IngredienteRIcetta("","empty",""))
+                    model.onIngredientsInsert(listState)
             }
         ) {
             Icon(Icons.Rounded.Add,"")
