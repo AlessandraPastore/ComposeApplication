@@ -29,7 +29,7 @@ fun NavConfig(
             arguments = listOf(navArgument("ricetta") { type = NavType.StringType })) {
             backStackEntry ->
 
-            RicettaDetail(navController, backStackEntry.arguments?.getString("ricetta"))
+            RicettaDetail(model, navController, backStackEntry.arguments?.getString("ricetta"))
         }
     }
 }

@@ -116,8 +116,8 @@ fun DropDown(
                 selected.value = !selected.value
                 filtro.checked  = selected.value
 
-                model.onFiltroChecked()
-                Log.d("Test",filtro.checked.toString() + filtro.name)
+                //model.onHomeClick()
+                //Log.d("Test",filtro.checked.toString() + filtro.name)
                 //checked.value = filter.checked
 
             }) {
@@ -130,6 +130,10 @@ fun DropDown(
                     Text(filtro.name)
                 }
             }
+        }
+
+        Button(onClick = { model.onFiltroChecked() }) {
+            Text("Applica")
         }
     }
 }

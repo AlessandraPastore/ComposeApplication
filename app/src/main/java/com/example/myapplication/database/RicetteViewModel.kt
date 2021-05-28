@@ -44,9 +44,9 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
         ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
 
-        /*_ricettaVuota.value!!.filtri.forEach{ filtro ->
+        _ricettaVuota.value!!.filtri.forEach{ filtro ->
             ricDao.insertRicetteCategoria(RicettaCategorie(_ricettaVuota.value!!.titolo, filtro.name))
-        }*/
+        }
 
 
 
@@ -89,9 +89,9 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         //ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
     }
 
-    fun onFiltroChecked(filtro: Filtro){
+    /*fun onFiltroChecked(filtro: Filtro){
         ricette = ricDao.getFilterRic(listOf(filtro.name))
-    }
+    }*/
 
 
 
@@ -121,6 +121,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
+    fun getRicetta(){
+
+    }
+
 
     /*
     private val _titolo = MutableLiveData("")
@@ -139,13 +143,33 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onFiltroChecked(){
         val lista: MutableList<String> = mutableListOf()
 
+        Log.d("Test", ricette.value!!.size.toString())
+
         for(filtro in _filtri.value!!){
             if(filtro.checked)
                 lista.add(filtro.name)
-                Log.d("Test",filtro.checked.toString() + filtro.name)
+
+
         }
 
-        ricette = ricDao.getFilterRic(lista)
+        Log.d("Test",lista.toString())
+
+        val tmp: List<String> = lista
+        Log.d("Test",tmp.toString())
+
+        //if(!lista.isEmpty())
+            //ricette = ricDao.getFilterRic()
+        ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
+        Log.d("Test", ricette.value!!.size.toString())
+
+        //val xx = ricDao.getFilterRic()
+
+        //if(xx.value != null){
+          //  Log.d("Test", xx.value!!.size.toString())
+        //}
+
+
+        //ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
     }
 
     /*

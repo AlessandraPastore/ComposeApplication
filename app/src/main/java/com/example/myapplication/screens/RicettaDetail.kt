@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.Screen
+import com.example.myapplication.database.RicetteViewModel
 
 @Composable
-fun RicettaDetail(navController: NavController, ricetta: String?){
+fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
     val scrollState = rememberScrollState()
 

@@ -67,7 +67,7 @@ abstract class RicetteDataBase : RoomDatabase() {
         }
         suspend fun prepopulateDatabase(dao:DaoRicette)
         {
-            if(dao.countIngredienti()==0) {
+           if(dao.countIngredienti()==0) {
                 dao.insertCategoria(Categoria("Antipasto"))
                 dao.insertCategoria(Categoria("Primo piatto"))
                 dao.insertCategoria(Categoria("Secondo piatto"))
