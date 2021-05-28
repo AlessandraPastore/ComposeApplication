@@ -1,17 +1,18 @@
 package com.example.myapplication.screens
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -24,10 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.Screen
+import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
+
+    val ricettaCompleta by model.ricettaCompleta.observeAsState()
+
 
     val scrollState = rememberScrollState()
 
@@ -55,7 +60,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     modifier = Modifier.padding(25.dp)
                 ){
                     Text(
-                        text ="Ricetta ${ricetta}",
+                        text ="${ricetta}",
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -73,12 +78,10 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 
                     //avremo una lista di ingredienti da mostrare
                     Column {
-                        //for(item in listIngredient) o qualcosa del genere
 
-                        repeat(4){
-                            IngredientItem()
+                        for(item in ricettaCompleta!!.ingredienti){
+                            IngredientItem(item)
                         }
-
 
                     }
 
@@ -90,7 +93,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     Spacer(modifier = Modifier.height(16.dp))
 
 
-                    Text("hello ".repeat(150))
+                    Text(ricettaCompleta!!.descrizione)
 
                     Box(modifier = Modifier
                         .background(Color.Transparent)
@@ -150,14 +153,14 @@ fun FadingTopBar(
 
 //mostra il singolo ingrediente comprendendo l'icona aggiungi a carrello
 @Composable
-fun IngredientItem(){
+fun IngredientItem(item: IngredienteRIcetta) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ){
         Column(){
-            Text("ingrediente")
-            Text("150gr")
+            Text(item.ingrediente)
+            Text(item.qta)
         }
         IconButton(onClick = { /*aggiunge ingrediente al carrello*/ }) {
             Icon(Icons.Rounded.Add, "")

@@ -230,6 +230,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             scope.launch {
                                 detectTapGestures(
                                     onTap = {
+                                        model.getRicetta(ricetta.titolo)
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
                                     },
                                     onLongPress = onLongPress

@@ -13,6 +13,7 @@ import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 // AndroidViewModel è sottoclasse di ViewModel
@@ -132,7 +133,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
-    fun getRicetta(){
+
+    private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
+    val ricettaCompleta: LiveData<RicettaSample> = _ricettaCompleta
+
+    fun getRicetta(titolo:String)=viewModelScope.launch (Dispatchers.IO) {
+
+        _ricettaCompleta.value!!.titolo = titolo
+        _ricettaCompleta.value!!.descrizione = ricDao.showRicettaCompleta(titolo).descrizione
+        _ricettaCompleta.value!!.ingredienti = ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
+        //ricettaCompleta.filtri = manca getFiltriRic
 
     }
 
