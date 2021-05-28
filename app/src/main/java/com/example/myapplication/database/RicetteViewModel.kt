@@ -75,25 +75,36 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         return true
     }
 
-
-
     // Quando viene schiacciato il tasto Home, carica la lista di tutte le ricette
     fun onHomeClick(){
         ricette = ricDao.getAllPreview()
+
+        val lista: MutableList<String> = mutableListOf()
+
+        for(filtro in _filtri.value!!){
+            if(filtro.checked)
+                lista.add(filtro.name)
+        }
+
+        if(!lista.isEmpty())
+            ricette = ricDao.getFilterRic(lista)
     }
 
     // Quando viene schiacciato il tasto Preferiti, carica la lista delle ricette classificate come tali
     fun onPreferitiClick(){
         ricette = ricDao.getPreferiti()
 
-        //ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
+        val lista: MutableList<String> = mutableListOf()
+
+        for(filtro in _filtri.value!!){
+            if(filtro.checked)
+                lista.add(filtro.name)
+        }
+
+        if(!lista.isEmpty())
+            ricette = ricDao.getFilterRic(lista)
+
     }
-
-    /*fun onFiltroChecked(filtro: Filtro){
-        ricette = ricDao.getFilterRic(listOf(filtro.name))
-    }*/
-
-
 
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
     //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota

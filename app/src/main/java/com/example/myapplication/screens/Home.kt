@@ -51,7 +51,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
             when{
                 longPressed -> LongPress(model, onLongPress = {model.onLongPress(false)})
                 searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
+                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
         },
     )
@@ -64,6 +64,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
 // Funzione che gestisce l'AppBar "ad alto livello"
 @Composable
 fun TopBar(
+    navController: NavController,
     model: RicetteViewModel,
     tipologia: String,
     expanded: Boolean,
@@ -84,7 +85,7 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
-            DropDown(model, filtri, expanded, onDeExpand = onDeExpand)
+            DropDown(navController , model, filtri, expanded, onDeExpand = onDeExpand)
         }
     )
 }
@@ -92,6 +93,7 @@ fun TopBar(
 // Funzione che gestisce l'icona del filtro
 @Composable
 fun DropDown(
+    navController: NavController,
     model: RicetteViewModel,
     filtri: List<Filtro>,
     expanded: Boolean,
@@ -106,11 +108,9 @@ fun DropDown(
 
     ) {
 
-
         for(filtro in filtri.listIterator()){
 
-            var selected = remember { mutableStateOf(filtro.checked) }
-
+            val selected = remember { mutableStateOf(filtro.checked) }
 
             DropdownMenuItem(onClick = {
                 selected.value = !selected.value
@@ -132,9 +132,19 @@ fun DropDown(
             }
         }
 
-        Button(onClick = { model.onFiltroChecked() }) {
+        Button(onClick = {
+            model.onHomeClick()
+
+            model.onExpand(false)
+
+            navController.navigate(Screen.Home.route)
+
+            Log.d("Prova", model.ricette.value.toString())
+        }) {
             Text("Applica")
         }
+
+
     }
 }
 
