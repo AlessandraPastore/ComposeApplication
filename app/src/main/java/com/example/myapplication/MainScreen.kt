@@ -55,6 +55,8 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
     FloatingActionButton(
         onClick = {
 
+
+
             if(currentRoute != Screen.NuovaRicetta.route) {
                 navController.navigate(Screen.NuovaRicetta.route){
 
@@ -78,6 +80,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
                     }
                 }
             }
+            model.restartFilters()  //toglie i check dai filtri
 
         },
     )

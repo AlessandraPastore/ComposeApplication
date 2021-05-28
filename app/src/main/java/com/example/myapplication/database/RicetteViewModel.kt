@@ -44,6 +44,11 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
         ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
 
+        /*_ricettaVuota.value!!.filtri.forEach{ filtro ->
+            ricDao.insertRicetteCategoria(RicettaCategorie(_ricettaVuota.value!!.titolo, filtro.name))
+        }*/
+
+
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
             //ingrediente.titolo = _ricettaVuota.value!!.titolo
@@ -57,6 +62,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         if(_ricettaVuota.value!!.titolo.isBlank()) return false
         if(_ricettaVuota.value!!.descrizione.isBlank()) return false
+        if(_ricettaVuota.value!!.filtri.isEmpty()) return false
         if(_ricettaVuota.value!!.ingredienti.isEmpty()) return false
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
@@ -89,8 +95,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
 
 
-    private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf()))
-    val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
+    private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
+    //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
 
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
@@ -103,6 +109,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
         _ricettaVuota.value!!.ingredienti = ingList
+    }
+
+    fun onFilterInsert(filterList : MutableList<Filtro>){
+        _ricettaVuota.value!!.filtri = filterList
+    }
+
+    fun restartFilters(){
+        for(filtro in _filtri.value!!){
+            filtro.checked = false
+        }
     }
 
 

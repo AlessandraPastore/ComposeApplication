@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -104,18 +105,16 @@ fun DropDown(
             .background(MaterialTheme.colors.background)
 
     ) {
-        //mi tiene i checked anche quando cambio pagina
-        //val filters = getFilters()
+
 
         for(filtro in filtri.listIterator()){
 
-            var selected by remember { mutableStateOf(filtro.checked) }
+            var selected = remember { mutableStateOf(filtro.checked) }
 
-            // capire come sono gestiti i filtri
-             //val checked = remember { mutableStateOf(filter.checked) }
 
             DropdownMenuItem(onClick = {
-                filtro.checked  = !selected
+                selected.value = !selected.value
+                filtro.checked  = selected.value
 
                 model.onFiltroChecked()
                 Log.d("Test",filtro.checked.toString() + filtro.name)
@@ -123,14 +122,11 @@ fun DropDown(
 
             }) {
                 Row{
-                    Checkbox(
-                        checked = selected, //checked.value
-                        onCheckedChange = {
-                            model.onFiltroChecked()
-                            //selected = it        // checked.value
-                            filtro.checked = it
-                        }
-                    )
+                    if(selected.value)
+                        Icon(Icons.Rounded.CheckBox, "")
+                    else
+                        Icon(Icons.Rounded.CropSquare, "")
+
                     Text(filtro.name)
                 }
             }

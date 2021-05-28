@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.registerForActivityResult
@@ -15,6 +16,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,10 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import com.example.myapplication.MainActivity
+import com.example.myapplication.*
 import com.example.myapplication.R
-import com.example.myapplication.RicettaSample
-import com.example.myapplication.Screen
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
@@ -40,17 +40,18 @@ fun NuovaRicetta(
     model: RicetteViewModel,
     navController: NavHostController,
 ) {
-    /*
-    val titolo = model.titolo.observeAsState("")
-    val ingrediente = model.ingrediente.observeAsState("")
-    val quantità = model.quantità.observeAsState("")
-     */
+    val filtri by model.filtri.observeAsState(getFilters())
+    val expanded by model.expanded.observeAsState(false)
+
+    var filterList = mutableListOf<Filtro>()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(R.string.nuova)) },
                 navigationIcon = {
                     IconButton(onClick = {
+                        model.restartFilters()  //toglie i check dai filtri
                         navController.navigate(Screen.Home.route){
 
                             popUpTo = navController.graph.startDestination
@@ -62,6 +63,13 @@ fun NuovaRicetta(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = "")
                     }
                 },
+                actions = {
+                    IconButton(onClick = { model.onExpand(true) }) {
+                        Icon(Icons.Rounded.FilterAlt,"")
+                    }
+                    ShowFilters(model, filtri,filterList, expanded) { model.onExpand(false) }
+                }
+
             )
         },
     ){
@@ -189,4 +197,51 @@ fun MyTextField(model: RicetteViewModel ,str: String, max: Int, singleLine: Bool
         )
 
     )
+}
+
+// Funzione che gestisce l'icona del filtro
+@Composable
+fun ShowFilters(
+    model: RicetteViewModel,
+    filtri: List<Filtro>,
+    filterList: MutableList<Filtro>,
+    expanded: Boolean,
+    onDeExpand: () -> Unit
+) {
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDeExpand,
+        modifier = Modifier
+            .wrapContentSize()
+            .background(MaterialTheme.colors.background)
+
+    ) {
+
+        filtri.forEach{
+
+
+            val checked = remember { mutableStateOf(it.checked) }
+
+            DropdownMenuItem(onClick = {
+                checked.value = !checked.value
+                it.checked = checked.value
+                if(!checked.value) filterList.remove(it)
+                else filterList.add(it)
+                model.onFilterInsert(filterList)
+
+
+
+            }) {
+                Row{
+                    if(checked.value)
+                        Icon(Icons.Rounded.CheckBox, "")
+                    else
+                        Icon(Icons.Rounded.CropSquare, "")
+
+                    Text(it.name)
+                }
+            }
+        }
+    }
 }
