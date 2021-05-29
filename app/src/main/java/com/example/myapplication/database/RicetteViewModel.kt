@@ -2,8 +2,6 @@ package com.example.myapplication.database
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +10,6 @@ import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 // AndroidViewModel è sottoclasse di ViewModel
@@ -31,20 +28,25 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.updateRicettaPreview(ric)
     }
 
-    fun onRicettaDelete()=viewModelScope.launch (Dispatchers.IO){
-        //val listing=ricDao.IngrOfRecipe(_ricettaSelezionata.value!!.titolo)
+    fun onRicettaDelete() =viewModelScope.launch (Dispatchers.IO) {
+        val listing=ricDao.IngrOfRecipe(_ricettaSelezionata.value!!.titolo)
+        Log.d("test", "delete" + _ricettaSelezionata.value!!)
+
         ricDao.deleteRicetta(_ricettaSelezionata.value!!)
-       /* listing.forEach{
+
+
+
+
+
+        listing.forEach{
             if(ricDao.numberIngInIngreRicetta(it.ingrediente)==0)
                 ricDao.deleteIngrFromName(it.ingrediente)
-        }*/
+        }
 
     }
 
     //aggiunge la ricetta salvata in _ricettaVuota
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO){
-
-        // Si deve aggiungere anche la categoria
 
 
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
@@ -53,8 +55,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaVuota.value!!.filtri.forEach{ filtro ->
             ricDao.insertRicetteCategoria(RicettaCategorie(_ricettaVuota.value!!.titolo, filtro.name))
         }
-
-
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
             //ingrediente.titolo = _ricettaVuota.value!!.titolo
@@ -159,13 +159,20 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     val ricettaSelezionata: LiveData<RicettePreview> = _ricettaSelezionata
 
     fun selectRicetta(ricetta : RicettePreview){
+        resetSelection()
         _ricettaSelezionata.value = ricetta
         Log.d("test", _ricettaSelezionata.value.toString() )
     }
 
+    fun resetRic(){
+        ricette = ricDao.getAllPreview()
+    }
+
     fun resetSelection(){
         _ricettaSelezionata.value = RicettePreview("",false)
+        Log.d("test", "reset"+_ricettaSelezionata.value.toString())
     }
+
 
     /*
     private val _titolo = MutableLiveData("")
@@ -243,7 +250,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onInvertPress() {
         _longPressed.value = _longPressed.value != true
         Log.d("test", "oninv"+_longPressed.value.toString() )
-
     }
 
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){

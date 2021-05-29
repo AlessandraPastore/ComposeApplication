@@ -2,11 +2,14 @@ package com.example.myapplication.screens
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -47,10 +51,10 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress(model, onLongPress = {
+                longPressed -> LongPress(model, navController) {
                     model.onInvertPress()
                     model.resetSelection()
-                })
+                }
                 searching -> Searching(onSearch = {model.onSearch(false)})
                 else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
@@ -184,7 +188,7 @@ fun Searching(onSearch: () -> Unit) {
 // Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
 // se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
-fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
+fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress: () -> Unit) {
 
     //val ricetta = model.ricettaSelezionata.observeAsState()
 
@@ -204,9 +208,10 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
                 Icon(Icons.Rounded.Create, contentDescription = "")
             }
             IconButton(onClick = {
-                model.onRicettaDelete()
-                model.onInvertPress()
-                model.resetSelection()
+
+                    model.onRicettaDelete()
+                    model.onInvertPress()   //toglie il menu superiore
+
             }) {
                 Icon(Icons.Rounded.Delete, contentDescription = "")
             }
@@ -218,21 +223,32 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
 @Composable
 fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, onLongPress: (Offset) -> Unit) {
 
-    val scope = rememberCoroutineScope()
+    //val scope = rememberCoroutineScope()
     val longPressed by model.longPressed.observeAsState()
     val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
+
+    //model.resetRic()
 
     var color : Color
     //if(longPressed == true) color = MaterialTheme.colors.secondary
 
     LazyColumn {
-        items(ricette) {   ricetta ->
 
-            val checked = ricetta.preferito
-            if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) color = MaterialTheme.colors.secondary
-            else color = MaterialTheme.colors.surface
+    //itemsIndexed(ricette){ index, ricetta ->
+        items(ricette){ ricetta ->
 
-            //Row(modifier = Modifier.fillParentMaxWidth()) {
+            key(ricetta.titolo) {
+
+
+                //Text(index.toString())
+
+                val checked = ricetta.preferito
+                color = if (ricettaSelezionata?.titolo.equals(ricetta.titolo))
+                    MaterialTheme.colors.secondary
+                else
+                    MaterialTheme.colors.surface
+
+                //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = color,
                     elevation = 5.dp,
@@ -241,24 +257,32 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                         .fillParentMaxWidth()
                         .padding(10.dp)
                         .pointerInput(Unit) {
-                            // Forse coroutine inutile qua
-                            scope.launch {
-                                detectTapGestures(
-                                    onTap = {
-                                        model.getRicetta(ricetta.titolo)
+                            detectTapGestures(
+                                onTap = {
+
+                                    if(!longPressed!!) {
                                         model.selectRicetta(ricetta)
+                                        model.getRicetta(ricetta.titolo)
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                    },
-                                    onLongPress = {
-                                        //onLongPress tolto perchè devo chiamare selectRic sorry
-                                        model.onInvertPress()
-                                        if (longPressed == true)
-                                            model.selectRicetta(ricetta)
-                                        else
-                                            model.resetSelection()
                                     }
-                                )
-                            }
+                                    else if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
+                                        model.onInvertPress()
+                                        model.resetSelection()
+                                    }
+                                },
+                                onLongPress = {
+
+                                    if(!longPressed!!) {
+                                        model.onInvertPress()
+                                        model.selectRicetta(ricetta)
+                                    }
+                                    else if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
+                                        model.onInvertPress()
+                                        model.resetSelection()
+                                    }
+
+                                }
+                            )
                         }
                 ) {
                     Row(
@@ -275,7 +299,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             modifier = Modifier
                                 .padding(start = 12.dp)
                                 .align(Alignment.CenterVertically)
-                                //.background(color)
+                            //.background(color)
                         ) {
                             Text(
                                 text = ricetta.titolo,
@@ -291,14 +315,21 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                         ) {
                             IconToggleButton(
                                 checked = checked,
-                                onCheckedChange = {model.onPreferitoChange(ric = RicettePreview(ricetta.titolo,!checked))}) {
+                                onCheckedChange = {
+                                    model.onPreferitoChange(
+                                        ric = RicettePreview(
+                                            ricetta.titolo,
+                                            !checked
+                                        )
+                                    )
+                                }) {
                                 if (!checked) Icon(Icons.Rounded.FavoriteBorder, "")
                                 else Icon(Icons.Rounded.Favorite, "")
                             }
                         }
                     }
                 }
-            //}
+            }
         }
         item(){
             Box(modifier = Modifier

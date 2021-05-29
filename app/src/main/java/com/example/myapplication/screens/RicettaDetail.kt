@@ -26,7 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.Screen
 import com.example.myapplication.database.IngredienteRIcetta
-import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 
 @Composable
@@ -156,14 +155,16 @@ fun FadingTopBar(
         IconButton(
             onClick = {
                 model.onRicettaDelete()
+                model.resetComplete()
+
                 navController.navigate(Screen.Home.route){
 
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
 
                 }
-                model.resetSelection()
-                model.resetComplete()
+                //model.resetSelection()
+
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
