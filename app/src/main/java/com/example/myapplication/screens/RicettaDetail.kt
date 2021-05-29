@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -136,7 +137,9 @@ fun FadingTopBar(
         )
         IconButton(
             onClick = {
-                model.selectRicetta(RicettePreview("",false))
+                //model.selectRicetta(RicettePreview("",false))
+                model.resetSelection()
+                model.resetComplete()
                 navController.navigate(Screen.Home.route){
 
                     popUpTo = navController.graph.startDestination
@@ -149,6 +152,24 @@ fun FadingTopBar(
         )
         {
             Icon(Icons.Rounded.ArrowBack, contentDescription = "")
+        }
+        IconButton(
+            onClick = {
+                model.onRicettaDelete()
+                navController.navigate(Screen.Home.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+
+                }
+                model.resetSelection()
+                model.resetComplete()
+            },
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+        )
+        {
+            Icon(Icons.Rounded.Delete, contentDescription = "")
         }
     }
 }

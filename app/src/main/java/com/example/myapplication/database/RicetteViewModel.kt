@@ -145,12 +145,20 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     }
 
+    fun resetComplete(){
+        _ricettaCompleta.value = RicettaSample("","", mutableListOf(), mutableListOf())
+    }
+
     private val _ricettaSelezionata = MutableLiveData(RicettePreview("",false))
     val ricettaSelezionata: LiveData<RicettePreview> = _ricettaSelezionata
 
     fun selectRicetta(ricetta : RicettePreview){
         _ricettaSelezionata.value = ricetta
         Log.d("test", _ricettaSelezionata.value.toString() )
+    }
+
+    fun resetSelection(){
+        _ricettaSelezionata.value = RicettePreview("",false)
     }
 
     /*

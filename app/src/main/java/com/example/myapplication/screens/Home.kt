@@ -47,7 +47,10 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress(model, onLongPress = {model.onInvertPress()})
+                longPressed -> LongPress(model, onLongPress = {
+                    model.onInvertPress()
+                    model.resetSelection()
+                })
                 searching -> Searching(onSearch = {model.onSearch(false)})
                 else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
@@ -202,6 +205,8 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
             }
             IconButton(onClick = {
                 model.onRicettaDelete()
+                model.onInvertPress()
+                model.resetSelection()
             }) {
                 Icon(Icons.Rounded.Delete, contentDescription = "")
             }
@@ -250,7 +255,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                                         if (longPressed == true)
                                             model.selectRicetta(ricetta)
                                         else
-                                            model.selectRicetta(RicettePreview("",false))
+                                            model.resetSelection()
                                     }
                                 )
                             }
