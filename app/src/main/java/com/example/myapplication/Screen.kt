@@ -11,5 +11,3 @@ sealed class Screen(var route: String, @StringRes val resId: Int) {
     object RicettaDetail: Screen("Ricetta",R.string.ricetta)
     object NuovaRicetta : Screen("NuovaRicetta",R.string.nuova )
 }
-
-class State(val isDark: Boolean){}

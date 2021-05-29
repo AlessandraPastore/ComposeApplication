@@ -38,6 +38,9 @@ interface DaoRicette {
     suspend fun updateCarrello(ingrediente: Ingrediente)
 
     @Delete
+    suspend fun deleteIngredienteRicetta(ingrediente: Ingrediente)
+
+    @Delete
     suspend fun deleteIngr(ingrediente: Ingrediente)
 
     @Delete
@@ -71,12 +74,25 @@ interface DaoRicette {
     @Query("Select Distinct * from IngredienteRIcetta where titolo=:ricetta")
     suspend fun IngrOfRecipe(ricetta:String):List<IngredienteRIcetta>
 
-    @Query ("SELECT Distinct RicettePreview.* from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.titolo where RicettaCategorie.categoria in (:lista)")
+    @Query("Select Distinct Categoria.* from Categoria where Categoria.categoria in(Select RicettaCategorie.categoria from RicettePreview Inner Join RicettaCategorie on RicettaCategorie.titolo=RicettePreview.titolo where RicettePreview.titolo=:ricetta)")
+    suspend fun allCatFromRecipe(ricetta: String):List<Categoria>
+
+
+    @Query ("SELECT Distinct RicettePreview.*  from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.titolo where RicettaCategorie.categoria in (:lista)")
     fun getFilterRic(lista:List<String>):LiveData<List<RicettePreview>>
+
+    @Query ("SELECT Distinct RicettePreview.* from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.titolo where RicettaCategorie.categoria in (:lista) and preferito=1")
+    fun getFilterRicPref(lista:List<String>):LiveData<List<RicettePreview>>
 
     @Query("SELECT * from RicettePreview where preferito =1")
     fun getPreferiti():LiveData<List<RicettePreview>>
 
     @Query("SELECT * From RicettePreview")
     fun getAllPreview():LiveData<List<RicettePreview>>
+
+    @Query ("Select count(*) from IngredienteRIcetta where ingrediente=:ingrediente")
+    suspend fun numberIngInIngreRicetta(ingrediente: String):Int
+
+    @Query("Delete from Ingrediente where ingrediente=:ingrediente")
+    suspend fun deleteIngrFromName(ingrediente: String)
 }

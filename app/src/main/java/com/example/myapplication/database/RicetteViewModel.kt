@@ -32,7 +32,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     fun onRicettaDelete()=viewModelScope.launch (Dispatchers.IO){
+        //val listing=ricDao.IngrOfRecipe(_ricettaSelezionata.value!!.titolo)
         ricDao.deleteRicetta(_ricettaSelezionata.value!!)
+       /* listing.forEach{
+            if(ricDao.numberIngInIngreRicetta(it.ingrediente)==0)
+                ricDao.deleteIngrFromName(it.ingrediente)
+        }*/
+
     }
 
     //aggiunge la ricetta salvata in _ricettaVuota
