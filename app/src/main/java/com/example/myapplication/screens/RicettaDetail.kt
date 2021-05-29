@@ -32,6 +32,7 @@ import com.example.myapplication.database.RicetteViewModel
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
+
     val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
 

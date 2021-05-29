@@ -1,14 +1,5 @@
 package com.example.myapplication.screens
-import androidx.activity.*
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
@@ -44,11 +34,19 @@ fun NuovaRicetta(
     val expanded by model.expanded.observeAsState(false)
 
     var filterList = mutableListOf<Filtro>()
+    var titolo = stringResource(R.string.nuova)
+
+    val modify = model.getModify()
+    val ricettaCompleta by model.ricettaCompleta.observeAsState()
+
+    if(modify)
+        titolo = stringResource(R.string.modifica)
+
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.nuova)) },
+                title = { Text(text = titolo) },
                 navigationIcon = {
                     IconButton(onClick = {
                         model.restartFilters()  //toglie i check dai filtri
@@ -67,13 +65,20 @@ fun NuovaRicetta(
                     IconButton(onClick = { model.onExpand(true) }) {
                         Icon(Icons.Rounded.FilterAlt,"")
                     }
+                    if(modify)
+                    {
+                        filterList = ricettaCompleta!!.filtri
+                        model.onFilterInsert(filterList)
+                    }
+
+                    Log.d("test", ricettaCompleta!!.filtri.toString())
                     ShowFilters(model, filtri,filterList, expanded) { model.onExpand(false) }
                 }
 
             )
         },
     ){
-        Content(model)
+        Content(model, ricettaCompleta, modify)
     }
 }
 
@@ -81,7 +86,7 @@ private val pickImgCode = 100
 //, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
 @Composable
-fun Content(model: RicetteViewModel) {
+fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Boolean) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,7 +113,7 @@ fun Content(model: RicetteViewModel) {
                     Icon(Icons.Rounded.Camera, "")
                 }
             }
-            MyTextField(model, stringResource(R.string.titolo), 20, true)
+            MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
         }
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -124,6 +129,13 @@ fun Content(model: RicetteViewModel) {
 
 
         val listState = remember { mutableStateListOf<IngredienteRIcetta>() }
+
+        if(modify){
+            for(item in ricettaCompleta!!.ingredienti){
+                listState.add(item)
+            }
+            model.onIngredientsInsert(listState)
+        }
 
         Column(
             modifier = Modifier
@@ -158,7 +170,14 @@ fun Content(model: RicetteViewModel) {
             verticalAlignment = Alignment.Top,
             modifier = Modifier.weight(3f)
         ){
-            MyTextField(model, stringResource(R.string.descrizione), 200, false)
+            MyTextField(
+                model,
+                stringResource(R.string.descrizione),
+                200,
+                false,
+                ricettaCompleta,
+                modify
+            )
         }
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -169,11 +188,32 @@ fun Content(model: RicetteViewModel) {
 
 
 @Composable
-fun MyTextField(model: RicetteViewModel ,str: String, max: Int, singleLine: Boolean){
+fun MyTextField(
+    model: RicetteViewModel,
+    str: String,
+    max: Int,
+    singleLine: Boolean,
+    ricettaCompleta: RicettaSample?,
+    modify: Boolean
+){
+
 
     val titolo = stringResource(R.string.titolo)
+    var readOnly = false
 
     val title = remember{ mutableStateOf(TextFieldValue()) }
+
+    if(modify) {
+        if(str.equals(titolo)){
+            title.value = TextFieldValue(ricettaCompleta!!.titolo)
+            model.onTitoloInsert(title.value.text)
+            readOnly = true
+        }
+        //else
+            //title.value = TextFieldValue(ricettaCompleta!!.descrizione)
+    }
+
+
     OutlinedTextField(
         value = title.value,
         onValueChange = {
@@ -185,6 +225,7 @@ fun MyTextField(model: RicetteViewModel ,str: String, max: Int, singleLine: Bool
             else
                 model.onDescrizioneInsert(title.value.text)
         },
+        readOnly = readOnly,  //readOnly se siamo in Modifica
         placeholder = {Text(text = "Inserire $str")},
         label = {Text(str)},
         modifier = Modifier
@@ -218,10 +259,18 @@ fun ShowFilters(
 
     ) {
 
+
+
         filtri.forEach{
 
 
+            for (filtro in filterList) {
+                if(filtro.name.equals(it.name)) it.checked = true
+            }
+
             val checked = remember { mutableStateOf(it.checked) }
+
+
 
             DropdownMenuItem(onClick = {
                 checked.value = !checked.value

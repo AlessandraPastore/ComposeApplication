@@ -45,6 +45,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO){
 
 
+
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
         ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
 
@@ -60,21 +61,21 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
-    fun onRicettaAddVerify():Boolean{
+    fun onRicettaAddVerify():String{
 
-        if(_ricettaVuota.value!!.titolo.isBlank()) return false
-        if(_ricettaVuota.value!!.descrizione.isBlank()) return false
-        if(_ricettaVuota.value!!.filtri.isEmpty()) return false
-        if(_ricettaVuota.value!!.ingredienti.isEmpty()) return false
+        if(_ricettaVuota.value!!.titolo.isBlank()) return "titolo"
+        if(_ricettaVuota.value!!.descrizione.isBlank()) return "descrizione"
+        if(_ricettaVuota.value!!.filtri.isEmpty()) return "filtri"
+        if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "ingredienti"
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
 
-            if(ingrediente.ingrediente.isBlank() || ingrediente.qta.isBlank()) return false
+            if(ingrediente.ingrediente.isBlank() || ingrediente.qta.isBlank()) return "ingredientE"
             ingrediente.titolo = _ricettaVuota.value!!.titolo
 
         }
 
-        return true
+        return ""
     }
 
     // Quando viene schiacciato il tasto Home, carica la lista di tutte le ricette
@@ -172,10 +173,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         Log.d("test", _ricettaSelezionata.value.toString() )
     }
 
-    fun resetRic(){
-        ricette = ricDao.getAllPreview()
-    }
-
     fun resetSelection(){
         _ricettaSelezionata.value = RicettePreview("",false)
         Log.d("test", "reset"+_ricettaSelezionata.value.toString())
@@ -258,6 +255,17 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onInvertPress() {
         _longPressed.value = _longPressed.value != true
         Log.d("test", "oninv"+_longPressed.value.toString() )
+    }
+
+    private val _modify = MutableLiveData(false)
+    val modify: LiveData<Boolean> = _modify
+
+    fun modifyRecipe(){
+        _modify.value = !_modify.value!!
+    }
+
+    fun getModify(): Boolean {
+        return _modify.value!!
     }
 
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){

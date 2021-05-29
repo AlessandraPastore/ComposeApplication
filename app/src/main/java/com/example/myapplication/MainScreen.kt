@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -20,6 +21,8 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.dialogIngredient
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @ExperimentalAnimationApi
@@ -51,11 +54,10 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
 private fun FAB(model: RicetteViewModel, navController: NavHostController, currentRoute: String?) {
 
     val openDialog = remember { mutableStateOf(false)  }
+    val scope = rememberCoroutineScope()
 
     FloatingActionButton(
         onClick = {
-
-
 
             if(currentRoute != Screen.NuovaRicetta.route) {
                 navController.navigate(Screen.NuovaRicetta.route){
@@ -68,9 +70,26 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
             }
             else{
 
-                if(!model.onRicettaAddVerify()) openDialog.value = true
+                val error = model.onRicettaAddVerify()
+                Log.d("test", error)
+
+                if(!error.equals("")) openDialog.value = true
                 else {
-                    model.onRicettaAdd()
+
+                    //se era una modifica bisogna resettare le variabili e cancellarla prima
+                    if(model.getModify()){
+                        model.modifyRecipe()
+                        model.resetComplete()
+                        model.onRicettaDelete()//devo cancellarla
+                        Log.d("test","cancellata")
+                    }
+
+                    scope.launch {
+                        delay(1000)
+                        //devo fare delay prima di chiamarlo
+                        model.onRicettaAdd()                //ERRORE STRANO SE MODIFICA
+                    }
+
 
                     navController.navigate(Screen.Home.route){
 
@@ -79,8 +98,11 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
                     }
                 }
+
+
+
             }
-            model.restartFilters()  //toglie i check dai filtri
+
 
         },
     )

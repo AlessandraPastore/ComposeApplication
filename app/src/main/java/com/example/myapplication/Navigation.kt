@@ -16,7 +16,7 @@ import com.example.myapplication.screens.*
 fun NavConfig(
     navController: NavHostController,
     enableDarkMode: MutableState<Boolean>,
-    model: RicetteViewModel
+    model: RicetteViewModel,
 ){
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) { Home(model, navController) }

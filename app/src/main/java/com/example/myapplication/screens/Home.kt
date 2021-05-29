@@ -190,7 +190,7 @@ fun Searching(onSearch: () -> Unit) {
 @Composable
 fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress: () -> Unit) {
 
-    //val ricetta = model.ricettaSelezionata.observeAsState()
+    val ricetta = model.ricettaSelezionata.observeAsState()
 
     TopAppBar(
         title = {
@@ -204,7 +204,21 @@ fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress
             }
         },
         actions = {
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+
+                model.modifyRecipe()
+                model.getRicetta(ricetta.value!!.titolo)
+
+                navController.navigate(Screen.NuovaRicetta.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+
+                }
+
+                model.onInvertPress()
+
+            }) {
                 Icon(Icons.Rounded.Create, contentDescription = "")
             }
             IconButton(onClick = {
@@ -240,7 +254,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
             key(ricetta.titolo) {
 
 
-                //Text(index.toString())
+
 
                 val checked = ricetta.preferito
                 color = if (ricettaSelezionata?.titolo.equals(ricetta.titolo))
@@ -248,7 +262,6 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                 else
                     MaterialTheme.colors.surface
 
-                //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = color,
                     elevation = 5.dp,
@@ -260,23 +273,21 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             detectTapGestures(
                                 onTap = {
 
-                                    if(!longPressed!!) {
+                                    if (!longPressed!!) {
                                         model.selectRicetta(ricetta)
                                         model.getRicetta(ricetta.titolo)
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                    }
-                                    else if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
+                                    } else if (!ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
                                         model.onInvertPress()
                                         model.resetSelection()
                                     }
                                 },
                                 onLongPress = {
 
-                                    if(!longPressed!!) {
+                                    if (!longPressed!!) {
                                         model.onInvertPress()
                                         model.selectRicetta(ricetta)
-                                    }
-                                    else if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
+                                    } else if (ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
                                         model.onInvertPress()
                                         model.resetSelection()
                                     }
