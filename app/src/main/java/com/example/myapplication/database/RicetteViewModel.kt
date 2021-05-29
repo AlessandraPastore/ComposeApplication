@@ -82,31 +82,14 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onHomeClick(){
         ricette = ricDao.getAllPreview()
 
-        val lista: MutableList<String> = mutableListOf()
-
-        for(filtro in _filtri.value!!){
-            if(filtro.checked)
-                lista.add(filtro.name)
-        }
-
-        if(!lista.isEmpty())
-            ricette = ricDao.getFilterRic(lista)
+        onFiltroChecked(false)
     }
 
     // Quando viene schiacciato il tasto Preferiti, carica la lista delle ricette classificate come tali
     fun onPreferitiClick(){
         ricette = ricDao.getPreferiti()
 
-        val lista: MutableList<String> = mutableListOf()
-
-        for(filtro in _filtri.value!!){
-            if(filtro.checked)
-                lista.add(filtro.name)
-        }
-
-        if(!lista.isEmpty())
-            ricette = ricDao.getFilterRic(lista)
-
+        onFiltroChecked(true)
     }
 
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
@@ -164,6 +147,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaCompleta.value = RicettaSample("","", mutableListOf(), mutableListOf())
     }
 
+    /*
+    Instance state per gestire i dati della ricetta selezionata
+    nella scrollable list di Home e Preferiti
+     */
     private val _ricettaSelezionata = MutableLiveData(RicettePreview("",false))
     val ricettaSelezionata: LiveData<RicettePreview> = _ricettaSelezionata
 
@@ -180,49 +167,27 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
 
     /*
-    private val _titolo = MutableLiveData("")
-    val titolo: LiveData<String> = _titolo
-
-    private val _ingrediente = MutableLiveData("")
-    val ingrediente: LiveData<String> = _ingrediente
-
-    private val _quantità = MutableLiveData("")
-    val quantità: LiveData<String> = _quantità
+    Instance state per la gestione dei filtri in Home e Preferiti
      */
-
     private val _filtri = MutableLiveData(getFilters())
     val filtri: LiveData<List<Filtro>> = _filtri
 
-    fun onFiltroChecked(){
+    fun onFiltroChecked(preferiti: Boolean){
         val lista: MutableList<String> = mutableListOf()
-
-        Log.d("Test", ricette.value!!.size.toString())
 
         for(filtro in _filtri.value!!){
             if(filtro.checked)
                 lista.add(filtro.name)
-
-
         }
 
-        Log.d("Test",lista.toString())
-
-        val tmp: List<String> = lista
-        Log.d("Test",tmp.toString())
-
-        //if(!lista.isEmpty())
-            //ricette = ricDao.getFilterRic()
-        ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
-        Log.d("Test", ricette.value!!.size.toString())
-
-        //val xx = ricDao.getFilterRic()
-
-        //if(xx.value != null){
-          //  Log.d("Test", xx.value!!.size.toString())
-        //}
+        if(!lista.isEmpty()){
+            if(!preferiti)
+                ricette = ricDao.getFilterRic(lista)
+            else
+                ricette = ricDao.getFilterRicPref(lista)
+        }
 
 
-        //ricette = ricDao.getFilterRic(listOf("Secondo piatto"))
     }
 
     /*
@@ -246,16 +211,25 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _searching.value = status
     }
 
-    //si usa solo on invert
-    /*fun onLongPress(status: Boolean){
-        _longPressed.value = status
-        Log.d("test", "onlong"+_longPressed.value.toString())
-    }*/
-
     fun onInvertPress() {
         _longPressed.value = _longPressed.value != true
         Log.d("test", "oninv"+_longPressed.value.toString() )
     }
+
+    // Chiamata al click del bottone Applica nel menù dei filtri
+    fun onApplicaClick(){
+        onHomeClick()
+        onExpand(false)
+    }
+
+    // Funzione chiamata al click del cestino in LongPress
+    fun onBinClick(){
+        onRicettaDelete()
+        onInvertPress()
+    }
+
+
+
 
     private val _modify = MutableLiveData(false)
     val modify: LiveData<Boolean> = _modify

@@ -2,14 +2,11 @@ package com.example.myapplication.screens
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,11 +16,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +31,6 @@ import com.example.myapplication.Screen
 import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.getFilters
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -51,18 +45,15 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress(model, navController) {
-                    model.onInvertPress()
-                    model.resetSelection()
-                }
+                longPressed -> LongPress( onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()})
                 searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
+                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick()})
             }
         },
     )
     {
         if(ricette != null)
-            ScrollableLIst(model, navController, ricette as List<RicettePreview>, onLongPress = {model.onInvertPress()})
+            ScrollableLIst(model, navController, ricette as List<RicettePreview>, longPressed)
     }
 }
 
@@ -75,7 +66,8 @@ fun TopBar(
     expanded: Boolean,
     onExpand: () -> Unit,
     onDeExpand: () -> Unit,
-    onSearch: () -> Unit
+    onSearch: () -> Unit,
+    onApplicaClick: () -> Unit
 ) {
     val filtri by model.filtri.observeAsState(getFilters())
 
@@ -90,7 +82,14 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
-            DropDown(navController , model, filtri, expanded, onDeExpand = onDeExpand)
+            DropDown(
+                navController,
+                filtri,
+                tipologia,
+                expanded,
+                onDeExpand = onDeExpand,
+                onApplicaClick = onApplicaClick
+            )
         }
     )
 }
@@ -99,10 +98,11 @@ fun TopBar(
 @Composable
 fun DropDown(
     navController: NavController,
-    model: RicetteViewModel,
     filtri: List<Filtro>,
+    tipologia: String,
     expanded: Boolean,
-    onDeExpand: () -> Unit
+    onDeExpand: () -> Unit,
+    onApplicaClick: () -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -110,24 +110,18 @@ fun DropDown(
         modifier = Modifier
             .wrapContentSize()
             .background(MaterialTheme.colors.background)
-
     ) {
 
         for(filtro in filtri.listIterator()){
 
-            val selected = remember { mutableStateOf(filtro.checked) }
+            var selected by remember { mutableStateOf(filtro.checked) }
 
             DropdownMenuItem(onClick = {
-                selected.value = !selected.value
-                filtro.checked  = selected.value
-
-                //model.onHomeClick()
-                //Log.d("Test",filtro.checked.toString() + filtro.name)
-                //checked.value = filter.checked
-
+                selected = !selected
+                filtro.checked  = selected
             }) {
                 Row{
-                    if(selected.value)
+                    if(selected)
                         Icon(Icons.Rounded.CheckBox, "")
                     else
                         Icon(Icons.Rounded.CropSquare, "")
@@ -138,13 +132,14 @@ fun DropDown(
         }
 
         Button(onClick = {
-            model.onHomeClick()
 
-            model.onExpand(false)
+            onApplicaClick()
 
-            navController.navigate(Screen.Home.route)
+            if(tipologia == "Home")
+                navController.navigate(Screen.Home.route)
+            else
+                navController.navigate(Screen.Preferiti.route)
 
-            Log.d("Prova", model.ricette.value.toString())
         }) {
             Text("Applica")
         }
@@ -188,9 +183,7 @@ fun Searching(onSearch: () -> Unit) {
 // Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
 // se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
-fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress: () -> Unit) {
-
-    val ricetta = model.ricettaSelezionata.observeAsState()
+fun LongPress(onLongPress: () -> Unit, onBinClick: () -> Unit) {
 
     TopAppBar(
         title = {
@@ -198,33 +191,24 @@ fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress
         },
         backgroundColor = MaterialTheme.colors.primaryVariant,
         contentColor = MaterialTheme.colors.onPrimary,
+
+        // Bottone X
         navigationIcon = {
             IconButton(onClick = onLongPress) {
                 Icon(Icons.Rounded.Close, contentDescription = "")
             }
         },
         actions = {
-            IconButton(onClick = {
 
-                model.modifyRecipe()
-                model.getRicetta(ricetta.value!!.titolo)
-
-                navController.navigate(Screen.NuovaRicetta.route){
-
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
-
-                }
-
-                model.onInvertPress()
-
-            }) {
+            // Bottone della matita
+            IconButton(onClick = {  }) {
                 Icon(Icons.Rounded.Create, contentDescription = "")
             }
+
+            // Bottone del cestino
             IconButton(onClick = {
 
-                    model.onRicettaDelete()
-                    model.onInvertPress()   //toglie il menu superiore
+                onBinClick()
 
             }) {
                 Icon(Icons.Rounded.Delete, contentDescription = "")
@@ -235,33 +219,24 @@ fun LongPress(model: RicetteViewModel, navController: NavController, onLongPress
 
 // Funzione che gestisce la lista delle ricette
 @Composable
-fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, onLongPress: (Offset) -> Unit) {
+fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, longPressed: Boolean) {
 
-    //val scope = rememberCoroutineScope()
-    val longPressed by model.longPressed.observeAsState()
     val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
-
-    //model.resetRic()
-
     var color : Color
-    //if(longPressed == true) color = MaterialTheme.colors.secondary
 
     LazyColumn {
-
-    //itemsIndexed(ricette){ index, ricetta ->
         items(ricette){ ricetta ->
 
             key(ricetta.titolo) {
 
-
-
-
                 val checked = ricetta.preferito
-                color = if (ricettaSelezionata?.titolo.equals(ricetta.titolo))
+
+                color = if(ricettaSelezionata?.titolo.equals(ricetta.titolo) && longPressed)
                     MaterialTheme.colors.secondary
                 else
                     MaterialTheme.colors.surface
 
+                //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = color,
                     elevation = 5.dp,
@@ -273,25 +248,46 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             detectTapGestures(
                                 onTap = {
 
-                                    if (!longPressed!!) {
+                                    /*
+                                    if(longPressed){
+                                        if(ricettaSelezionata?.titolo.equals(ricetta.titolo) ) {
+                                            model.selectRicetta(ricetta)
+                                            model.getRicetta(ricetta.titolo)
+                                            model.onInvertPress()
+
+                                            navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
+                                        }
+                                    }
+                                    else{
+                                        navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
+                                    }
+                                     */
+
+                                    Log.d("Test",longPressed.toString())
+
+                                    if(!longPressed) {
                                         model.selectRicetta(ricetta)
                                         model.getRicetta(ricetta.titolo)
+
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                    } else if (!ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
-                                        model.onInvertPress()
-                                        model.resetSelection()
+                                    }
+                                    else{
+                                        if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
+                                            model.onInvertPress()
+                                            model.resetSelection()
+                                        }
                                     }
                                 },
                                 onLongPress = {
 
-                                    if (!longPressed!!) {
+                                    if(!longPressed) {
                                         model.onInvertPress()
                                         model.selectRicetta(ricetta)
-                                    } else if (ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
+                                    }
+                                    else if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
                                         model.onInvertPress()
                                         model.resetSelection()
                                     }
-
                                 }
                             )
                         }
@@ -342,7 +338,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                 }
             }
         }
-        item(){
+        item{
             Box(modifier = Modifier
                 .background(Color.Transparent)
                 .height(100.dp)

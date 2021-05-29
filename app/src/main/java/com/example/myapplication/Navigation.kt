@@ -24,9 +24,9 @@ fun NavConfig(
         composable(Screen.Carrello.route) { Carrello() }
         composable(Screen.Impostazioni.route) { Impostazioni(enableDarkMode) }
         composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController) }
-        composable(
-            "${Screen.RicettaDetail.route}/{ricetta}",
-            arguments = listOf(navArgument("ricetta") { type = NavType.StringType })) {
+        composable("${Screen.RicettaDetail.route}/{ricetta}",
+            arguments = listOf(navArgument("ricetta") { type = NavType.StringType }))
+        {
             backStackEntry ->
 
             RicettaDetail(model, navController, backStackEntry.arguments?.getString("ricetta"))
