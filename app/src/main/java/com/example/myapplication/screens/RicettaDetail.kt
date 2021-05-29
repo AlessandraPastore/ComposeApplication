@@ -1,11 +1,11 @@
 package com.example.myapplication.screens
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -66,6 +67,31 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                    ){
+                        for(item in ricettaCompleta!!.filtri){
+                            Box(
+                                modifier = Modifier.padding(5.dp)
+                            ){
+                                Text(
+                                    text = item.name,
+                                    style = MaterialTheme.typography.caption,
+                                    fontWeight = FontWeight.Bold,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.background(
+                                        color = colors.secondary,
+                                        shape = RoundedCornerShape(15.dp)
+                                    ).padding(7.dp)
+                                )
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -128,7 +154,7 @@ fun FadingTopBar(
                     //fade della topBar
                     kotlin.math.max(
                         0f,
-                        scrollState.value / (scrollState.maxValue.toFloat() / 3)
+                        scrollState.value / (scrollState.maxValue.toFloat())
                     )
                 )
                 .height(56.dp)

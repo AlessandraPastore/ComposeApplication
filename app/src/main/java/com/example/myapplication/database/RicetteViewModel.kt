@@ -34,10 +34,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         ricDao.deleteRicetta(_ricettaSelezionata.value!!)
 
-
-
-
-
         listing.forEach{
             if(ricDao.numberIngInIngreRicetta(it.ingrediente)==0)
                 ricDao.deleteIngrFromName(it.ingrediente)
@@ -147,7 +143,19 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaCompleta.value!!.titolo = titolo
         _ricettaCompleta.value!!.descrizione = ricDao.showRicettaCompleta(titolo).descrizione
         _ricettaCompleta.value!!.ingredienti = ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
-        //ricettaCompleta.filtri = manca getFiltriRic
+
+        //conversione categoria -> filtro
+        val categoriaList = ricDao.allCatFromRecipe(titolo)
+        val filterList = getFilters()
+        val tmp = mutableListOf<Filtro>()
+
+        for(filter in filterList) {
+            for (cat in categoriaList) {
+                if (cat.categoria.equals(filter.name)) tmp.add(filter)
+            }
+        }
+
+        _ricettaCompleta.value!!.filtri = tmp
 
     }
 

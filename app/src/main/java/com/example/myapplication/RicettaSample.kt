@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import com.example.myapplication.database.Categoria
 import com.example.myapplication.database.Ingrediente
 import com.example.myapplication.database.IngredienteRIcetta
 
