@@ -2,7 +2,6 @@ package com.example.myapplication.database
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.AndroidViewModel
@@ -32,8 +31,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.updateRicettaPreview(ric)
     }
 
-    fun onRicettaDelete(ric: RicettePreview)=viewModelScope.launch (Dispatchers.IO){
-        ricDao.deleteRicetta(ric)
+    fun onRicettaDelete()=viewModelScope.launch (Dispatchers.IO){
+        ricDao.deleteRicetta(_ricettaSelezionata.value!!)
     }
 
     //aggiunge la ricetta salvata in _ricettaVuota
@@ -146,6 +145,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     }
 
+    private val _ricettaSelezionata = MutableLiveData(RicettePreview("",false))
+    val ricettaSelezionata: LiveData<RicettePreview> = _ricettaSelezionata
+
+    fun selectRicetta(ricetta : RicettePreview){
+        _ricettaSelezionata.value = ricetta
+        Log.d("test", _ricettaSelezionata.value.toString() )
+    }
 
     /*
     private val _titolo = MutableLiveData("")
@@ -214,12 +220,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _searching.value = status
     }
 
-    fun onLongPress(status: Boolean){
+    //si usa solo on invert
+    /*fun onLongPress(status: Boolean){
         _longPressed.value = status
-    }
+        Log.d("test", "onlong"+_longPressed.value.toString())
+    }*/
 
-    fun onInvertPress(){
+    fun onInvertPress() {
         _longPressed.value = _longPressed.value != true
+        Log.d("test", "oninv"+_longPressed.value.toString() )
+
     }
 
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){

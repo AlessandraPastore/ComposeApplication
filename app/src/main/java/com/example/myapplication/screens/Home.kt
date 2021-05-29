@@ -14,7 +14,6 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -49,7 +47,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress(model, onLongPress = {model.onLongPress(false)})
+                longPressed -> LongPress(model, onLongPress = {model.onInvertPress()})
                 searching -> Searching(onSearch = {model.onSearch(false)})
                 else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)})
             }
@@ -184,6 +182,9 @@ fun Searching(onSearch: () -> Unit) {
 // se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
 fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
+
+    //val ricetta = model.ricettaSelezionata.observeAsState()
+
     TopAppBar(
         title = {
             Text(text = stringResource(R.string.selected))
@@ -199,7 +200,9 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
             IconButton(onClick = {  }) {
                 Icon(Icons.Rounded.Create, contentDescription = "")
             }
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+                model.onRicettaDelete()
+            }) {
                 Icon(Icons.Rounded.Delete, contentDescription = "")
             }
         }
@@ -211,15 +214,22 @@ fun LongPress(model: RicetteViewModel, onLongPress: () -> Unit) {
 fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, onLongPress: (Offset) -> Unit) {
 
     val scope = rememberCoroutineScope()
+    val longPressed by model.longPressed.observeAsState()
+    val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
+
+    var color : Color
+    //if(longPressed == true) color = MaterialTheme.colors.secondary
 
     LazyColumn {
         items(ricette) {   ricetta ->
 
             val checked = ricetta.preferito
+            if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) color = MaterialTheme.colors.secondary
+            else color = MaterialTheme.colors.surface
 
             //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
-                    //backgroundColor = MaterialTheme.colors.primary,
+                    backgroundColor = color,
                     elevation = 5.dp,
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
@@ -231,9 +241,17 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                                 detectTapGestures(
                                     onTap = {
                                         model.getRicetta(ricetta.titolo)
+                                        model.selectRicetta(ricetta)
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
                                     },
-                                    onLongPress = onLongPress
+                                    onLongPress = {
+                                        //onLongPress tolto perchè devo chiamare selectRic sorry
+                                        model.onInvertPress()
+                                        if (longPressed == true)
+                                            model.selectRicetta(ricetta)
+                                        else
+                                            model.selectRicetta(RicettePreview("",false))
+                                    }
                                 )
                             }
                         }
@@ -252,6 +270,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             modifier = Modifier
                                 .padding(start = 12.dp)
                                 .align(Alignment.CenterVertically)
+                                //.background(color)
                         ) {
                             Text(
                                 text = ricetta.titolo,
