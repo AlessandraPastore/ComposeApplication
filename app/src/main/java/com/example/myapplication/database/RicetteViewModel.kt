@@ -2,11 +2,13 @@ package com.example.myapplication.database
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.Filtro
+import com.example.myapplication.R
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
@@ -213,7 +215,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onInvertPress() {
         _longPressed.value = _longPressed.value != true
-        Log.d("test", "oninv"+_longPressed.value.toString() )
     }
 
     fun getLongPressed(): Boolean {
@@ -221,8 +222,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     // Chiamata al click del bottone Applica nel menù dei filtri
-    fun onApplicaClick(){
-        onHomeClick()
+    fun onApplicaClick(tipologia: String){
+
+        if(tipologia.equals("home"))
+            onHomeClick()
+        else
+            onPreferitiClick()
+
         onExpand(false)
     }
 
@@ -230,6 +236,11 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onBinClick(){
         onRicettaDelete()
         onInvertPress()
+    }
+
+    fun onDisplaySearch(titolo: String){
+        ricette = ricDao.getRicByName(titolo)
+        //onSearch(false)
     }
 
 

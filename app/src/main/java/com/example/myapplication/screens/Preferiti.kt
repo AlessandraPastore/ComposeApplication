@@ -11,20 +11,9 @@ import com.example.myapplication.database.RicetteViewModel
 
 
 @Composable
-fun Preferiti(model: RicetteViewModel, navController: NavController, tipologia: String = "Preferiti"){
+fun Preferiti(model: RicetteViewModel,
+              navController: NavController,
+              tipologia: String = stringResource(R.string.preferiti)){
 
     Home(model, navController, tipologia)
-
-    /*
-    Scaffold(
-        topBar = {
-            TopAppBar(title = {
-                Text(text = stringResource(R.string.preferiti))
-            })
-        }
-    ){
-        Text(stringResource(R.string.preferiti))
-    }
-
-     */
 }

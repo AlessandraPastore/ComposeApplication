@@ -34,7 +34,7 @@ import com.example.myapplication.getFilters
 
 
 @Composable
-fun Home(model: RicetteViewModel, navController: NavController, tipologia: String = "Home") {
+fun Home(model: RicetteViewModel, navController: NavController, tipologia: String = stringResource(R.string.home)) {
 
     val ricette by model.ricette.observeAsState()
 
@@ -46,8 +46,8 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
         topBar = {
             when{
                 longPressed -> LongPress( onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()})
-                searching -> Searching(onSearch = {model.onSearch(false)})
-                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick()})
+                searching -> Searching(model, navController) { model.onSearch(false) }
+                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
         },
     )
@@ -150,9 +150,8 @@ fun DropDown(
 
 // Funzione che gestisce l'icona della ricerca
 @Composable
-fun Searching(onSearch: () -> Unit) {
+fun Searching(model: RicetteViewModel, navController: NavController, onSearch: () -> Unit) {
 
-    // Forse hoisting? Provare stringa
     val input = remember{ mutableStateOf(TextFieldValue())}
 
         Row(
@@ -160,22 +159,38 @@ fun Searching(onSearch: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.background(Color.Transparent)
         ){
-            IconButton(onClick = onSearch)
+            // Bottone <-: premendolo si esce dalla ricerca
+            IconButton(onClick = {
+                model.onSearch(false)
+                model.onHomeClick()
+                navController.navigate(Screen.Home.route)
+            }
+            )
             {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
+
+            // TextField in cui memorizzare il testo digitato dall'utente
             OutlinedTextField(
                 value = input.value,
                 onValueChange = {
-                    if(it.text.length <= 20) input.value = it
+                    if(it.text.length <= 20)
+                        input.value = it
                                 },
-                placeholder = {Text(text = "Search")},
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                trailingIcon = {Icon(Icons.Rounded.Search, contentDescription = "")},
+                placeholder = { Text(stringResource(R.string.Search)) },
+                modifier = Modifier.padding(10.dp),
                 singleLine = true,
             )
+
+            // Bottone "lente d'ingrandimento" per avviare la ricerca
+            IconButton(onClick = {
+                model.onDisplaySearch(input.value.text + "%")
+                navController.navigate(Screen.Home.route)
+            }) {
+                Icon(Icons.Rounded.Search, contentDescription = "")
+
+                Log.d("Search",input.value.text)
+            }
         }
 }
 
@@ -248,49 +263,32 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             detectTapGestures(
                                 onTap = {
 
-                                    /*
-                                    if(longPressed){
-                                        if(ricettaSelezionata?.titolo.equals(ricetta.titolo) ) {
-                                            model.selectRicetta(ricetta)
-                                            model.getRicetta(ricetta.titolo)
-                                            model.onInvertPress()
+                                    //Log.d("Tap",longPressed.toString())
 
-                                            navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                        }
-                                    }
-                                    else{
-                                        navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                    }
-                                     */
-
-                                    Log.d("Tap",longPressed.toString())
-
-                                    if(!model.getLongPressed()) {
+                                    if (!model.getLongPressed()) {
                                         model.selectRicetta(ricetta)
                                         model.getRicetta(ricetta.titolo)
 
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
-                                    }
-                                    else{
-                                        if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
-                                            model.onInvertPress()
-                                            model.resetSelection()
-                                        }
+                                    } else {
+                                        //if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
+                                        model.onInvertPress()
+                                        model.resetSelection()
+                                        //}
                                     }
                                 },
                                 onLongPress = {
 
-                                    if(!model.getLongPressed()) {
+                                    if (!model.getLongPressed()) {
                                         model.onInvertPress()
                                         model.selectRicetta(ricetta)
-                                    }
-                                    else {
-                                        if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
+                                    } else {
+                                        if (ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
                                             model.onInvertPress()
                                             model.resetSelection()
                                         }
                                     }
-                                    Log.d("Tap",longPressed.toString())
+                                    Log.d("Tap", longPressed.toString())
                                 }
                             )
                         }

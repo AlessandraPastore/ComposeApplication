@@ -68,7 +68,7 @@ interface DaoRicette {
     //es utente inserisce carb
     //al metodo passiamo carb%
     @Query ("SELECT * from RicettePreview where titolo LIKE :nome ")
-    fun getRicByName(nome:String):LiveData<List<RicettePreview>?>
+    fun getRicByName(nome:String):LiveData<List<RicettePreview>>
 
     //lista ingredienti di una ricetta
     @Query("Select Distinct * from IngredienteRIcetta where titolo=:ricetta")
