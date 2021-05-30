@@ -33,8 +33,9 @@ import com.example.myapplication.database.RicetteViewModel
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
 
-    val ricettaCompleta by model.ricettaCompleta.observeAsState()
+    //val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
+    val ricettaCompleta = model.getRicettaCompleta()
 
     val scrollState = rememberScrollState()
 

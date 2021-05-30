@@ -55,6 +55,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
     val openDialog = remember { mutableStateOf(false)  }
     val scope = rememberCoroutineScope()
+    var error:String
 
     FloatingActionButton(
         onClick = {
@@ -70,7 +71,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
             }
             else{
 
-                val error = model.onRicettaAddVerify()
+                error = model.onRicettaAddVerify()
                 Log.d("test", error)
 
                 if(!error.equals("")) openDialog.value = true
@@ -78,19 +79,16 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
                     //se era una modifica bisogna resettare le variabili e cancellarla prima
                     if(model.getModify()){
-                        model.modifyRecipe()
-                        model.resetComplete()
-                        model.onRicettaDelete()//devo cancellarla
+                        model.addModify()
                         Log.d("test","cancellata")
                     }
 
                     scope.launch {
-                        delay(1000)
-                        //devo fare delay prima di chiamarlo
-                        model.onRicettaAdd()                //ERRORE STRANO SE MODIFICA
+                        delay(1000)  //aspetto che faccia il delete, non so ancora un modo migliore
+                        model.onRicettaAdd()                //ERRORE su dispositivi lenti
                     }
 
-
+                    model.restartFilters()
                     navController.navigate(Screen.Home.route){
 
                         popUpTo = navController.graph.startDestination

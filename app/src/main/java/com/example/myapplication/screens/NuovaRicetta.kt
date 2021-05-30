@@ -22,6 +22,8 @@ import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 // Cornice per lo schermo
@@ -36,11 +38,20 @@ fun NuovaRicetta(
     var filterList = mutableListOf<Filtro>()
     var titolo = stringResource(R.string.nuova)
 
-    val modify = model.getModify()
-    val ricettaCompleta by model.ricettaCompleta.observeAsState()
+    val scope = rememberCoroutineScope()
 
-    if(modify)
+    val modify = model.getModify()
+    //val ricettaCompleta by model.ricettaCompleta.observeAsState()
+    val ricettaCompleta = model.getRicettaCompleta()
+
+    if(modify) {
         titolo = stringResource(R.string.modifica)
+        model.onTitoloInsert(ricettaCompleta.titolo)
+        model.onDescrizioneInsert(ricettaCompleta.descrizione)
+        model.onIngredientsInsert(ricettaCompleta.ingredienti)
+        model.onFilterInsert(ricettaCompleta.filtri)
+    }
+
 
 
     Scaffold(
@@ -50,6 +61,8 @@ fun NuovaRicetta(
                 navigationIcon = {
                     IconButton(onClick = {
                         model.restartFilters()  //toglie i check dai filtri
+                        if(modify)
+                            model.resetModify()   //resetta la variabile
                         navController.navigate(Screen.Home.route){
 
                             popUpTo = navController.graph.startDestination
@@ -61,17 +74,18 @@ fun NuovaRicetta(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = "")
                     }
                 },
+                //scope per i filtri
                 actions = {
                     IconButton(onClick = { model.onExpand(true) }) {
                         Icon(Icons.Rounded.FilterAlt,"")
                     }
                     if(modify)
                     {
-                        filterList = ricettaCompleta!!.filtri
-                        model.onFilterInsert(filterList)
+                        filterList = ricettaCompleta.filtri
+                        //model.onFilterInsert(filterList)
                     }
 
-                    Log.d("test", ricettaCompleta!!.filtri.toString())
+                    Log.d("test", ricettaCompleta.filtri.toString())
                     ShowFilters(model, filtri,filterList, expanded) { model.onExpand(false) }
                 }
 
@@ -134,7 +148,7 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
             for(item in ricettaCompleta!!.ingredienti){
                 listState.add(item)
             }
-            model.onIngredientsInsert(listState)
+            //model.onIngredientsInsert(listState)
         }
 
         Column(
@@ -201,29 +215,32 @@ fun MyTextField(
     val titolo = stringResource(R.string.titolo)
     var readOnly = false
 
-    val title = remember{ mutableStateOf(TextFieldValue()) }
+    //val title = remember{ mutableStateOf(TextFieldValue()) }
+    var title = remember{mutableStateOf("")}
 
     if(modify) {
         if(str.equals(titolo)){
-            title.value = TextFieldValue(ricettaCompleta!!.titolo)
-            model.onTitoloInsert(title.value.text)
+            //title.value = TextFieldValue(ricettaCompleta!!.titolo)
+            title = remember {mutableStateOf(ricettaCompleta!!.titolo)}
+            //model.onTitoloInsert(title.value.text)
             readOnly = true
         }
-        //else
-            //title.value = TextFieldValue(ricettaCompleta!!.descrizione)
+        else
+            title = remember {mutableStateOf(ricettaCompleta!!.descrizione)}
+
     }
 
 
     OutlinedTextField(
         value = title.value,
         onValueChange = {
-            if(it.text.length <= max)
+            if(it.length <= max)
                 title.value = it
 
             if(str.equals(titolo))
-                model.onTitoloInsert(title.value.text)
+                model.onTitoloInsert(title.value)
             else
-                model.onDescrizioneInsert(title.value.text)
+                model.onDescrizioneInsert(title.value)
         },
         readOnly = readOnly,  //readOnly se siamo in Modifica
         placeholder = {Text(text = "Inserire $str")},

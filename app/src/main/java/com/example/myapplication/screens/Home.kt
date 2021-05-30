@@ -31,6 +31,8 @@ import com.example.myapplication.Screen
 import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.getFilters
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -45,7 +47,7 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
     Scaffold(
         topBar = {
             when{
-                longPressed -> LongPress( onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()})
+                longPressed -> LongPress(navController, onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()}, onModify = {model.modifyRecipe()})
                 searching -> Searching(model, navController) { model.onSearch(false) }
                 else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
@@ -157,7 +159,7 @@ fun Searching(model: RicetteViewModel, navController: NavController, onSearch: (
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(Color.Transparent)
+            modifier = Modifier.background(Color.Transparent).fillMaxWidth()
         ){
             // Bottone <-: premendolo si esce dalla ricerca
             IconButton(onClick = {
@@ -178,7 +180,7 @@ fun Searching(model: RicetteViewModel, navController: NavController, onSearch: (
                         input.value = it
                                 },
                 placeholder = { Text(stringResource(R.string.Search)) },
-                modifier = Modifier.padding(10.dp),
+                //modifier = Modifier.padding(10.dp),
                 singleLine = true,
             )
 
@@ -186,8 +188,10 @@ fun Searching(model: RicetteViewModel, navController: NavController, onSearch: (
             IconButton(onClick = {
                 model.onDisplaySearch(input.value.text + "%")
                 navController.navigate(Screen.Home.route)
-            }) {
-                Icon(Icons.Rounded.Search, contentDescription = "")
+            }
+            )
+            {
+                Icon(Icons.Rounded.Search, contentDescription = null)
 
                 Log.d("Search",input.value.text)
             }
@@ -198,7 +202,9 @@ fun Searching(model: RicetteViewModel, navController: NavController, onSearch: (
 // Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
 // se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
-fun LongPress(onLongPress: () -> Unit, onBinClick: () -> Unit) {
+fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick: () -> Unit, onModify: () -> Unit) {
+
+    val scope = rememberCoroutineScope()
 
     TopAppBar(
         title = {
@@ -216,7 +222,22 @@ fun LongPress(onLongPress: () -> Unit, onBinClick: () -> Unit) {
         actions = {
 
             // Bottone della matita
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+
+                scope.launch{
+                    onModify()
+                    delay(1000)
+                }
+
+
+                navController.navigate(Screen.NuovaRicetta.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+
+                }
+
+            }) {
                 Icon(Icons.Rounded.Create, contentDescription = "")
             }
 

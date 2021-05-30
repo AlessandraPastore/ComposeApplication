@@ -104,14 +104,17 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onDescrizioneInsert(descrizione: String){
         _ricettaVuota.value!!.descrizione = descrizione
+        Log.d("doge", _ricettaVuota.value!!.descrizione )
     }
 
     fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
         _ricettaVuota.value!!.ingredienti = ingList
+        Log.d("doge", _ricettaVuota.value!!.ingredienti.toString() )
     }
 
     fun onFilterInsert(filterList : MutableList<Filtro>){
         _ricettaVuota.value!!.filtri = filterList
+        Log.d("doge", _ricettaVuota.value!!.filtri.toString() )
     }
 
     fun restartFilters(){
@@ -124,6 +127,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
     val ricettaCompleta: LiveData<RicettaSample> = _ricettaCompleta
 
+    //inserisce in ricetta completa le informazioni della ricetta passata
     fun getRicetta(titolo:String)=viewModelScope.launch (Dispatchers.IO) {
 
         _ricettaCompleta.value!!.titolo = titolo
@@ -143,6 +147,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         _ricettaCompleta.value!!.filtri = tmp
 
+    }
+
+    fun getRicettaCompleta():RicettaSample{
+        return _ricettaCompleta.value!!
     }
 
     fun resetComplete(){
@@ -250,11 +258,24 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     val modify: LiveData<Boolean> = _modify
 
     fun modifyRecipe(){
+        resetModify()
+        getRicetta(_ricettaSelezionata.value!!.titolo)
+        onInvertPress()
+    }
+
+    fun resetModify(){
         _modify.value = !_modify.value!!
     }
 
     fun getModify(): Boolean {
         return _modify.value!!
+    }
+
+    fun addModify(){
+        modifyRecipe()
+        resetComplete()
+        onRicettaDelete()
+        onInvertPress()
     }
 
     fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
