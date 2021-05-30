@@ -263,9 +263,9 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                                     }
                                      */
 
-                                    Log.d("Test",longPressed.toString())
+                                    Log.d("Tap",longPressed.toString())
 
-                                    if(!longPressed) {
+                                    if(!model.getLongPressed()) {
                                         model.selectRicetta(ricetta)
                                         model.getRicetta(ricetta.titolo)
 
@@ -280,14 +280,17 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                                 },
                                 onLongPress = {
 
-                                    if(!longPressed) {
+                                    if(!model.getLongPressed()) {
                                         model.onInvertPress()
                                         model.selectRicetta(ricetta)
                                     }
-                                    else if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
-                                        model.onInvertPress()
-                                        model.resetSelection()
+                                    else {
+                                        if(ricettaSelezionata?.titolo.equals(ricetta.titolo)) {
+                                            model.onInvertPress()
+                                            model.resetSelection()
+                                        }
                                     }
+                                    Log.d("Tap",longPressed.toString())
                                 }
                             )
                         }

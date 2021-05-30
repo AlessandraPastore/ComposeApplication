@@ -216,6 +216,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         Log.d("test", "oninv"+_longPressed.value.toString() )
     }
 
+    fun getLongPressed(): Boolean {
+        return _longPressed.value!!
+    }
+
     // Chiamata al click del bottone Applica nel menù dei filtri
     fun onApplicaClick(){
         onHomeClick()
