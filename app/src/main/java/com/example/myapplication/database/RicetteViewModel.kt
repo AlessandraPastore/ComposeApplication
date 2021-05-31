@@ -15,6 +15,8 @@ import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 // AndroidViewModel è sottoclasse di ViewModel
 class RicetteViewModel(application: Application):AndroidViewModel(application) {
@@ -44,23 +46,34 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
 
     }
-
+    private val lock= Mutex()
     //aggiunge la ricetta salvata in _ricettaVuota
-    fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO){
+    fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
+        lock.withLock {
 
+            ricDao.insertRicettaPreview(RicettePreview(_ricettaVuota.value!!.titolo, false))
+            ricDao.insertRicettaCompleta(
+                RicettaCompleta(
+                    _ricettaVuota.value!!.titolo,
+                    _ricettaVuota.value!!.descrizione
+                )
+            )
 
-        ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
-        ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
+            _ricettaVuota.value!!.filtri.forEach { filtro ->
+                ricDao.insertRicetteCategoria(
+                    RicettaCategorie(
+                        _ricettaVuota.value!!.titolo,
+                        filtro.name
+                    )
+                )
+            }
 
-        _ricettaVuota.value!!.filtri.forEach{ filtro ->
-            ricDao.insertRicetteCategoria(RicettaCategorie(_ricettaVuota.value!!.titolo, filtro.name))
-        }
+            _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
+                //ingrediente.titolo = _ricettaVuota.value!!.titolo
 
-        _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
-            //ingrediente.titolo = _ricettaVuota.value!!.titolo
-
-            ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
-            ricDao.insertIngredienteRicetta(ingrediente)
+                ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
+                ricDao.insertIngredienteRicetta(ingrediente)
+            }
         }
     }
 
