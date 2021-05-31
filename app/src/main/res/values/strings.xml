@@ -15,6 +15,9 @@
     // Placeholder della textfield per la ricerca
     <string name="Search">Search</string>
 
+    // Testo del bottone Applica nel menù dei filtri
+    <string name="Applica">Applica</string>
+
     <string name="selected">Ricetta selezionata</string>
 
     <string name="titolo">Titolo</string>

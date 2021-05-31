@@ -12,8 +12,9 @@ import com.example.myapplication.database.RicetteViewModel
 
 @Composable
 fun Preferiti(model: RicetteViewModel,
-              navController: NavController,
-              tipologia: String = stringResource(R.string.preferiti)){
+              navController: NavController){
 
-    Home(model, navController, tipologia)
+    model.updateTipologia(true)
+
+    Home(model, navController)
 }

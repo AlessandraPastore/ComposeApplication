@@ -36,9 +36,20 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun Home(model: RicetteViewModel, navController: NavController, tipologia: String = stringResource(R.string.home)) {
+fun Home(model: RicetteViewModel, navController: NavController) {
 
     val ricette by model.ricette.observeAsState()
+
+    val isPreferiti = model.getTipologia()
+
+    var tipologia: String? = "DIO"
+
+    if(isPreferiti != null) {
+        if (isPreferiti)
+            tipologia = "Preferiti"
+        else
+            tipologia = "Home"
+    }
 
     val expanded by model.expanded.observeAsState(false)
     val searching by model.searching.observeAsState(false)
@@ -48,8 +59,8 @@ fun Home(model: RicetteViewModel, navController: NavController, tipologia: Strin
         topBar = {
             when{
                 longPressed -> LongPress(navController, onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()}, onModify = {model.modifyRecipe()})
-                searching -> Searching(model, navController) { model.onSearch(false) }
-                else -> TopBar(navController , model, tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
+                searching -> Searching(model, navController, tipologia as String) { model.onSearch(false) }
+                else -> TopBar(navController , model, tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
         },
     )
@@ -85,6 +96,7 @@ fun TopBar(
                 Icon(Icons.Rounded.FilterAlt, contentDescription = "")
             }
             DropDown(
+                model,
                 navController,
                 filtri,
                 tipologia,
@@ -99,6 +111,7 @@ fun TopBar(
 // Funzione che gestisce l'icona del filtro
 @Composable
 fun DropDown(
+    model: RicetteViewModel,
     navController: NavController,
     filtri: List<Filtro>,
     tipologia: String,
@@ -135,39 +148,50 @@ fun DropDown(
 
         Button(onClick = {
 
-            onApplicaClick()
+            //onApplicaClick()
 
-            if(tipologia == "Home")
+            if(tipologia == "Home") {
+                model.onHomeClick()
                 navController.navigate(Screen.Home.route)
-            else
+            }
+            else {
+                model.onPreferitiClick()
                 navController.navigate(Screen.Preferiti.route)
+            }
+
+            model.onExpand(false)
 
         }) {
-            Text("Applica")
+            Text(stringResource(R.string.Applica))
         }
-
-
     }
 }
 
 // Funzione che gestisce l'icona della ricerca
 @Composable
-fun Searching(model: RicetteViewModel, navController: NavController, onSearch: () -> Unit) {
+fun Searching(model: RicetteViewModel, navController: NavController,  tipologia: String, onSearch: () -> Unit) {
 
     val input = remember{ mutableStateOf(TextFieldValue())}
+
+    val openDialog = remember { mutableStateOf(false)  }
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(Color.Transparent).fillMaxWidth()
+            modifier = Modifier
+                .background(Color.Transparent)
+                .fillMaxWidth()
         ){
             // Bottone <-: premendolo si esce dalla ricerca
             IconButton(onClick = {
-                model.onSearch(false)
-                model.onHomeClick()
-                navController.navigate(Screen.Home.route)
-            }
-            )
+
+                model.onBackFromSearch(tipologia)
+
+                if(tipologia == "Home")
+                    navController.navigate(Screen.Home.route)
+                else
+                    navController.navigate(Screen.Preferiti.route)
+            })
             {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
@@ -180,27 +204,48 @@ fun Searching(model: RicetteViewModel, navController: NavController, onSearch: (
                         input.value = it
                                 },
                 placeholder = { Text(stringResource(R.string.Search)) },
-                //modifier = Modifier.padding(10.dp),
                 singleLine = true,
             )
 
             // Bottone "lente d'ingrandimento" per avviare la ricerca
             IconButton(onClick = {
-                model.onDisplaySearch(input.value.text + "%")
-                navController.navigate(Screen.Home.route)
-            }
-            )
+
+                if(!input.value.text.contains("%")) {
+                    model.onDisplaySearch(tipologia, input.value.text + "%")
+
+                    if (tipologia == "Home")
+                        navController.navigate(Screen.Home.route)
+                    else
+                        navController.navigate(Screen.Preferiti.route)
+                }
+                else{
+                    openDialog.value = true
+                }
+            })
             {
                 Icon(Icons.Rounded.Search, contentDescription = null)
+            }
 
-                Log.d("Search",input.value.text)
+            if(openDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { openDialog.value = false },
+                    title = { Text(text = "Errore nei caratteri inseriti") },
+                    text = { Text(text = "Non è possibile usare il carattere % per la ricerca") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                openDialog.value = false
+                            }) {
+                            Text("Capito")
+                        }
+                    },
+                    backgroundColor = MaterialTheme.colors.background
+                )
             }
         }
 }
 
 // Funzione che gestisce il longPress di una determinaata ricetta.
-// Ho notato che dopo aver premuto una ricetta, se si ripreme la stessa ricetta o
-// se ne preme un'altra, lo stato di longPressed cambia: bug o feature?
 @Composable
 fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick: () -> Unit, onModify: () -> Unit) {
 
@@ -328,7 +373,6 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             modifier = Modifier
                                 .padding(start = 12.dp)
                                 .align(Alignment.CenterVertically)
-                            //.background(color)
                         ) {
                             Text(
                                 text = ricetta.titolo,

@@ -47,7 +47,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO){
 
 
-
         ricDao.insertRicettaPreview(RicettePreview( _ricettaVuota.value!!.titolo , false))
         ricDao.insertRicettaCompleta(RicettaCompleta( _ricettaVuota.value!!.titolo , _ricettaVuota.value!!.descrizione))
 
@@ -66,6 +65,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAddVerify():String{
 
         if(_ricettaVuota.value!!.titolo.isBlank()) return "titolo"
+        if(_ricettaVuota.value!!.titolo.contains("%")) return "titolo"
         if(_ricettaVuota.value!!.descrizione.isBlank()) return "descrizione"
         if(_ricettaVuota.value!!.filtri.isEmpty()) return "filtri"
         if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "ingredienti"
@@ -246,9 +246,21 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onInvertPress()
     }
 
-    fun onDisplaySearch(titolo: String){
-        ricette = ricDao.getRicByName(titolo)
-        //onSearch(false)
+    fun onDisplaySearch(tipologia: String, titolo: String) {
+
+        if (tipologia.equals("Home"))
+            ricette = ricDao.getRicByName(titolo)
+        else
+            ricette = ricDao.getRicPreferitiByName(titolo)
+    }
+
+    fun onBackFromSearch(tipologia: String){
+        onSearch(false)
+
+        if(tipologia.equals("Home"))
+            onHomeClick()
+        else
+            onPreferitiClick()
     }
 
 
@@ -284,6 +296,18 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun delete(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
         ricDao.deleteIngr(ingrediente)
+    }
+
+    private var _isPreferiti = MutableLiveData(false)
+    val isPreferiti: LiveData<Boolean> = _isPreferiti
+
+    fun getTipologia(): Boolean?
+    {
+        return _isPreferiti.value
+    }
+
+    fun updateTipologia(status: Boolean){
+        _isPreferiti.value = status
     }
 
 }

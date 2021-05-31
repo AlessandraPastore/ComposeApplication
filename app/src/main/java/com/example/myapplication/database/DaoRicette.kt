@@ -70,6 +70,10 @@ interface DaoRicette {
     @Query ("SELECT * from RicettePreview where titolo LIKE :nome ")
     fun getRicByName(nome:String):LiveData<List<RicettePreview>>
 
+    @Query ("SELECT * from RicettePreview where titolo LIKE :nome and preferito=1")
+    fun getRicPreferitiByName(nome:String):LiveData<List<RicettePreview>>
+
+
     //lista ingredienti di una ricetta
     @Query("Select Distinct * from IngredienteRIcetta where titolo=:ricetta")
     suspend fun IngrOfRecipe(ricetta:String):List<IngredienteRIcetta>

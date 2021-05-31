@@ -33,6 +33,17 @@ import com.example.myapplication.database.RicetteViewModel
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
 
+    val isPreferiti = model.getTipologia()
+
+    var tipologia: String? = "Home"
+
+    if(isPreferiti != null) {
+        if (isPreferiti)
+            tipologia = "Preferiti"
+        else
+            tipologia = "Home"
+    }
+
     //val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
     val ricettaCompleta = model.getRicettaCompleta()
@@ -133,7 +144,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 
 
             }
-            FadingTopBar(model, scrollState, navController)
+            FadingTopBar(model, scrollState, navController, tipologia as String)
         }
 
     }
@@ -145,7 +156,8 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 fun FadingTopBar(
     model: RicetteViewModel,
     scrollState: ScrollState,
-    navController: NavController
+    navController: NavController,
+    tipologia:String
 ){
     Box(){
         Box(
@@ -167,12 +179,31 @@ fun FadingTopBar(
                 //model.selectRicetta(RicettePreview("",false))
                 model.resetSelection()
                 model.resetComplete()
+
+                if(tipologia == "Home") {
+                    model.onHomeClick()
+                    navController.navigate(Screen.Home.route){
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
+                    }
+
+                }
+                else {
+                    model.onPreferitiClick()
+                    navController.navigate(Screen.Preferiti.route){
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
+                    }
+                }
+                /*
                 navController.navigate(Screen.Home.route){
 
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
 
                 }
+
+                 */
             },
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -185,12 +216,30 @@ fun FadingTopBar(
                 model.onRicettaDelete()
                 model.resetComplete()
 
+                if(tipologia == "Home") {
+                    model.onHomeClick()
+                    navController.navigate(Screen.Home.route){
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
+                    }
+
+                }
+                else {
+                    model.onPreferitiClick()
+                    navController.navigate(Screen.Preferiti.route){
+                        popUpTo = navController.graph.startDestination
+                        launchSingleTop = true
+                    }
+                }
+                /*
                 navController.navigate(Screen.Home.route){
 
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
 
                 }
+
+                 */
                 //model.resetSelection()
 
             },

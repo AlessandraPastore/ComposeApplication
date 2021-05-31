@@ -33,6 +33,7 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
 
+
     Scaffold(
         floatingActionButton = {
             if(currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
@@ -159,6 +160,8 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     onClick = {
 
                         model.onHomeClick()     // Carico tutte le ricette
+
+                        model.updateTipologia(false)
 
                         navController.navigate(home) {
                             popUpTo = navController.graph.startDestination
