@@ -2,6 +2,7 @@ package com.example.myapplication.database
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -13,6 +14,7 @@ import com.example.myapplication.RicettaSample
 import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // AndroidViewModel è sottoclasse di ViewModel
 class RicetteViewModel(application: Application):AndroidViewModel(application) {
@@ -308,6 +310,34 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun updateTipologia(status: Boolean){
         _isPreferiti.value = status
+    }
+
+    val listaCarrello: LiveData<List<Ingrediente>?> = ricDao.getAllIngrIncarrello()
+
+    fun getCarrello(): List<Ingrediente>? {
+        return listaCarrello.value!!
+    }
+
+    fun isInCarrello(ingrediente:String): Boolean {
+        var valore = false
+
+        runBlocking {
+            valore = ricDao.inCarrello(ingrediente)
+        }
+
+        return valore
+    }
+
+    fun updateCarrello(ingrediente: String, status: Boolean)=viewModelScope.launch (Dispatchers.IO) {
+        ricDao.updateCarrello(Ingrediente(ingrediente, status))
+    }
+
+    fun addCarrello(ingrediente: String)=viewModelScope.launch (Dispatchers.IO){
+        ricDao.updateCarrello(Ingrediente(ingrediente, true))
+    }
+
+    fun removeCarrello(ingrediente: String)=viewModelScope.launch (Dispatchers.IO){
+        ricDao.updateCarrello(Ingrediente(ingrediente, false))
     }
 
 }

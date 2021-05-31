@@ -11,9 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,62 +20,72 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.database.RicetteViewModel
+import androidx.compose.runtime.livedata.observeAsState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @Composable
-fun RemoveCarrello() {
+fun RemoveCarrello(model: RicetteViewModel) {
 
-    var ingredientList = mutableListOf<String>("a","b","c","d","e","f","g","h","i","l")    //me la dovrà dare il viewModel
+    val ingredientList = model.listaCarrello.observeAsState()    //me la dovrà dare il viewModel
     val deletedIngredientList = remember { mutableStateListOf<String>() }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        itemsIndexed(items = ingredientList,
-            itemContent = { _, ingredient ->
+    val scope = rememberCoroutineScope()
 
-                AnimatedVisibility(
-                    visible = !deletedIngredientList.contains(ingredient),
-                    exit = shrinkVertically()
-                ) {
-                    Card(
-                        elevation = 5.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(start = 10.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
+    if(ingredientList.value != null) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            itemsIndexed(items = ingredientList.value!!,
+                itemContent = { _, ingredient ->
+
+                    AnimatedVisibility(
+                        visible = !deletedIngredientList.contains(ingredient),
+                        exit = shrinkVertically()
                     ) {
-                        Row(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Card(
+                            elevation = 5.dp,
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(start = 10.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
                         ) {
-                            Text(
-                                ingredient,
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    textAlign = TextAlign.Center
-                                ),
-                                modifier = Modifier.padding(16.dp)
-                            )
-                            IconButton(
-                                onClick = {
-                                    deletedIngredientList.add(ingredient)
-                                    //ingredientList.remove(ingredient)   //crash, ma tanto dovrà farlo il viewmodel questo
-                                }
+                            Row(
+                                modifier = Modifier.fillParentMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(Icons.Rounded.Delete,"")
+                                Text(
+                                    ingredient.ingrediente,
+                                    style = TextStyle(
+                                        fontSize = 20.sp,
+                                        textAlign = TextAlign.Center
+                                    ),
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                                IconButton(
+                                    onClick = {
+                                        scope.launch {
+                                            deletedIngredientList.add(ingredient.ingrediente)
+                                            model.updateCarrello(ingredient.ingrediente, false)}
+                                    }
+                                ) {
+                                    Icon(Icons.Rounded.Delete, "")
+                                }
                             }
                         }
                     }
-                }
-            })
-        item(){
-            Box(modifier = Modifier
-                .background(Color.Transparent)
-                .height(100.dp)
-                .fillMaxWidth()
-            ){}
+                })
+            item() {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .height(100.dp)
+                        .fillMaxWidth()
+                ) {}
+            }
         }
     }
 }

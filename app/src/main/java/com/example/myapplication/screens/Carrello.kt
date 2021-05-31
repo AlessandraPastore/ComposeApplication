@@ -7,11 +7,12 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.myapplication.R
+import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.RemoveCarrello
 
 @ExperimentalAnimationApi
 @Composable
-fun Carrello(){
+fun Carrello(model: RicetteViewModel){
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -19,7 +20,7 @@ fun Carrello(){
             })
         }
     ){
-        RemoveCarrello()
+        RemoveCarrello(model)
     }
 }
 

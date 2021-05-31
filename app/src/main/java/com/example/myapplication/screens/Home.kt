@@ -389,11 +389,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             IconToggleButton(
                                 checked = checked,
                                 onCheckedChange = {
-                                    model.onPreferitoChange(
-                                        ric = RicettePreview(
-                                            ricetta.titolo,
-                                            !checked
-                                        )
+                                    model.onPreferitoChange(ric = RicettePreview(ricetta.titolo, !checked)
                                     )
                                 }) {
                                 if (!checked) Icon(Icons.Rounded.FavoriteBorder, "")

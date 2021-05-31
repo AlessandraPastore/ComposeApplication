@@ -1,7 +1,7 @@
 package com.example.myapplication.screens
 
+import android.util.Log
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -9,10 +9,11 @@ import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -50,7 +51,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 
     val scrollState = rememberScrollState()
 
-    Scaffold(){
+    Scaffold{
         Box(modifier = Modifier.fillMaxSize()){
             Column(
                 modifier = Modifier
@@ -119,9 +120,8 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     Column {
 
                         for(item in ricettaCompleta!!.ingredienti){
-                            IngredientItem(item)
+                            IngredientItem(model, navController, item)
                         }
-
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -140,9 +140,6 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .fillMaxWidth()
                     )
                 }
-
-
-
             }
             FadingTopBar(model, scrollState, navController, tipologia as String)
         }
@@ -159,9 +156,8 @@ fun FadingTopBar(
     navController: NavController,
     tipologia:String
 ){
-    Box(){
+    Box{
         Box(
-
             modifier = Modifier
                 .fillMaxWidth()
                 .alpha(
@@ -195,15 +191,6 @@ fun FadingTopBar(
                         launchSingleTop = true
                     }
                 }
-                /*
-                navController.navigate(Screen.Home.route){
-
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
-
-                }
-
-                 */
             },
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -231,17 +218,6 @@ fun FadingTopBar(
                         launchSingleTop = true
                     }
                 }
-                /*
-                navController.navigate(Screen.Home.route){
-
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
-
-                }
-
-                 */
-                //model.resetSelection()
-
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -254,17 +230,34 @@ fun FadingTopBar(
 
 //mostra il singolo ingrediente comprendendo l'icona aggiungi a carrello
 @Composable
-fun IngredientItem(item: IngredienteRIcetta) {
+fun IngredientItem(model: RicetteViewModel, navController: NavController, item: IngredienteRIcetta) {
+
+    val checked = remember{ mutableStateOf(false)}
+
+    checked.value = model.isInCarrello(item.ingrediente)
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ){
-        Column(){
+        Column{
             Text(item.ingrediente)
             Text(item.qta)
         }
-        IconButton(onClick = { /*aggiunge ingrediente al carrello*/ }) {
-            Icon(Icons.Rounded.Add, "")
+        IconToggleButton(
+            checked = checked.value,
+            onCheckedChange = {
+                checked.value = !checked.value
+                model.updateCarrello(item.ingrediente, checked.value)
+        }) {
+            Log.d("Checked", checked.toString() + item.ingrediente)
+
+            if(checked.value) {
+                Icon(Icons.Rounded.Check, "")
+            }
+            else {
+                Icon(Icons.Rounded.Add, "")
+            }
         }
 
     }

@@ -58,8 +58,8 @@ interface DaoRicette {
     @Query("Select count(*) from Ingrediente")
     suspend fun countIngredienti():Int
 
-    @Query("Select *from Ingrediente where inCarrello=:inCarrello")
-    fun getAllIngrIncarrello(inCarrello :Boolean=true):LiveData<List<Ingrediente>?>
+    @Query("Select *from Ingrediente where inCarrello=1")
+    fun getAllIngrIncarrello():LiveData<List<Ingrediente>?>
 
     @Query("select * from RicettaCompleta where titolo=:titolo")
     suspend fun showRicettaCompleta(titolo:String) : RicettaCompleta
@@ -73,6 +73,8 @@ interface DaoRicette {
     @Query ("SELECT * from RicettePreview where titolo LIKE :nome and preferito=1")
     fun getRicPreferitiByName(nome:String):LiveData<List<RicettePreview>>
 
+    @Query ("SELECT inCarrello from Ingrediente where ingrediente=:ingrediente")
+    suspend fun inCarrello(ingrediente: String): Boolean
 
     //lista ingredienti di una ricetta
     @Query("Select Distinct * from IngredienteRIcetta where titolo=:ricetta")
