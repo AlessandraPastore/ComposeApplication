@@ -25,14 +25,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@ExperimentalAnimationApi
 @Composable
 fun RemoveCarrello(model: RicetteViewModel) {
 
     val ingredientList = model.listaCarrello.observeAsState()    //me la dovrà dare il viewModel
-    val deletedIngredientList = remember { mutableStateListOf<String>() }
-
-    val scope = rememberCoroutineScope()
 
     if(ingredientList.value != null) {
         LazyColumn(
@@ -41,39 +37,32 @@ fun RemoveCarrello(model: RicetteViewModel) {
             itemsIndexed(items = ingredientList.value!!,
                 itemContent = { _, ingredient ->
 
-                    AnimatedVisibility(
-                        visible = !deletedIngredientList.contains(ingredient),
-                        exit = shrinkVertically()
+                    Card(
+                        elevation = 5.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(start = 10.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
                     ) {
-                        Card(
-                            elevation = 5.dp,
-                            shape = RoundedCornerShape(4.dp),
-                            modifier = Modifier
-                                .fillParentMaxWidth()
-                                .padding(start = 10.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
+                        Row(
+                            modifier = Modifier.fillParentMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.fillParentMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    ingredient.ingrediente,
-                                    style = TextStyle(
-                                        fontSize = 20.sp,
-                                        textAlign = TextAlign.Center
-                                    ),
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                                IconButton(
-                                    onClick = {
-                                        scope.launch {
-                                            deletedIngredientList.add(ingredient.ingrediente)
-                                            model.updateCarrello(ingredient.ingrediente, false)}
-                                    }
-                                ) {
-                                    Icon(Icons.Rounded.Delete, "")
+                            Text(
+                                ingredient.ingrediente,
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            IconButton(
+                                onClick = {
+                                    model.updateCarrello(ingredient.ingrediente, false)
                                 }
+                            ) {
+                                Icon(Icons.Rounded.Delete, "")
                             }
                         }
                     }

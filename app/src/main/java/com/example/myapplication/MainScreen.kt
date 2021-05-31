@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@ExperimentalAnimationApi
+
 @Composable
 fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()

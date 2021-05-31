@@ -10,7 +10,7 @@ import com.example.myapplication.R
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.RemoveCarrello
 
-@ExperimentalAnimationApi
+
 @Composable
 fun Carrello(model: RicetteViewModel){
     Scaffold(

@@ -11,7 +11,7 @@ import androidx.navigation.compose.navArgument
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.screens.*
 
-@ExperimentalAnimationApi
+
 @Composable
 fun NavConfig(
     navController: NavHostController,

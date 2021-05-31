@@ -61,7 +61,7 @@ companion object  {
 
     lateinit var enableDarkMode: MutableState<Boolean>
 
-    @ExperimentalAnimationApi
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -115,7 +115,7 @@ companion object  {
     }
 }
 
-@ExperimentalAnimationApi
+
 @Composable
 fun GeneralManager(model: RicetteViewModel, enableDarkMode: MutableState<Boolean>)
 {
