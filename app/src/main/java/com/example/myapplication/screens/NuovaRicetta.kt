@@ -8,12 +8,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
@@ -22,8 +22,7 @@ import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.myapplication.reactingLists.dialogIngredient
 
 
 // Cornice per lo schermo
@@ -166,19 +165,22 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
         }
 
 
+        val openDialog = remember { mutableStateOf(false)  }
+        val ingrediente = IngredienteRIcetta("","empty","")
 
         // Tasto +
         IconButton(
             // Aggiunge un elemento a ingredientList
             onClick = {
-                    //ingredientList.add(IngredienteRIcetta("","",""))
-                    listState.add(IngredienteRIcetta("","empty",""))
-                    model.onIngredientsInsert(listState)
+                    //listState.add(ingrediente)
+                    //model.onIngredientsInsert(listState)    //va fatto dopo?
+                    openDialog.value = true
             }
         ) {
             Icon(Icons.Rounded.Add,"")
         }
-
+        if(openDialog.value)
+            NewDialog(model, listState, openDialog, ingrediente)
 
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -186,7 +188,9 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Top,
-            modifier = Modifier.weight(3f).padding(end = 10.dp),
+            modifier = Modifier
+                .weight(3f)
+                .padding(end = 10.dp),
         ){
             MyTextField(
                 model,
@@ -202,6 +206,34 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
         )
 
     }
+}
+
+@Composable
+fun NewDialog(
+    model: RicetteViewModel,
+    listState: SnapshotStateList<IngredienteRIcetta>,
+    openDialog: MutableState<Boolean>,
+    ingredient: IngredienteRIcetta
+) {
+    AlertDialog(
+        onDismissRequest = {
+            listState.add(ingredient)
+            model.onIngredientsInsert(listState)    //va fatto dopo?
+            openDialog.value = false },
+        title = { Text(text = "") },
+        text = { dialogIngredient(ingredient) },
+        confirmButton = {
+            Button(
+                onClick = {
+                    listState.add(ingredient)
+                    model.onIngredientsInsert(listState)
+                    openDialog.value = false
+                }) {
+                Text("Fatto")
+            }
+        },
+        backgroundColor = MaterialTheme.colors.background
+    )
 }
 
 
