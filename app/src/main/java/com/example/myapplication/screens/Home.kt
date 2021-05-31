@@ -25,12 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.example.myapplication.Filtro
+import com.example.myapplication.*
 import com.example.myapplication.R
-import com.example.myapplication.Screen
 import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
-import com.example.myapplication.getFilters
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,7 +40,7 @@ fun Home(model: RicetteViewModel, navController: NavController) {
 
     val isPreferiti = model.getTipologia()
 
-    var tipologia: String? = "DIO"
+    var tipologia: String? = "tmp"
 
     if(isPreferiti != null) {
         if (isPreferiti)
@@ -65,8 +63,12 @@ fun Home(model: RicetteViewModel, navController: NavController) {
         },
     )
     {
-        if(ricette != null)
-            ScrollableLIst(model, navController, ricette as List<RicettePreview>, longPressed)
+        if(ricette != null) {
+            if(ricette!!.isEmpty())
+                tipologia?.let { it1 -> showEmpty(str = it1) }
+            else
+                ScrollableLIst(model, navController, ricette as List<RicettePreview>, longPressed)
+        }
     }
 }
 
@@ -119,50 +121,65 @@ fun DropDown(
     onDeExpand: () -> Unit,
     onApplicaClick: () -> Unit
 ) {
+
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDeExpand,
         modifier = Modifier
-            .wrapContentSize()
             .background(MaterialTheme.colors.background)
+            .fillMaxWidth(0.6f)
     ) {
 
-        for(filtro in filtri.listIterator()){
+            for (filtro in filtri.listIterator()) {
 
-            var selected by remember { mutableStateOf(filtro.checked) }
+                var selected by remember { mutableStateOf(filtro.checked) }
 
-            DropdownMenuItem(onClick = {
-                selected = !selected
-                filtro.checked  = selected
-            }) {
-                Row{
-                    if(selected)
-                        Icon(Icons.Rounded.CheckBox, "")
-                    else
-                        Icon(Icons.Rounded.CropSquare, "")
+                DropdownMenuItem(
+                    onClick = {
+                    selected = !selected
+                    filtro.checked = selected
+                    },
+                    modifier = Modifier.wrapContentWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        //horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        if (selected)
+                            Icon(Icons.Rounded.CheckBox, "")
+                        else
+                            Icon(Icons.Rounded.CropSquare, "")
 
-                    Text(filtro.name)
+                        Text(filtro.name, modifier = Modifier.padding(5.dp))
+                    }
                 }
             }
-        }
 
-        Button(onClick = {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(onClick = {
 
-            //onApplicaClick()
+                //onApplicaClick()
 
-            if(tipologia == "Home") {
-                model.onHomeClick()
-                navController.navigate(Screen.Home.route)
+                if (tipologia == "Home") {
+                    model.onHomeClick()
+                    navController.navigate(Screen.Home.route)
+                } else {
+                    model.onPreferitiClick()
+                    navController.navigate(Screen.Preferiti.route)
+                }
+
+                model.onExpand(false)
+
+            },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+            ) {
+                Text(stringResource(R.string.Applica))
             }
-            else {
-                model.onPreferitiClick()
-                navController.navigate(Screen.Preferiti.route)
-            }
-
-            model.onExpand(false)
-
-        }) {
-            Text(stringResource(R.string.Applica))
         }
     }
 }
@@ -183,7 +200,8 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 .fillMaxWidth()
         ){
             // Bottone <-: premendolo si esce dalla ricerca
-            IconButton(onClick = {
+            IconButton(
+                onClick = {
 
                 model.onBackFromSearch(tipologia)
 
@@ -191,7 +209,9 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                     navController.navigate(Screen.Home.route)
                 else
                     navController.navigate(Screen.Preferiti.route)
-            })
+                },
+                modifier = Modifier.padding(top = 5.dp)
+                )
             {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
@@ -205,10 +225,12 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                                 },
                 placeholder = { Text(stringResource(R.string.Search)) },
                 singleLine = true,
+                modifier = Modifier.weight(3f)
             )
 
-            // Bottone "lente d'ingrandimento" per avviare la ricerca
-            IconButton(onClick = {
+            // Bottone "cerca" per avviare la ricerca
+            Button(
+                onClick = {
 
                 if(!input.value.text.contains("%")) {
                     model.onDisplaySearch(tipologia, input.value.text + "%")
@@ -221,9 +243,13 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 else{
                     openDialog.value = true
                 }
-            })
+                          },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .weight(1f)
+            )
             {
-                Icon(Icons.Rounded.Search, contentDescription = null)
+                Text("cerca")
             }
 
             if(openDialog.value) {

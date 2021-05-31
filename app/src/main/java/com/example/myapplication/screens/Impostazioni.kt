@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.Light
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.ModeNight
@@ -34,7 +35,7 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Text(text = stringResource(R.string.impostazioni))
+                Text(text = stringResource(R.string.modalità))
             })
         }
     ){
@@ -46,23 +47,24 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>) {
         ){
             if(enableDarkMode.value)   {
 
-                Icon(Icons.Rounded.ModeNight, contentDescription = "", modifier = Modifier.scale(2F))}
+                Icon(Icons.Rounded.DarkMode, contentDescription = "", modifier = Modifier.scale(3F))}
             else {
-                Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(2F))}
+                Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.scale(3F))}
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = "clicca per cambiare modalità",
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h5
                 )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
             Switch(
                 checked = enableDarkMode.value,
                 onCheckedChange= {
-                    if (enableDarkMode.value)
-                        enableDarkMode.value = false
-                    else
-                        enableDarkMode.value = true
+                    enableDarkMode.value = !enableDarkMode.value
                 })
         }
     }

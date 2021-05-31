@@ -60,9 +60,13 @@ fun NuovaRicetta(
                 title = { Text(text = titolo) },
                 navigationIcon = {
                     IconButton(onClick = {
+
                         model.restartFilters()  //toglie i check dai filtri
+                        model.updateTipologia(false)
+                        model.onHomeClick()
                         if(modify)
                             model.resetModify()   //resetta la variabile
+
                         navController.navigate(Screen.Home.route){
 
                             popUpTo = navController.graph.startDestination
@@ -182,7 +186,7 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Top,
-            modifier = Modifier.weight(3f)
+            modifier = Modifier.weight(3f).padding(end = 10.dp),
         ){
             MyTextField(
                 model,

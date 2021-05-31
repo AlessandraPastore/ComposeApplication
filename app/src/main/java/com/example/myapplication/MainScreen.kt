@@ -75,6 +75,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
                 error = model.onRicettaAddVerify()
                 Log.d("test", error)
 
+                //se error è qualcosa di diverso da "" si è presentato un errore
                 if(!error.equals("")) openDialog.value = true
                 else {
 
@@ -90,6 +91,8 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
                     }
 
                     model.restartFilters()
+                    model.updateTipologia(false)
+                    model.onHomeClick()
                     navController.navigate(Screen.Home.route){
 
                         popUpTo = navController.graph.startDestination
@@ -138,7 +141,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
     val home = Screen.Home.route
     val preferiti = Screen.Preferiti.route
     val carrello = Screen.Carrello.route
-    val impostazioni = Screen.Impostazioni.route
+    val impostazioni = Screen.Modalità.route
 
     BottomAppBar(
         cutoutShape = CircleShape,
@@ -230,7 +233,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                             softWrap = false,
                             overflow = TextOverflow.Visible,
                             textAlign = TextAlign.Justify,
-                            modifier = Modifier.offset(x = (-15).dp)  //non mi piace
+                            //modifier = Modifier.offset(x = (-15).dp)  //non mi piace
                         )
                     },
                     selected =  currentRoute == impostazioni,

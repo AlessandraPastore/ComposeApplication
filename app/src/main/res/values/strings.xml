@@ -8,7 +8,7 @@
     <string name="home">Home</string>
     <string name="preferiti">Preferiti</string>
     <string name="carrello">Carrello</string>
-    <string name="impostazioni">Impostazioni</string>
+    <string name="impostazioni">Mode</string>
     <string name="ricetta">Ricetta</string>
     <string name="nuova">Nuova Ricetta</string>
 
@@ -27,4 +27,5 @@
     <string name="unità">unità</string>
     <string name="descrizione">Descrizione</string>
     <string name="modifica">Modifica ricetta</string>
+    <string name="modalità">Modalità</string>
 </resources>
