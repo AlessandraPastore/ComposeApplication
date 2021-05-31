@@ -3,6 +3,7 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 
 
 
+@ExperimentalFoundationApi
 @Composable
 fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
     val navController = rememberNavController()

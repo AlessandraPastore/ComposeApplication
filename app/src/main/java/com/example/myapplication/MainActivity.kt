@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -62,6 +63,7 @@ companion object  {
     lateinit var enableDarkMode: MutableState<Boolean>
 
 
+    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -116,6 +118,7 @@ companion object  {
 }
 
 
+@ExperimentalFoundationApi
 @Composable
 fun GeneralManager(model: RicetteViewModel, enableDarkMode: MutableState<Boolean>)
 {

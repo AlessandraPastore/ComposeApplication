@@ -1,8 +1,14 @@
 package com.example.myapplication.screens
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
@@ -13,7 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
@@ -26,6 +35,7 @@ import com.example.myapplication.reactingLists.dialogIngredient
 
 
 // Cornice per lo schermo
+@ExperimentalFoundationApi
 @Composable
 fun NuovaRicetta(
     model: RicetteViewModel,
@@ -78,7 +88,7 @@ fun NuovaRicetta(
                     }
                 },
                 //scope per i filtri
-                actions = {
+                /*actions = {
                     IconButton(onClick = { model.onExpand(true) }) {
                         Icon(Icons.Rounded.FilterAlt,"")
                     }
@@ -90,26 +100,39 @@ fun NuovaRicetta(
 
                     Log.d("test", ricettaCompleta.filtri.toString())
                     ShowFilters(model, filtri,filterList, expanded) { model.onExpand(false) }
-                }
+                } */
 
             )
         },
     ){
-        Content(model, ricettaCompleta, modify)
+        if(modify)
+        {
+            filterList = ricettaCompleta.filtri
+            //model.onFilterInsert(filterList)
+        }
+        Content(model, ricettaCompleta, modify, filtri, filterList)
     }
 }
 
 private val pickImgCode = 100
 //, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
+@ExperimentalFoundationApi
 @Composable
-fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Boolean) {
+fun Content(
+    model: RicetteViewModel,
+    ricettaCompleta: RicettaSample?,
+    modify: Boolean,
+    filtri: List<Filtro>,
+    filterList: MutableList<Filtro>
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
+            //.verticalScroll(rememberScrollState())
     ){
         Row(
             modifier = Modifier.padding(10.dp),
@@ -132,6 +155,22 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
             }
             MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
         }
+
+        //filtri a chips selezionabili
+        Divider(
+            modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
+        )
+        Text(
+            text = stringResource(R.string.Filtri),
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .fillMaxWidth()
+        )
+
+        FilterGrid(model, filtri, filterList) { model.onExpand(false) }
+
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
         )
@@ -147,11 +186,11 @@ fun Content(model: RicetteViewModel, ricettaCompleta: RicettaSample?, modify: Bo
 
         val listState = remember { mutableStateListOf<IngredienteRIcetta>() }
 
+        //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
         if(modify){
             for(item in ricettaCompleta!!.ingredienti){
                 listState.add(item)
             }
-            //model.onIngredientsInsert(listState)
         }
 
         Column(
@@ -342,6 +381,74 @@ fun ShowFilters(
                         Icon(Icons.Rounded.CropSquare, "")
 
                     Text(it.name)
+                }
+            }
+        }
+    }
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun FilterGrid(
+    model: RicetteViewModel,
+    filtri: List<Filtro>,
+    filterList: MutableList<Filtro>,
+    onDeExpand: () -> Unit
+){
+    LazyVerticalGrid(
+        cells = GridCells.Adaptive(100.dp),
+        modifier = Modifier.wrapContentWidth()
+    ) {
+        filtri.forEach { filtro ->
+
+
+            item() {
+
+                for (flt in filterList) {
+                    if(flt.name.equals(filtro.name)) filtro.checked = true
+                }
+
+                val checked = remember { mutableStateOf(filtro.checked) }
+
+                Log.d("test", filtro.checked.toString())
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = MaterialTheme.colors.primary,
+                    ),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .clickable {
+                            checked.value = !checked.value
+                            filtro.checked = checked.value
+                            if(!checked.value) filterList.remove(filtro)
+                            else filterList.add(filtro)
+                            model.onFilterInsert(filterList)
+                        }
+                        .wrapContentWidth()
+
+                )
+                {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    )
+                    {
+                        if(checked.value)
+                            Icon(Icons.Rounded.Check, "", modifier = Modifier.padding(start = 5.dp))
+
+                        Text(
+                            text = filtro.name,
+                            style = MaterialTheme.typography.caption,
+                            fontWeight = FontWeight.Bold,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier/*.background(
+                                color = MaterialTheme.colors.secondary,
+                                shape = RoundedCornerShape(15.dp),
+                            )*/.padding(10.dp)
+                        )
+                    }
                 }
             }
         }

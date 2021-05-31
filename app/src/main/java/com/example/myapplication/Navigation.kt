@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
@@ -12,6 +13,7 @@ import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.screens.*
 
 
+@ExperimentalFoundationApi
 @Composable
 fun NavConfig(
     navController: NavHostController,
