@@ -1,6 +1,9 @@
 package com.example.myapplication.screens
 
 import android.util.Log
+import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
@@ -31,7 +35,8 @@ import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import java.io.File
+import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 fun Home(model: RicetteViewModel, navController: NavController) {
@@ -394,7 +399,9 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             elevation = 19.dp,
                             border = BorderStroke(1.dp, Color.Gray),
                             modifier = Modifier.size(130.dp),
-                        ) {}
+                        ) { 
+                            RicettaImage( "")
+                        }
                         Column(
                             modifier = Modifier
                                 .padding(start = 12.dp)

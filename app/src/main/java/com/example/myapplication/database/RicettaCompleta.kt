@@ -17,5 +17,8 @@ data class RicettaCompleta (
     val titolo:String,
 
     @ColumnInfo (name = "descrizione")
-    val descrizione:String
+    val descrizione:String,
+
+    @ColumnInfo
+    val uri:String?=null
     )

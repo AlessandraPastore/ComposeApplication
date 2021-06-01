@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
         RicettaCompleta::class,
         RicettePreview::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class RicetteDataBase : RoomDatabase() {

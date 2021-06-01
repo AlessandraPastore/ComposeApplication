@@ -9,5 +9,8 @@ data class RicettePreview(
     @PrimaryKey
     val titolo:String,
     @ColumnInfo(name="preferito")
-    val preferito:Boolean=false
+    val preferito:Boolean=false,
+    @ColumnInfo
+    val uri:String?=null
+
 )

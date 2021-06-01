@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.example.myapplication.RicettaImage
 import com.example.myapplication.Screen
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
@@ -67,7 +68,9 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .fillMaxWidth()
                         .height(300.dp)
                 )
-
+                {
+                    RicettaImage( "")
+                }
                 //Spacer(modifier = Modifier.height(10.dp))
 
                 //contiene tutti i detail della ricetta

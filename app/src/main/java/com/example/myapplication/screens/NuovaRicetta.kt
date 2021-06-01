@@ -1,5 +1,9 @@
 package com.example.myapplication.screens
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.registerForActivityResult
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -113,7 +117,7 @@ fun NuovaRicetta(
         Content(model, ricettaCompleta, modify, filtri, filterList)
     }
 }
-
+private var imageUriState =  mutableStateOf<Uri?>(null)
 private val pickImgCode = 100
 //, titolo: String, ingrediente: String, quantità: String
 // Funzione che gestisce il contenuto
@@ -140,18 +144,27 @@ fun Content(
             verticalAlignment = Alignment.CenterVertically
         ){
             //al post di box metteremo un Image
+
+            val selectImageLauncher =
+                rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+                    imageUriState.value = uri
+                    model.onImageInsert(imageUriState.toString())
+                }
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(Color.Red)
                     .size(58.dp)
             ){
+
                 IconButton(onClick = {
-                   val main=MainActivity.get()
-                    main!!.ImageSelection()
+                        selectImageLauncher.launch("image/*")
                 }) {
                     Icon(Icons.Rounded.Camera, "")
                 }
+
+                if(imageUriState.value!=null)
+                    RicettaImage(urStr = imageUriState.value.toString())
             }
             MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
         }
@@ -422,7 +435,7 @@ fun FilterGrid(
                         .clickable {
                             checked.value = !checked.value
                             filtro.checked = checked.value
-                            if(!checked.value) filterList.remove(filtro)
+                            if (!checked.value) filterList.remove(filtro)
                             else filterList.add(filtro)
                             model.onFilterInsert(filterList)
                         }

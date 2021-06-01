@@ -25,11 +25,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
+import java.net.URI
 
 class MainActivity : ComponentActivity() {
     //enable dovrà esser posto dentro il view model in modo tale da verificare se l'utente ha dato i permessi
     //in caso contrario mostriamo le cose di default
-    var enable= mutableStateOf(false)
+    var enable=
+        mutableStateOf(false)
+
     private fun requestStoragePermission() {
        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -48,17 +51,6 @@ companion object  {
         }
     }
 
-    fun ImageSelection() {
-        intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        try {
-            startActivityForResult(intent, 100)
-        } catch (e: ActivityNotFoundException) {
-
-
-        }
-
-
-    }
 
     lateinit var enableDarkMode: MutableState<Boolean>
 
@@ -85,25 +77,7 @@ companion object  {
             GeneralManager(model, enableDarkMode)
         }
     }
-    private var imageUriState =  mutableStateOf<Uri?>(null)
-    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        imageUriState.value = uri
-    }
-    private val pickImgCode = 100
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK)
-        {
-            when(requestCode)
-            {
-                pickImgCode -> {
-                    imageUriState.value = data?.data
 
-                }
-            }
-        }
-    }
 
     override fun onPause() {
         super.onPause()

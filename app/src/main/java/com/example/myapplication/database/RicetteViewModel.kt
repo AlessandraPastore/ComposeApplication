@@ -1,6 +1,7 @@
 package com.example.myapplication.database
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
@@ -51,11 +52,12 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
         lock.withLock {
 
-            ricDao.insertRicettaPreview(RicettePreview(_ricettaVuota.value!!.titolo, false))
+            ricDao.insertRicettaPreview(RicettePreview(_ricettaVuota.value!!.titolo, false,_ricettaVuota.value!!.uri))
             ricDao.insertRicettaCompleta(
                 RicettaCompleta(
                     _ricettaVuota.value!!.titolo,
-                    _ricettaVuota.value!!.descrizione
+                    _ricettaVuota.value!!.descrizione,
+                    _ricettaVuota.value!!.uri
                 )
             )
 
@@ -109,9 +111,14 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onFiltroChecked(true)
     }
 
-    private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
+    private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
 
+    fun onImageInsert(uri:String?)
+    {
+        _ricettaVuota.value!!.uri=uri
+
+    }
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
         Log.d("doge", _ricettaVuota.value!!.titolo )
@@ -139,7 +146,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
 
-    private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf()))
+    private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     val ricettaCompleta: LiveData<RicettaSample> = _ricettaCompleta
 
     //inserisce in ricetta completa le informazioni della ricetta passata
@@ -169,7 +176,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     fun resetComplete(){
-        _ricettaCompleta.value = RicettaSample("","", mutableListOf(), mutableListOf())
+        _ricettaCompleta.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
     }
 
     /*
@@ -353,4 +360,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.updateCarrello(Ingrediente(ingrediente, false))
     }
 
+    private val _permission = MutableLiveData(false)
+    val permission: LiveData<Boolean> = _permission
 }
