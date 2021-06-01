@@ -400,7 +400,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             border = BorderStroke(1.dp, Color.Gray),
                             modifier = Modifier.size(130.dp),
                         ) { 
-                            RicettaImage( "")
+                            RicettaImage( null)
                         }
                         Column(
                             modifier = Modifier

@@ -69,7 +69,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .height(300.dp)
                 )
                 {
-                    RicettaImage( "")
+                    RicettaImage( null)
                 }
                 //Spacer(modifier = Modifier.height(10.dp))
 

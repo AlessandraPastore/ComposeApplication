@@ -164,7 +164,7 @@ fun Content(
                 }
 
                 if(imageUriState.value!=null)
-                    RicettaImage(urStr = imageUriState.value.toString())
+                    RicettaImage(urStr = imageUriState.value)
             }
             MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
         }

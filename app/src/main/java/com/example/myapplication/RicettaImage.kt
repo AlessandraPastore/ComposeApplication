@@ -44,26 +44,41 @@ import java.io.InputStream
 
 
 @Composable
-fun  RicettaImage (urStr:String){
+fun  RicettaImage (urStr:Uri?){
 
-    var urinew= Uri.parse(urStr)
+    //var urinew= Uri.parse(urStr)
+    var urinew = urStr
+    if(urinew == null){}
 
-    Log.d("Image", File(urinew.toString()).canRead().toString())
-    AndroidView({ context -> ImageView(context).apply{  try{setImageURI(urinew)  } catch (e: IOException){ Log.d("image","bene")
-        setImageDrawable((AppCompatResources.getDrawable(
-        MainActivity.get()?.applicationContext!!,
-        R.drawable.foto
-    )))}
-    }  },
-        update={  imageView ->
-            try{imageView.setImageURI(urinew)  }
-            catch (e: IOException){
-            imageView.setImageDrawable(
-                AppCompatResources.getDrawable(
-                    MainActivity.get()?.applicationContext!!,
-                    R.drawable.foto
-                )
-            )}
-        } )
+    if (urinew != null) {
+        Log.d("image2", File(urinew.encodedPath!!).canRead().toString())
+    }
+
+        Log.d("image22", "entrato")
+        //Log.d("Image2", File(urinew!!.encodedPath).toString())
+                AndroidView({ context -> ImageView(context).apply{
+                    try{
+
+                    setImageURI(urinew)
+                        Log.d("image22", this.contentDescription.toString())
+
+                    }
+                    catch (e: NullPointerException)
+                    { Log.d("image","bene")
+            setImageDrawable((AppCompatResources.getDrawable(
+                MainActivity.get()?.applicationContext!!,
+                R.drawable.foto
+            )))}
+        }  },
+            update={  imageView ->
+                try{imageView.setImageURI(urinew)  } catch (e: IOException){
+                    imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.foto
+                        )
+                    )}
+            } )
+
 
 }
