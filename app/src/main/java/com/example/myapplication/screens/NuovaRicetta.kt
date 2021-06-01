@@ -153,11 +153,12 @@ fun Content(
                     .size(58.dp)
             ){
                 RicettaImage(urStr = main?.getUri())
+                model.onImageInsert(main?.getUri().toString())
+
                 IconButton(onClick = {
 
                         main?.loadImage()
 
-                        model.onImageInsert(main?.getUri().toString())
                 }) {
                     Icon(Icons.Rounded.Camera, "")
                 }
