@@ -46,10 +46,11 @@ import java.io.InputStream
 @Composable
 fun  RicettaImage (urStr:Uri?){
 
-    //var urinew= Uri.parse(urStr)
-    var urinew = urStr
-    if(urinew == null){}
+    var urinew= urStr
 
+    if(urinew == null){}
+    if(urinew!=null)
+Log.d("Image",urinew.toString())
     if (urinew != null) {
         Log.d("image2", File(urinew.encodedPath!!).canRead().toString())
     }

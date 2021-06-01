@@ -145,26 +145,23 @@ fun Content(
         ){
             //al post di box metteremo un Image
 
-            val selectImageLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-                    imageUriState.value = uri
-                    model.onImageInsert(imageUriState.toString())
-                }
+            val main=MainActivity.get()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(Color.Red)
                     .size(58.dp)
             ){
-
+                RicettaImage(urStr = main?.getUri())
                 IconButton(onClick = {
-                        selectImageLauncher.launch("image/*")
+
+                        main?.loadImage()
+
+                        model.onImageInsert(main?.getUri().toString())
                 }) {
                     Icon(Icons.Rounded.Camera, "")
                 }
 
-                if(imageUriState.value!=null)
-                    RicettaImage(urStr = imageUriState.value)
             }
             MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
         }

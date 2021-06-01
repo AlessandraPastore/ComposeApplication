@@ -43,12 +43,38 @@ class MainActivity : ComponentActivity() {
             permission ->
         enable.value = permission
     }
+    fun loadImage()
+    {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        try {
+            startActivityForResult(intent, pickImgCode)
+        } catch(e: ActivityNotFoundException) {
+            Toast.makeText(applicationContext, "no!", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private val pickImgCode = 100
+    var imageUri:MutableState<Uri?> = mutableStateOf(null)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                pickImgCode -> {
+                     imageUri.value = data?.data
+                }
+            }
+        }
+    }
+fun getUri():Uri?
+{
+    return imageUri.value
+}
 
 companion object  {
     var inst: MainActivity? = null
         fun get(): MainActivity? {
             return inst
         }
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.myapplication.screens
 
+import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
@@ -400,7 +401,12 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             border = BorderStroke(1.dp, Color.Gray),
                             modifier = Modifier.size(130.dp),
                         ) { 
-                            RicettaImage( null)
+                            if(ricetta.uri!=null) {
+                                RicettaImage(Uri.parse(ricetta.uri))
+                            Log.d("Testuri",Uri.parse(ricetta.uri).toString())
+                            }
+                            else
+                                RicettaImage(urStr = null)
                         }
                         Column(
                             modifier = Modifier
