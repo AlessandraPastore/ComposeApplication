@@ -70,8 +70,11 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .height(300.dp)
                 )
                 {
+                    Log.d("foto",ricettaCompleta.toString())
                    if(ricettaCompleta.uri.isNullOrEmpty())
                        RicettaImage(urStr = null)
+                    else
+                        RicettaImage(urStr = Uri.parse(ricettaCompleta.uri))
                 }
 
                 //Spacer(modifier = Modifier.height(10.dp))

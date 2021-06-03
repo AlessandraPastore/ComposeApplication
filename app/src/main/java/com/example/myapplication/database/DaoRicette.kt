@@ -102,5 +102,7 @@ interface DaoRicette {
     @Query("Delete from Ingrediente where ingrediente=:ingrediente")
     suspend fun deleteIngrFromName(ingrediente: String)
 
+    @Query("select uri from RicettaCompleta where titolo=:titolo")
+    suspend fun getUri(titolo:String):String
 
 }

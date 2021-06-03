@@ -74,7 +74,10 @@ companion object  {
         }
 
     }
-
+fun ResetUri()
+{
+    imageUri.value=null
+}
 
     lateinit var enableDarkMode: MutableState<Boolean>
 

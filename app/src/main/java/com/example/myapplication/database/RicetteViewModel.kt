@@ -172,7 +172,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaCompleta.value!!.titolo = titolo
         _ricettaCompleta.value!!.descrizione = ricDao.showRicettaCompleta(titolo).descrizione
         _ricettaCompleta.value!!.ingredienti = ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
-
+        _ricettaCompleta.value!!.uri=ricDao.getUri(titolo)
         //conversione categoria -> filtro
         val categoriaList = ricDao.allCatFromRecipe(titolo)
         val filterList = getFilters()
