@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
     }
     fun loadImage()
     {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         try {
             startActivityForResult(intent, pickImgCode)
         } catch(e: ActivityNotFoundException) {
@@ -60,6 +61,13 @@ class MainActivity : ComponentActivity() {
             when (requestCode) {
                 pickImgCode -> {
                      imageUri.value = data?.data
+                    val contentResolver = applicationContext.contentResolver
+
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+// Check for the freshest data.
+                    imageUri.value?.let { contentResolver.takePersistableUriPermission(it, takeFlags)
+                    Log.d("PermissionTest",it.toString())
+                    }
                 }
             }
         }
