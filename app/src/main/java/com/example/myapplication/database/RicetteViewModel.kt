@@ -9,10 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.Filtro
-import com.example.myapplication.R
-import com.example.myapplication.RicettaSample
-import com.example.myapplication.getFilters
+import com.example.myapplication.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -92,6 +89,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
                 ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
                 ricDao.insertIngredienteRicetta(ingrediente)
+            }
+            val main=MainActivity.get()
+            if (main != null) {
+                main.resetUri()
             }
         }
     }

@@ -74,7 +74,7 @@ companion object  {
         }
 
     }
-fun ResetUri()
+fun resetUri()
 {
     imageUri.value=null
 }
