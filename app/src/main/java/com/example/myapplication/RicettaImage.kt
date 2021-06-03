@@ -48,7 +48,9 @@ fun  RicettaImage (urStr:Uri?){
 
     var urinew= urStr
 
-    if(urinew == null){}
+    if(urinew == null){
+        Log.d("null","lo vedo")
+    }
     if(urinew!=null)
 Log.d("Image",urinew.toString())
     if (urinew != null) {

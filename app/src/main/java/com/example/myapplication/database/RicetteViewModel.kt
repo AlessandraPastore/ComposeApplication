@@ -52,14 +52,31 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
         lock.withLock {
 
-            ricDao.insertRicettaPreview(RicettePreview(_ricettaVuota.value!!.titolo, false,_ricettaVuota.value!!.uri))
-            ricDao.insertRicettaCompleta(
-                RicettaCompleta(
-                    _ricettaVuota.value!!.titolo,
-                    _ricettaVuota.value!!.descrizione,
-                    _ricettaVuota.value!!.uri
+            if(_ricettaVuota.value!!.uri.equals("null")) {
+                ricDao.insertRicettaPreview(RicettePreview(_ricettaVuota.value!!.titolo, false))
+                ricDao.insertRicettaCompleta(
+                    RicettaCompleta(
+                        _ricettaVuota.value!!.titolo,
+                        _ricettaVuota.value!!.descrizione
+                    )
                 )
-            )
+            }
+                else {
+                ricDao.insertRicettaPreview(
+                    RicettePreview(
+                        _ricettaVuota.value!!.titolo,
+                        false,
+                        _ricettaVuota.value!!.uri
+                    )
+                )
+                ricDao.insertRicettaCompleta(
+                    RicettaCompleta(
+                        _ricettaVuota.value!!.titolo,
+                        _ricettaVuota.value!!.descrizione,
+                        _ricettaVuota.value!!.uri
+                    )
+                )
+            }
 
             _ricettaVuota.value!!.filtri.forEach { filtro ->
                 ricDao.insertRicetteCategoria(

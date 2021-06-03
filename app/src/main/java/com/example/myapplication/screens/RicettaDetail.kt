@@ -1,5 +1,6 @@
 package com.example.myapplication.screens
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -69,8 +70,10 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .height(300.dp)
                 )
                 {
-                    RicettaImage( null)
+                   if(ricettaCompleta.uri.isNullOrEmpty())
+                       RicettaImage(urStr = null)
                 }
+
                 //Spacer(modifier = Modifier.height(10.dp))
 
                 //contiene tutti i detail della ricetta
@@ -101,10 +104,12 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                                     style = MaterialTheme.typography.caption,
                                     fontWeight = FontWeight.Bold,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.background(
-                                        color = colors.secondary,
-                                        shape = RoundedCornerShape(15.dp)
-                                    ).padding(7.dp)
+                                    modifier = Modifier
+                                        .background(
+                                            color = colors.secondary,
+                                            shape = RoundedCornerShape(15.dp)
+                                        )
+                                        .padding(7.dp)
                                 )
                             }
                         }
