@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -29,49 +31,37 @@ import kotlinx.coroutines.launch
 import java.net.URI
 
 class MainActivity : ComponentActivity() {
-    //enable dovrà esser posto dentro il view model in modo tale da verificare se l'utente ha dato i permessi
-    //in caso contrario mostriamo le cose di default
+
     var enable=
         mutableStateOf(false)
-
-    private fun requestStoragePermission() {
-       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE))
-            requestResult.launch( android.Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
-    private val requestResult=registerForActivityResult(ActivityResultContracts.RequestPermission())
-    {
-            permission ->
-        enable.value = permission
-    }
-    fun loadImage()
-    {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        try {
-            startActivityForResult(intent, pickImgCode)
-        } catch(e: ActivityNotFoundException) {
-            Toast.makeText(applicationContext, "no!", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private val pickImgCode = 100
     var imageUri:MutableState<Uri?> = mutableStateOf(null)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                pickImgCode -> {
-                     imageUri.value = data?.data
-                    val contentResolver = applicationContext.contentResolver
-
-                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
-// Check for the freshest data.
-                    imageUri.value?.let { contentResolver.takePersistableUriPermission(it, takeFlags)
-                    Log.d("PermissionTest",it.toString())
-                    }
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            if (intent != null) {
+                imageUri.value = intent.data
+                val contentResolver = applicationContext.contentResolver
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                imageUri.value?.let {
+                    contentResolver.takePersistableUriPermission(it, takeFlags)
                 }
             }
         }
     }
+
+        private val pickImgCode = 100
+    fun loadImage()
+    {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        try {
+
+            startForResult.launch(intent)
+        } catch(e: ActivityNotFoundException) {
+            Toast.makeText(applicationContext, "no!", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
 fun getUri():Uri?
 {
     return imageUri.value
@@ -92,13 +82,7 @@ companion object  {
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED)
-        {
-            requestStoragePermission()
-        }
-        else
-            enable.value=true
+
         inst=this
         setContent {
             val model: RicetteViewModel = ViewModelProvider(this).get(RicetteViewModel::class.java)
