@@ -66,7 +66,7 @@ Log.d("Image",urinew.toString())
                         Log.d("image22", this.contentDescription.toString())
 
                     }
-                    catch (e: NullPointerException)
+                    catch (e: java.lang.Exception)
                     { Log.d("image","bene")
             setImageDrawable((AppCompatResources.getDrawable(
                 MainActivity.get()?.applicationContext!!,
@@ -74,7 +74,7 @@ Log.d("Image",urinew.toString())
             )))}
         }  },
             update={  imageView ->
-                try{imageView.setImageURI(urinew)  } catch (e: IOException){
+                try{imageView.setImageURI(urinew)  } catch (e: java.lang.Exception){
                     imageView.setImageDrawable(
                         AppCompatResources.getDrawable(
                             MainActivity.get()?.applicationContext!!,
