@@ -1,7 +1,6 @@
 package com.example.myapplication.screens
 
 import android.util.Log
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -141,7 +140,6 @@ fun DropDown(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        //horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         if (selected)
                             Icon(Icons.Rounded.CheckBox, "")
@@ -162,10 +160,10 @@ fun DropDown(
 
                 if (tipologia == "Home") {
                     model.onHomeClick()
-                    navController.navigate(Screen.Home.route)
+                   // navController.navigate(Screen.Home.route)
                 } else {
                     model.onPreferitiClick()
-                    navController.navigate(Screen.Preferiti.route)
+                   // navController.navigate(Screen.Preferiti.route)
                 }
 
                 model.onExpand(false)
@@ -230,12 +228,14 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 onClick = {
 
                 if(!input.value.text.contains("%")) {
-                    model.onDisplaySearch(tipologia, input.value.text + "%")
+                    model.onDisplaySearch(tipologia, "%" + input.value.text + "%")
 
+                    /*
                     if (tipologia == "Home")
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
+                     */
                 }
                 else{
                     openDialog.value = true
@@ -337,6 +337,13 @@ fun ScrollableList(
     LazyColumn {
         items(ricette){ ricetta ->
 
+            /*
+            In Compose le funzioni composable sono identificate dal compilatore attraverso
+            il proprio call site (il punto nel codice in cui vengono invocate). In liste come questa,
+            i singoli elementi della lista condividono lo stesso call site. Per permettere
+            l'identificazione e realizzare una Recomposition più funzionale si utilizza la
+            funzione key(), che permette di inserire un ulteriore ID.
+             */
             key(ricetta.titolo) {
 
                 val checked = ricetta.preferito
@@ -346,7 +353,6 @@ fun ScrollableList(
                 else
                     MaterialTheme.colors.surface
 
-                //Row(modifier = Modifier.fillParentMaxWidth()) {
                 Card(
                     backgroundColor = color,
                     elevation = 5.dp,
@@ -357,8 +363,6 @@ fun ScrollableList(
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = {
-
-                                    //Log.d("Tap",longPressed.toString())
 
                                     if (!model.getLongPressed()) {
                                         model.selectRicetta(ricetta)
@@ -383,7 +387,6 @@ fun ScrollableList(
                                             model.resetSelection()
                                         }
                                     }
-                                    Log.d("Tap", longPressed.toString())
                                 }
                             )
                         }

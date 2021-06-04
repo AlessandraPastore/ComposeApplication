@@ -35,7 +35,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onRicettaDelete() =viewModelScope.launch (Dispatchers.IO) {
         val listing=ricDao.IngrOfRecipe(_ricettaSelezionata.value!!.titolo)
-        Log.d("test", "delete" + _ricettaSelezionata.value!!)
 
         ricDao.deleteRicetta(_ricettaSelezionata.value!!)
 
@@ -45,6 +44,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
 
     }
+
     private val lock= Mutex()
     //aggiunge la ricetta salvata in _ricettaVuota
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
