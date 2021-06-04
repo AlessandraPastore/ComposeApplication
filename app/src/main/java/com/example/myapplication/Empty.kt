@@ -20,7 +20,7 @@ fun showEmpty(str: String){
         modifier = Modifier
             .fillMaxSize()
     ){
-        Icon(Icons.Rounded.VisibilityOff, "", modifier = Modifier.scale(3F))
+        Icon(Icons.Rounded.VisibilityOff, "", modifier = Modifier.size(128.dp))
         Spacer(modifier = Modifier.height(30.dp))
         Text("$str è vuoto", style = MaterialTheme.typography.h5)
     }

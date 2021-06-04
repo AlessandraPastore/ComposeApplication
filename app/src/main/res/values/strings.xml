@@ -30,4 +30,5 @@
     <string name="modalità">Modalità</string>
     <string name="Filtri">Filtri</string>
     <string name="titoloEmpty">Il titolo risulta vuoto</string>
+    <string name="listView_key">listView</string>
 </resources>

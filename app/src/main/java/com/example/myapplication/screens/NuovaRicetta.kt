@@ -171,7 +171,7 @@ fun Content(
                         main?.loadImage()
 
                 }) {
-                    Icon(Icons.Rounded.PhotoCamera, "", tint = Color.White, modifier = Modifier.scale(1.2F))
+                    Icon(Icons.Rounded.PhotoCamera, "", tint = Color.White, modifier = Modifier.size(30.dp))
                 }
 
             }

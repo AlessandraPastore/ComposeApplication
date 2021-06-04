@@ -22,17 +22,35 @@ val DeepPurple100 = Color(0xFFD1C4E9)
 
 val Complementary = Color(0xFF89B73A)
 
+val Red500 = Color(0xFFD32F2F)
+val Red700 = Color(0xFFB71C1C)
+val DeepOrange100 = Color(0xFFFFECB3)
+
+
+val Amber600 = Color(0xFFFFA000)
+
+
+
 
 
 
 
 val LightColors = lightColors(
 
-
+/*
     primary = DeepPurple500,
     primaryVariant = DeepPurple700,
     secondary = Complementary,
     surface = DeepPurple100
+
+ */
+
+    primary = Red500,
+    primaryVariant = Red700,
+    secondary = Amber600,
+    surface = DeepOrange100
+
+
 
     /* Other default colors to override
     background = Color.White,
@@ -48,6 +66,7 @@ val LightColors = lightColors(
 val DarkColors = darkColors(
     primary = Gray800,
     primaryVariant = Gray900,
-    secondary = Complementary,
-    onPrimary = Color.White
+    secondary = Amber600,
+    onPrimary = Color.White,
+    onSecondary = Color.Black
 )

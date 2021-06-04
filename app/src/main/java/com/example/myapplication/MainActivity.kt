@@ -3,32 +3,20 @@ package com.example.myapplication
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlinx.coroutines.launch
-import java.net.URI
 
 class MainActivity : ComponentActivity() {
 
@@ -80,6 +68,7 @@ fun resetUri()
 }
 
     lateinit var enableDarkMode: MutableState<Boolean>
+    lateinit var listView: MutableState<Boolean>
 
 
     @ExperimentalFoundationApi
@@ -92,10 +81,12 @@ fun resetUri()
 
             val preferences = getPreferences(MODE_PRIVATE)
             val starState = preferences.getBoolean(stringResource(R.string.darkMode_key),false)
+            val listState = preferences.getBoolean(stringResource(R.string.listView_key),false)
 
             enableDarkMode = remember { mutableStateOf(starState) }
+            listView = remember { mutableStateOf(listState)}
 
-            GeneralManager(model, enableDarkMode)
+            GeneralManager(model, enableDarkMode, listView)
         }
     }
 
@@ -107,6 +98,7 @@ fun resetUri()
         val editor = preferences.edit()
 
         editor.putBoolean(getString(R.string.darkMode_key), enableDarkMode.value)
+        editor.putBoolean(getString(R.string.listView_key), listView.value)
 
         editor.apply()
     }
@@ -115,10 +107,14 @@ fun resetUri()
 
 @ExperimentalFoundationApi
 @Composable
-fun GeneralManager(model: RicetteViewModel, enableDarkMode: MutableState<Boolean>)
+fun GeneralManager(
+    model: RicetteViewModel,
+    enableDarkMode: MutableState<Boolean>,
+    listView: MutableState<Boolean>
+)
 {
     MyApplicationTheme (enableDarkMode){
-        MainScreen(model,enableDarkMode)
+        MainScreen(model,enableDarkMode, listView)
     }
 }
 

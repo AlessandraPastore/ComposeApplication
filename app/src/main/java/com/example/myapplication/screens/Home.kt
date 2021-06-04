@@ -1,11 +1,7 @@
 package com.example.myapplication.screens
 
-import android.net.Uri
 import android.util.Log
-import android.widget.ImageView
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -23,11 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
@@ -36,11 +29,9 @@ import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
-import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
-fun Home(model: RicetteViewModel, navController: NavController) {
+fun Home(model: RicetteViewModel, navController: NavController, listView: MutableState<Boolean>) {
 
     val ricette by model.ricette.observeAsState()
 
@@ -73,7 +64,7 @@ fun Home(model: RicetteViewModel, navController: NavController) {
             if(ricette!!.isEmpty())
                 tipologia?.let { it1 -> showEmpty(str = it1) }
             else
-                ScrollableLIst(model, navController, ricette as List<RicettePreview>, longPressed)
+                ScrollableList(model, navController, ricette as List<RicettePreview>, longPressed, listView)
         }
     }
 }
@@ -332,7 +323,13 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
 
 // Funzione che gestisce la lista delle ricette
 @Composable
-fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricette: List<RicettePreview>, longPressed: Boolean) {
+fun ScrollableList(
+    model: RicetteViewModel,
+    navController: NavController,
+    ricette: List<RicettePreview>,
+    longPressed: Boolean,
+    listView: MutableState<Boolean>
+) {
 
     val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
     var color : Color
@@ -353,7 +350,7 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                 Card(
                     backgroundColor = color,
                     elevation = 5.dp,
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(5.dp),
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .padding(10.dp)
@@ -391,51 +388,19 @@ fun ScrollableLIst(model: RicetteViewModel, navController: NavController, ricett
                             )
                         }
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        //sarebbe l'immagine, poi da cambiare
-                        Surface(
-                            color = MaterialTheme.colors.onSurface,
-                            elevation = 19.dp,
-                            border = BorderStroke(1.dp, Color.Gray),
-                            modifier = Modifier.size(130.dp),
-                        ) { 
-                            if(ricetta.uri!=null) {
-                                RicettaImage(Uri.parse(ricetta.uri))
-                            Log.d("Testuri",Uri.parse(ricetta.uri).toString())
-                            }
-                            else
-                                RicettaImage(urStr = null)
-                        }
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 12.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Text(
-                                text = ricetta.titolo,
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(15.dp),
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                .padding(end = 12.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            IconToggleButton(
-                                checked = checked,
-                                onCheckedChange = {
-                                    model.onPreferitoChange(ric = RicettePreview(ricetta.titolo, !checked,ricetta.uri)
-                                    )
-                                }) {
-                                if (!checked) Icon(Icons.Rounded.FavoriteBorder, "")
-                                else Icon(Icons.Rounded.Favorite, "")
-                            }
-                        }
-                    }
+
+                    if(listView.value)
+                        ListVariant(
+                            model = model,
+                            ricetta = ricetta,
+                            checked = checked
+                        )
+                    else
+                        GridVariant(
+                        model = model,
+                        ricetta = ricetta,
+                        checked = checked
+                        )
                 }
             }
         }

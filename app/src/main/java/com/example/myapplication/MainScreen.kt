@@ -26,7 +26,11 @@ import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @Composable
-fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
+fun MainScreen(
+    model: RicetteViewModel,
+    enableDarkMode: MutableState<Boolean>,
+    listView: MutableState<Boolean>
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
@@ -45,7 +49,7 @@ fun MainScreen(model: RicetteViewModel,enableDarkMode: MutableState<Boolean>) {
                 BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta e su RicettaDetail
         },
     ){
-        NavConfig(navController, enableDarkMode, model)
+        NavConfig(navController, enableDarkMode, model, listView)
     }
 }
 

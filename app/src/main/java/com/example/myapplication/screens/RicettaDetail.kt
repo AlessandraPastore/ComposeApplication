@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -93,28 +95,35 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     )
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    SimpleFlowRow(
-                        alignment = Alignment.CenterHorizontally,
-                    ) {
-                        for(item in ricettaCompleta!!.filtri){
-                            Box(
-                                modifier = Modifier.padding(5.dp)
-                            ){
-                                Text(
-                                    text = item.name,
-                                    style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .background(
-                                            color = colors.secondary,
-                                            shape = RoundedCornerShape(15.dp)
-                                        )
-                                        .padding(7.dp)
-                                )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ){
+                        SimpleFlowRow(
+                            alignment = Alignment.End,
+                        ) {
+                            for(item in ricettaCompleta.filtri){
+                                Box(
+                                    modifier = Modifier.padding(5.dp)
+                                ){
+                                    Text(
+                                        text = item.name,
+                                        color = MaterialTheme.colors.onSecondary,
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.Bold,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .background(
+                                                color = colors.secondary,
+                                                shape = RoundedCornerShape(15.dp)
+                                            )
+                                            .padding(7.dp)
+                                    )
+                                }
                             }
                         }
                     }
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -212,7 +221,13 @@ fun FadingTopBar(
                 .align(Alignment.CenterStart)
         )
         {
-            Icon(Icons.Rounded.ArrowBack, contentDescription = "")
+            Icon(
+                Icons.Rounded.ArrowBack,
+                contentDescription = "",
+                modifier = Modifier
+                    .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                    .padding(8.dp)
+            )
         }
         IconButton(
             onClick = {
@@ -239,7 +254,13 @@ fun FadingTopBar(
                 .align(Alignment.CenterEnd)
         )
         {
-            Icon(Icons.Rounded.Delete, contentDescription = "")
+                Icon(
+                    Icons.Rounded.Delete,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                        .padding(8.dp)
+                )
         }
     }
 }
