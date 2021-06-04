@@ -2,10 +2,9 @@ package com.example.myapplication
 
 
 import android.util.Log
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,14 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.database.RicetteViewModel
-import com.example.myapplication.reactingLists.dialogIngredient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -58,7 +55,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
     val openDialog = remember { mutableStateOf(false)  }
     val scope = rememberCoroutineScope()
-    var error:String
+    var error = remember { mutableStateOf("")  }
 
     FloatingActionButton(
         onClick = {
@@ -74,11 +71,11 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
             }
             else{
 
-                error = model.onRicettaAddVerify()
-                Log.d("test", error)
+                error.value = model.onRicettaAddVerify()
+                Log.d("error", error.value)
 
                 //se error è qualcosa di diverso da "" si è presentato un errore
-                if(!error.equals("")) openDialog.value = true
+                if(error.value != "") openDialog.value = true
                 else {
 
                     //se era una modifica bisogna resettare le variabili e cancellarla prima
@@ -115,15 +112,21 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
         else Icon( Icons.Rounded.Check, "")
     }
 
-    if(openDialog.value) AlertError(openDialog)
+    if(openDialog.value) AlertError(openDialog, error.value)
 }
 
 @Composable
-fun AlertError(openDialog: MutableState<Boolean>) {
+fun AlertError(openDialog: MutableState<Boolean>, error: String) {
     AlertDialog(
         onDismissRequest = { openDialog.value = false },
         title = { Text(text = "Errore nei dati inseriti") },
-        text = { Text(text="Uno o più campi risultano vuoti") },
+        text = {
+            Column(){
+                Text(text="Uno o più campi risultano vuoti")
+                Text(text=error)
+            }
+
+               },
         confirmButton = {
             Button(
                 onClick = {

@@ -1,4 +1,5 @@
 package com.example.myapplication
+//crediti a icesmith https://github.com/icesmith/android-samples/tree/master/SimpleComposeFlowRow
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

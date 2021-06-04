@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.RicettaImage
 import com.example.myapplication.Screen
+import com.example.myapplication.SimpleFlowRow
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 
@@ -92,12 +93,9 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     )
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ){
+                    SimpleFlowRow(
+                        alignment = Alignment.CenterHorizontally,
+                    ) {
                         for(item in ricettaCompleta!!.filtri){
                             Box(
                                 modifier = Modifier.padding(5.dp)
@@ -125,15 +123,22 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         style = MaterialTheme.typography.h5
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(13.dp))
 
-                    //avremo una lista di ingredienti da mostrare
-                    Column {
+                    //lista degli ingredienti
+                    Surface(
+                        shape = RoundedCornerShape(15.dp)
+                    ){
+                        Column(
+                            modifier = Modifier.padding(10.dp)
+                        ) {
 
-                        for(item in ricettaCompleta!!.ingredienti){
-                            IngredientItem(model, navController, item)
+                            for(item in ricettaCompleta!!.ingredienti){
+                                IngredientItem(model, navController, item)
+                            }
                         }
                     }
+
 
                     Spacer(modifier = Modifier.height(32.dp))
                     Text(

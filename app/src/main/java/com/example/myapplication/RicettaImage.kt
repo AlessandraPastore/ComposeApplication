@@ -51,37 +51,55 @@ fun  RicettaImage (urStr:Uri?){
     if(urinew == null){
         Log.d("null","lo vedo")
     }
+
     if(urinew!=null)
-Log.d("Image",urinew.toString())
+        //Log.d("Image",urinew.toString())
+
     if (urinew != null) {
         Log.d("image2", File(urinew.encodedPath!!).canRead().toString())
     }
 
-        Log.d("image22", "entrato")
-        //Log.d("Image2", File(urinew!!.encodedPath).toString())
-                AndroidView({ context -> ImageView(context).apply{
-                    try{
+    Log.d("image22", "entrato")
+    //Log.d("Image2", File(urinew!!.encodedPath).toString())
 
-                    setImageURI(urinew)
-                        Log.d("image22", this.contentDescription.toString())
+    var img:ImageView
 
-                    }
-                    catch (e: java.lang.Exception)
-                    { Log.d("image","bene")
-            setImageDrawable((AppCompatResources.getDrawable(
-                MainActivity.get()?.applicationContext!!,
-                R.drawable.foto
-            )))}
-        }  },
-            update={  imageView ->
-                try{imageView.setImageURI(urinew)  } catch (e: java.lang.Exception){
-                    imageView.setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            MainActivity.get()?.applicationContext!!,
-                            R.drawable.foto
-                        )
-                    )}
-            } )
+
+    AndroidView(
+        { context -> ImageView(context).apply{
+            try
+            {
+                setImageURI(urinew)
+                Log.d("image22", this.contentDescription.toString())
+            }
+            catch (e: java.lang.Exception) {
+                Log.d("image","bene")
+
+                setImageDrawable(
+                    (AppCompatResources.getDrawable(
+                        MainActivity.get()?.applicationContext!!,
+                        R.drawable.foto)
+                    )
+                )
+            }
+
+            this.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        }
+        },
+
+        modifier = Modifier.fillMaxSize(),
+
+
+        update={  imageView ->
+            try{imageView.setImageURI(urinew)  } catch (e: java.lang.Exception){
+                imageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        MainActivity.get()?.applicationContext!!,
+                        R.drawable.foto
+                    )
+                )}
+        } )
 
 
 }

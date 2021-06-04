@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -21,7 +18,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +31,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
 import com.example.myapplication.R
+import com.example.myapplication.RicettaImage
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
@@ -149,10 +149,21 @@ fun Content(
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(Color.Red)
-                    .size(58.dp)
+                    .background(color = MaterialTheme.colors.surface)
+                    .size(55.dp),
+                contentAlignment = Alignment.Center
             ){
-                RicettaImage(urStr = main?.getUri())
+
+                Box(
+                    modifier = Modifier.alpha(0.85f)
+                ){
+                    RicettaImage(urStr = main?.getUri())
+                }
+
+
+
+
+
                 model.onImageInsert(main?.getUri().toString())
 
                 IconButton(onClick = {
@@ -160,7 +171,7 @@ fun Content(
                         main?.loadImage()
 
                 }) {
-                    Icon(Icons.Rounded.Camera, "")
+                    Icon(Icons.Rounded.PhotoCamera, "", tint = Color.White, modifier = Modifier.scale(1.2F))
                 }
 
             }
@@ -179,6 +190,7 @@ fun Content(
                 .padding(start = 15.dp)
                 .fillMaxWidth()
         )
+        Spacer(modifier = Modifier.padding(2.dp))
 
         FilterGrid(model, filtri, filterList) { model.onExpand(false) }
 
@@ -406,60 +418,65 @@ fun FilterGrid(
     filterList: MutableList<Filtro>,
     onDeExpand: () -> Unit
 ){
-    LazyVerticalGrid(
-        cells = GridCells.Adaptive(100.dp),
-        modifier = Modifier.wrapContentWidth()
-    ) {
+    val primary = Color.Transparent
+
+
+    SimpleFlowRow(
+        alignment = Alignment.CenterHorizontally,
+        horizontalGap = 10.dp,
+        verticalGap = 5.dp
+    ){
         filtri.forEach { filtro ->
 
 
-            item() {
+            for (flt in filterList) {
+                if(flt.name.equals(filtro.name)) filtro.checked = true
+            }
 
-                for (flt in filterList) {
-                    if(flt.name.equals(filtro.name)) filtro.checked = true
-                }
+            val checked = remember { mutableStateOf(filtro.checked) }
+            val bgColor = remember{ mutableStateOf(primary)}
+            if(checked.value) bgColor.value = MaterialTheme.colors.surface
+            else bgColor.value = Color.Transparent
 
-                val checked = remember { mutableStateOf(filtro.checked) }
+            Log.d("test", filtro.checked.toString())
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = bgColor.value,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.primary,
+                ),
+                modifier = Modifier
+                    //.padding(5.dp)
+                    .clickable {
+                        checked.value = !checked.value
+                        filtro.checked = checked.value
+                        if (!checked.value) filterList.remove(filtro)
+                        else filterList.add(filtro)
+                        model.onFilterInsert(filterList)
+                    }
+                    .wrapContentWidth()
 
-                Log.d("test", filtro.checked.toString())
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = MaterialTheme.colors.primary,
-                    ),
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .clickable {
-                            checked.value = !checked.value
-                            filtro.checked = checked.value
-                            if (!checked.value) filterList.remove(filtro)
-                            else filterList.add(filtro)
-                            model.onFilterInsert(filterList)
-                        }
-                        .wrapContentWidth()
-
+            )
+            {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 )
                 {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    )
-                    {
-                        if(checked.value)
-                            Icon(Icons.Rounded.Check, "", modifier = Modifier.padding(start = 5.dp))
+                    if(checked.value)
+                        Icon(Icons.Rounded.Check, "", modifier = Modifier.padding(start = 5.dp))
 
-                        Text(
-                            text = filtro.name,
-                            style = MaterialTheme.typography.caption,
-                            fontWeight = FontWeight.Bold,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier/*.background(
-                                color = MaterialTheme.colors.secondary,
-                                shape = RoundedCornerShape(15.dp),
-                            )*/.padding(10.dp)
-                        )
-                    }
+                    Text(
+                        text = filtro.name,
+                        style = MaterialTheme.typography.caption,
+                        fontWeight = FontWeight.Bold,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier/*.background(
+                            color = MaterialTheme.colors.secondary,
+                            shape = RoundedCornerShape(15.dp),
+                        )*/.padding(10.dp)
+                    )
                 }
             }
         }

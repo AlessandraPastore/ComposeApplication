@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -99,15 +100,15 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onRicettaAddVerify():String{
 
-        if(_ricettaVuota.value!!.titolo.isBlank()) return "titolo"
-        if(_ricettaVuota.value!!.titolo.contains("%")) return "titolo"
-        if(_ricettaVuota.value!!.descrizione.isBlank()) return "descrizione"
-        if(_ricettaVuota.value!!.filtri.isEmpty()) return "filtri"
-        if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "ingredienti"
+        if(_ricettaVuota.value!!.titolo.isBlank()) return "(inserisci il titolo)"
+        if(_ricettaVuota.value!!.titolo.contains("%")) return "(non puoi usare il carattere % per il titolo)"
+        if(_ricettaVuota.value!!.descrizione.isBlank()) return "(inserisci una descrizione)"
+        if(_ricettaVuota.value!!.filtri.isEmpty()) return "(inserisci uno o più filtri)"
+        if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "(inserisci degli ingredienti)"
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
 
-            if(ingrediente.ingrediente.isBlank() || ingrediente.qta.isBlank()) return "ingredientE"
+            if(ingrediente.ingrediente.isBlank() || ingrediente.qta.isBlank()) return "(alcuni campi degli ingredienti sono vuoti)"
             ingrediente.titolo = _ricettaVuota.value!!.titolo
 
         }
