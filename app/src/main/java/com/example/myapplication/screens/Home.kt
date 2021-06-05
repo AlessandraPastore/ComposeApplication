@@ -53,7 +53,7 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
         topBar = {
             when{
                 longPressed -> LongPress(navController, onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()}, onModify = {model.modifyRecipe()})
-                searching -> Searching(model, navController, tipologia as String) { model.onSearch(false) }
+                searching -> Searching(model, navController, tipologia as String) { model.onDisplaySearch(tipologia) }
                 else -> TopBar(navController , model, tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
         },
@@ -80,8 +80,6 @@ fun TopBar(
     onSearch: () -> Unit,
     onApplicaClick: () -> Unit
 ) {
-    val filtri by model.filtri.observeAsState(getFilters())
-
     TopAppBar(
         title = {
             Text(text = tipologia)
@@ -96,7 +94,6 @@ fun TopBar(
             DropDown(
                 model,
                 navController,
-                filtri,
                 tipologia,
                 expanded,
                 onDeExpand = onDeExpand,
@@ -111,12 +108,13 @@ fun TopBar(
 fun DropDown(
     model: RicetteViewModel,
     navController: NavController,
-    filtri: List<Filtro>,
     tipologia: String,
     expanded: Boolean,
     onDeExpand: () -> Unit,
     onApplicaClick: () -> Unit
 ) {
+
+    val filtri by model.filtri.observeAsState(getFilters())
 
     DropdownMenu(
         expanded = expanded,
@@ -160,13 +158,13 @@ fun DropDown(
 
                 if (tipologia == "Home") {
                     model.onHomeClick()
-                   // navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Home.route)
                 } else {
                     model.onPreferitiClick()
-                   // navController.navigate(Screen.Preferiti.route)
+                    navController.navigate(Screen.Preferiti.route)
                 }
 
-                model.onExpand(false)
+                onDeExpand()
 
             },
                 modifier = Modifier
@@ -183,7 +181,8 @@ fun DropDown(
 @Composable
 fun Searching(model: RicetteViewModel, navController: NavController,  tipologia: String, onSearch: () -> Unit) {
 
-    val input = remember{ mutableStateOf(TextFieldValue())}
+    //val input = remember{ mutableStateOf(TextFieldValue())}
+    val ricerca by model.ricerca.observeAsState("")
 
     val openDialog = remember { mutableStateOf(false)  }
 
@@ -194,6 +193,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 .background(Color.Transparent)
                 .fillMaxWidth()
         ){
+
             // Bottone <-: premendolo si esce dalla ricerca
             IconButton(
                 onClick = {
@@ -213,12 +213,12 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
 
             // TextField in cui memorizzare il testo digitato dall'utente
             OutlinedTextField(
-                value = input.value,
+                value = ricerca ,
                 onValueChange = {
-                    if(it.text.length <= 20)
-                        input.value = it
+                        if(it.length <= 20)
+                            model.onClickRicerca(it)
                                 },
-                placeholder = { Text(stringResource(R.string.Search)) },
+                placeholder = { Text(stringResource(R.string.Cerca)) },
                 singleLine = true,
                 modifier = Modifier.weight(3f)
             )
@@ -227,15 +227,18 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
             Button(
                 onClick = {
 
-                if(!input.value.text.contains("%")) {
-                    model.onDisplaySearch(tipologia, "%" + input.value.text + "%")
+                    //model.onClickRicerca(input.value.text)
 
-                    /*
+                    if(!ricerca.contains("%")) {
+                        onSearch()
+                        //model.onDisplaySearch(tipologia)
+
+
                     if (tipologia == "Home")
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
-                     */
+
                 }
                 else{
                     openDialog.value = true
@@ -246,7 +249,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                     .weight(1f)
             )
             {
-                Text("cerca")
+                Text(stringResource(R.string.Cerca))
             }
 
             if(openDialog.value) {

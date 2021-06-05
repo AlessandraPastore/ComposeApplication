@@ -287,16 +287,18 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onInvertPress()
     }
 
-    fun onDisplaySearch(tipologia: String, titolo: String) {
+    fun onDisplaySearch(tipologia: String) {
 
         if (tipologia.equals("Home"))
-            ricette = ricDao.getRicByName(titolo)
+            ricette = ricDao.getRicByName("%" + _ricerca.value!! + "%")
         else
-            ricette = ricDao.getRicPreferitiByName(titolo)
+            ricette = ricDao.getRicPreferitiByName("%" + _ricerca.value!! + "%")
     }
 
     fun onBackFromSearch(tipologia: String){
         onSearch(false)
+
+        resetRicerca()
 
         if(tipologia.equals("Home"))
             onHomeClick()
@@ -339,7 +341,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.deleteIngr(ingrediente)
     }
 
-    private var _isPreferiti = MutableLiveData(false)
+    private val _isPreferiti = MutableLiveData(false)
     val isPreferiti: LiveData<Boolean> = _isPreferiti
 
     fun getTipologia(): Boolean?
@@ -381,4 +383,17 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     private val _permission = MutableLiveData(false)
     val permission: LiveData<Boolean> = _permission
+
+
+    // Stato della barra della ricerca in Home e Preferiti
+    private val _ricerca = MutableLiveData("")
+    val ricerca: LiveData<String> = _ricerca
+
+    fun resetRicerca(){
+        _ricerca.value = ""
+    }
+
+    fun onClickRicerca(testo: String){
+        _ricerca.value = testo
+    }
 }

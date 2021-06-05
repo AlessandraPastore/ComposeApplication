@@ -13,7 +13,7 @@
     <string name="nuova">Nuova Ricetta</string>
 
     // Placeholder della textfield per la ricerca
-    <string name="Search">Search</string>
+    <string name="Cerca">Search</string>
 
     // Testo del bottone Applica nel menù dei filtri
     <string name="Applica">Applica</string>
