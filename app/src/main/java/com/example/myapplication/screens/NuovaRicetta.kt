@@ -6,9 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -36,6 +34,7 @@ import com.example.myapplication.R
 import com.example.myapplication.RicettaImage
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
+import com.example.myapplication.reactingLists.NewIngredient
 import com.example.myapplication.reactingLists.addIngredientCard
 import com.example.myapplication.reactingLists.dialogIngredient
 import kotlinx.coroutines.Dispatchers
@@ -164,148 +163,206 @@ fun Content(
     main: MainActivity?
 ) {
 
-    Column(
+    val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
+    val empty = remember { mutableStateOf(true) }
+
+    //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
+    if (modify && empty.value) {
+        for (item in ricettaCompleta!!.ingredienti) {
+            ingredientList.add(item)
+        }
+        empty.value = false
+    }
+
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxSize()
-            //.verticalScroll(rememberScrollState())
     ){
-        Row(
-            modifier = Modifier.padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
 
-            //scope per selezionare l'immagine
+        // titolo e immagine
+        item()
+        {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                //scope per selezionare l'immagine
 
 
-            var uri = main?.getUri()
+                var uri = main?.getUri()
 
-            Log.d("image", ricettaCompleta?.uri.toString() )
-            if(modify && !ricettaCompleta?.uri.isNullOrEmpty()) uri = Uri.parse(ricettaCompleta?.uri)
+                Log.d("image", ricettaCompleta?.uri.toString())
+                if (modify && !ricettaCompleta?.uri.isNullOrEmpty()) uri =
+                    Uri.parse(ricettaCompleta?.uri)
 
-            model.onImageInsert(uri.toString())
-
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(color = MaterialTheme.colors.surface)
-                    .size(55.dp),
-                contentAlignment = Alignment.Center
-            ){
+                model.onImageInsert(uri.toString())
 
                 Box(
-                    modifier = Modifier.alpha(0.85f)
-                ){
-                    RicettaImage(uri)
-                    //RicettaImage(urStr = main?.getUri())
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(color = MaterialTheme.colors.surface)
+                        .size(55.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Box(
+                        modifier = Modifier.alpha(0.85f)
+                    ) {
+                        RicettaImage(uri)
+                        //RicettaImage(urStr = main?.getUri())
+                    }
+
+
+
+                    IconButton(onClick = {
+
+                        main?.loadImage()
+
+                    }) {
+                        Icon(
+                            painterResource(R.drawable.ic_baseline_add_photo_alternate_24),
+                            "",
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+
                 }
+                MyTextField(
+                    model,
+                    stringResource(R.string.titolo),
+                    25,
+                    true,
+                    ricettaCompleta,
+                    modify
+                )
+            }
 
 
 
-                IconButton(onClick = {
+        //filtri
 
-                    main?.loadImage()
+            //filtri a chips selezionabili
+            Divider(
+                modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
+            )
+            Text(
+                text = stringResource(R.string.Filtri),
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.padding(2.dp))
 
-                }) {
-                    Icon(painterResource(R.drawable.ic_baseline_add_photo_alternate_24), "", tint = Color.White, modifier = Modifier.size(30.dp))
+
+            FilterGrid(model, filtri, filterList)
+
+
+        //header ingredienti
+            Divider(
+                modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
+            )
+            Text(
+                text = stringResource(R.string.ingredienti),
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .fillMaxWidth()
+            )
+        }
+
+/*
+            val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
+            val empty = remember { mutableStateOf(true) }
+
+            //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
+            if (modify && empty.value) {
+                for (item in ricettaCompleta!!.ingredienti) {
+                    ingredientList.add(item)
                 }
-
+                empty.value = false
             }
-            MyTextField(model, stringResource(R.string.titolo), 25, true, ricettaCompleta, modify)   //modify
-        }
 
-        //filtri a chips selezionabili
-        Divider(
-            modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
-        )
-        Text(
-            text = stringResource(R.string.Filtri),
-            style = MaterialTheme.typography.subtitle1,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier
-                .padding(start = 15.dp)
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.padding(2.dp))
-
-        FilterGrid(model, filtri, filterList) /*{ model.onExpand(false) }*/
-
-        Divider(
-            modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
-        )
-        Text(
-            text = stringResource(R.string.ingredienti),
-            style = MaterialTheme.typography.subtitle1,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier
-                .padding(start = 15.dp)
-                .fillMaxWidth()
-        )
+ */
 
 
-        val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
-        val empty = remember { mutableStateOf(true) }
-
-        //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
-        if(modify && empty.value){
-            for(item in ricettaCompleta!!.ingredienti){
-                ingredientList.add(item)
+        //lista reattiva degli ingredienti
+        itemsIndexed(items = ingredientList,
+            itemContent = { _, ingredient ->
+                NewIngredient(ingredientList = ingredientList, ingredient = ingredient)
             }
-            empty.value = false
-        }
+        )
+            //addIngredientCard(ingredientList)
+            /*LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                    //.weight(2f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+            ){
+                    addIngredientCard(ingredientList)
+            }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(2f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-        ){
-                addIngredientCard(ingredientList)
-        }
+             */
 
 
-        val openDialog = remember { mutableStateOf(false)  }
-        val ingrediente = IngredienteRIcetta("","empty","")
 
-        // Tasto +
-        IconButton(
-            // Aggiunge un elemento a ingredientList
-            onClick = {
+        //bottone ADD
+        item(){
+            val openDialog = remember { mutableStateOf(false) }
+            val ingrediente = IngredienteRIcetta("", "empty", "")
+
+            // Tasto +
+            IconButton(
+                // Aggiunge un elemento a ingredientList
+                onClick = {
                     //listState.add(ingrediente)
                     //model.onIngredientsInsert(listState)    //va fatto dopo?
                     openDialog.value = true
+                }
+            ) {
+                Icon(Icons.Rounded.Add, "")
             }
-        ) {
-            Icon(Icons.Rounded.Add,"")
-        }
-        if(openDialog.value)
-            NewDialog(model, ingredientList, openDialog, ingrediente)
+            if (openDialog.value)
+                NewDialog(model, ingredientList, openDialog, ingrediente)
 
-        Divider(
-            modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
-        )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Top,
-            modifier = Modifier
-                .weight(3f)
-                .padding(end = 10.dp),
-        ){
-            MyTextField(
-                model,
-                stringResource(R.string.descrizione),
-                300,
-                false,
-                ricettaCompleta,
-                modify
+            Divider(
+                modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
+            )
+
+
+            //descrizione
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier
+                    //.weight(3f)
+                    .padding(end = 10.dp),
+            ) {
+                MyTextField(
+                    model,
+                    stringResource(R.string.descrizione),
+                    300,
+                    false,
+                    ricettaCompleta,
+                    modify
+                )
+            }
+            //non so a cora serva questa box, forse come scrollable list
+            Box(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .height(100.dp)
+                    .fillMaxWidth()
             )
         }
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        )
 
     }
 }

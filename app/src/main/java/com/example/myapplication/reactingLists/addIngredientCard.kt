@@ -28,6 +28,8 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
     ) {
         itemsIndexed(items = ingredientList,
             itemContent = { _, ingredient ->
