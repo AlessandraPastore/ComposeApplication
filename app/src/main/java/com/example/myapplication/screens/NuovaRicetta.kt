@@ -75,7 +75,7 @@ fun NuovaRicetta(
                 navigationIcon = {
                     IconButton(onClick = {
 
-                        main?.resetUri()    //resetta l'uri se scelto
+                        main?.resetUri()    //resetta l'uri se esce
 
                         model.restartFilters()  //toglie i check dai filtri
 
@@ -182,12 +182,15 @@ fun Content(
 
                 //scope per selezionare l'immagine
 
-
                 var uri = main?.getUri()
 
-                Log.d("image", ricettaCompleta?.uri.toString())
-                if (modify && !ricettaCompleta?.uri.isNullOrEmpty()) uri =
-                    Uri.parse(ricettaCompleta?.uri)
+                val change = remember { mutableStateOf(false)}
+
+
+                if (modify && !ricettaCompleta?.uri.isNullOrEmpty() && !change.value) {
+                    uri = Uri.parse(ricettaCompleta?.uri) //uri è quello vecchio
+                    change.value = true
+                }
 
                 model.onImageInsert(uri.toString())
 
