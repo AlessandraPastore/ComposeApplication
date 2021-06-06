@@ -8,6 +8,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -36,10 +37,15 @@ import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.addIngredientCard
 import com.example.myapplication.reactingLists.dialogIngredient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 
 // Cornice per lo schermo
 @ExperimentalFoundationApi
+@Synchronized
 @Composable
 fun NuovaRicetta(
     model: RicetteViewModel,
@@ -57,15 +63,19 @@ fun NuovaRicetta(
     //val ricettaCompleta by model.ricettaCompleta.observeAsState()
     val ricettaCompleta = model.getRicettaCompleta()
 
+
+
     if(modify) {
         titolo = stringResource(R.string.modifica)
         model.onTitoloInsert(ricettaCompleta.titolo)
         model.onDescrizioneInsert(ricettaCompleta.descrizione)
         model.onIngredientsInsert(ricettaCompleta.ingredienti)
-        model.onFilterInsert(ricettaCompleta.filtri)
+        //model.onFilterInsert(ricettaCompleta.filtri)
+        model.onImageInsert(ricettaCompleta.uri)
     }
 
 
+    val main=MainActivity.get()
 
     Scaffold(
         topBar = {
@@ -74,17 +84,31 @@ fun NuovaRicetta(
                 navigationIcon = {
                     IconButton(onClick = {
 
+                        main?.resetUri()
+
                         model.restartFilters()  //toglie i check dai filtri
-                        model.updateTipologia(false)
-                        model.onHomeClick()
+
+
                         if(modify)
                             model.resetModify()   //resetta la variabile
 
-                        navController.navigate(Screen.Home.route){
+                        if(model.getFromDetails() == true) {
+                            model.isFromDetails()
+                            navController.navigate("${Screen.RicettaDetail.route}/${titolo}") {
 
-                            popUpTo = navController.graph.startDestination
-                            launchSingleTop = true
+                                popUpTo = navController.graph.startDestination
+                                launchSingleTop = true
 
+                            }
+                        }
+                        else {
+                            model.updateTipologia(false)
+                            model.onHomeClick()
+                            navController.navigate(Screen.Home.route) {
+
+                                popUpTo = navController.graph.startDestination
+                                launchSingleTop = true
+                            }
                         }
                     })
                     {
@@ -109,12 +133,14 @@ fun NuovaRicetta(
             )
         },
     ){
+
         if(modify)
         {
+            model.onFilterInsert(ricettaCompleta.filtri)
             filterList = ricettaCompleta.filtri
             //model.onFilterInsert(filterList)
         }
-        Content(model, ricettaCompleta, modify, filtri, filterList)
+        Content(model, ricettaCompleta, modify, filtri, filterList, main)
     }
 }
 private var imageUriState =  mutableStateOf<Uri?>(null)
@@ -128,7 +154,8 @@ fun Content(
     ricettaCompleta: RicettaSample?,
     modify: Boolean,
     filtri: List<Filtro>,
-    filterList: MutableList<Filtro>
+    filterList: MutableList<Filtro>,
+    main: MainActivity?
 ) {
 
     Column(
@@ -143,9 +170,17 @@ fun Content(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            //al post di box metteremo un Image
 
-            val main=MainActivity.get()
+            //scope per selezionare l'immagine
+
+
+            var uri = main?.getUri()
+
+            Log.d("image", ricettaCompleta?.uri.toString() )
+            if(modify && !ricettaCompleta?.uri.isNullOrEmpty()) uri = Uri.parse(ricettaCompleta?.uri)
+
+            model.onImageInsert(uri.toString())
+
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -157,25 +192,22 @@ fun Content(
                 Box(
                     modifier = Modifier.alpha(0.85f)
                 ){
-                    RicettaImage(urStr = main?.getUri())
+                    RicettaImage(uri)
+                    //RicettaImage(urStr = main?.getUri())
                 }
 
 
 
-
-
-                model.onImageInsert(main?.getUri().toString())
-
                 IconButton(onClick = {
 
-                        main?.loadImage()
+                    main?.loadImage()
 
                 }) {
                     Icon(Icons.Rounded.PhotoCamera, "", tint = Color.White, modifier = Modifier.size(30.dp))
                 }
 
             }
-            MyTextField(model, stringResource(R.string.titolo), 20, true, ricettaCompleta, modify)   //modify
+            MyTextField(model, stringResource(R.string.titolo), 25, true, ricettaCompleta, modify)   //modify
         }
 
         //filtri a chips selezionabili
@@ -192,7 +224,7 @@ fun Content(
         )
         Spacer(modifier = Modifier.padding(2.dp))
 
-        FilterGrid(model, filtri, filterList) { model.onExpand(false) }
+        FilterGrid(model, filtri, filterList) /*{ model.onExpand(false) }*/
 
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -207,12 +239,12 @@ fun Content(
         )
 
 
-        val listState = remember { mutableStateListOf<IngredienteRIcetta>() }
+        val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
 
         //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
         if(modify){
             for(item in ricettaCompleta!!.ingredienti){
-                listState.add(item)
+                ingredientList.add(item)
             }
         }
 
@@ -223,7 +255,7 @@ fun Content(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ){
-                addIngredientCard(listState)
+                addIngredientCard(ingredientList)
         }
 
 
@@ -242,7 +274,7 @@ fun Content(
             Icon(Icons.Rounded.Add,"")
         }
         if(openDialog.value)
-            NewDialog(model, listState, openDialog, ingrediente)
+            NewDialog(model, ingredientList, openDialog, ingrediente)
 
         Divider(
             modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
@@ -257,7 +289,7 @@ fun Content(
             MyTextField(
                 model,
                 stringResource(R.string.descrizione),
-                200,
+                300,
                 false,
                 ricettaCompleta,
                 modify
@@ -273,22 +305,22 @@ fun Content(
 @Composable
 fun NewDialog(
     model: RicetteViewModel,
-    listState: SnapshotStateList<IngredienteRIcetta>,
+    ingredientList: SnapshotStateList<IngredienteRIcetta>,
     openDialog: MutableState<Boolean>,
     ingredient: IngredienteRIcetta
 ) {
     AlertDialog(
         onDismissRequest = {
-            listState.add(ingredient)
-            model.onIngredientsInsert(listState)    //va fatto dopo?
+            ingredientList.add(ingredient)
+            model.onIngredientsInsert(ingredientList)
             openDialog.value = false },
         title = { Text(text = "") },
         text = { dialogIngredient(ingredient) },
         confirmButton = {
             Button(
                 onClick = {
-                    listState.add(ingredient)
-                    model.onIngredientsInsert(listState)
+                    ingredientList.add(ingredient)
+                    model.onIngredientsInsert(ingredientList)
                     openDialog.value = false
                 }) {
                 Text("Fatto")
@@ -416,7 +448,7 @@ fun FilterGrid(
     model: RicetteViewModel,
     filtri: List<Filtro>,
     filterList: MutableList<Filtro>,
-    onDeExpand: () -> Unit
+    //onDeExpand: () -> Unit
 ){
     val primary = Color.Transparent
 

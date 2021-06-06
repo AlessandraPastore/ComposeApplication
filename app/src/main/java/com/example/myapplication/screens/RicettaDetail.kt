@@ -9,13 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -34,6 +32,8 @@ import com.example.myapplication.Screen
 import com.example.myapplication.SimpleFlowRow
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
@@ -142,7 +142,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                             modifier = Modifier.padding(10.dp)
                         ) {
 
-                            for(item in ricettaCompleta!!.ingredienti){
+                            for(item in ricettaCompleta.ingredienti){
                                 IngredientItem(model, navController, item)
                             }
                         }
@@ -157,7 +157,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     Spacer(modifier = Modifier.height(16.dp))
 
 
-                    Text(ricettaCompleta!!.descrizione)
+                    Text(ricettaCompleta.descrizione)
 
                     Box(modifier = Modifier
                         .background(Color.Transparent)
@@ -229,31 +229,64 @@ fun FadingTopBar(
                     .padding(8.dp)
             )
         }
-        IconButton(
-            onClick = {
-                model.onRicettaDelete()
-                model.resetComplete()
 
-                if(tipologia == "Home") {
-                    model.onHomeClick()
-                    navController.navigate(Screen.Home.route){
-                        popUpTo = navController.graph.startDestination
-                        launchSingleTop = true
-                    }
+        val scope = rememberCoroutineScope()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth().height(56.dp)
+        ){
+            // Bottone della matita
+            IconButton(onClick = {
+
+                scope.launch{
+                    model.isFromDetails()
+                    model.modifyRecipe()
+                    delay(1000)
+                }
+
+
+                navController.navigate(Screen.NuovaRicetta.route){
+
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
 
                 }
-                else {
-                    model.onPreferitiClick()
-                    navController.navigate(Screen.Preferiti.route){
-                        popUpTo = navController.graph.startDestination
-                        launchSingleTop = true
+
+            }
+            ) {
+                Icon(
+                    Icons.Rounded.Create,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                        .padding(8.dp)
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    model.onRicettaDelete()
+                    model.resetComplete()
+
+                    if(tipologia == "Home") {
+                        model.onHomeClick()
+                        navController.navigate(Screen.Home.route){
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
+
                     }
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-        )
-        {
+                    else {
+                        model.onPreferitiClick()
+                        navController.navigate(Screen.Preferiti.route){
+                            popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+            {
                 Icon(
                     Icons.Rounded.Delete,
                     contentDescription = "",
@@ -261,7 +294,9 @@ fun FadingTopBar(
                         .background(color = MaterialTheme.colors.primary, shape = CircleShape)
                         .padding(8.dp)
                 )
+            }
         }
+
     }
 }
 

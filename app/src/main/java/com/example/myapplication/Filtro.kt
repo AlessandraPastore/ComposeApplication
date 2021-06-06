@@ -7,7 +7,7 @@ sealed class Filtro (val name : String, var checked: Boolean = false ){
     object Dessert : Filtro("Dolce")
     object Vegetariano : Filtro("Vegetariano")
     object Vegano : Filtro("Vegano")
-    object GlutenFree : Filtro("Gluten Free")
+    object GlutenFree : Filtro("Gluten free")
 }
 
 fun getFilters() : List<Filtro>{

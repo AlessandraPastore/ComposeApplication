@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -47,6 +48,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     private val lock= Mutex()
     //aggiunge la ricetta salvata in _ricettaVuota
+    @Synchronized
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
         lock.withLock {
 
@@ -76,6 +78,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 )
             }
 
+            Log.d("nuovo",_ricettaVuota.value!!.ingredienti.toString() )
             _ricettaVuota.value!!.filtri.forEach { filtro ->
                 ricDao.insertRicetteCategoria(
                     RicettaCategorie(
@@ -85,11 +88,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 )
             }
 
+
             _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
                 //ingrediente.titolo = _ricettaVuota.value!!.titolo
 
                 ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
                 ricDao.insertIngredienteRicetta(ingrediente)
+
             }
             val main=MainActivity.get()
             if (main != null) {
@@ -133,31 +138,35 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
 
+    @Synchronized
     fun onImageInsert(uri:String?)
     {
         _ricettaVuota.value!!.uri=uri
-
     }
+
+    @Synchronized
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
         Log.d("doge", _ricettaVuota.value!!.titolo )
     }
 
+    @Synchronized
     fun onDescrizioneInsert(descrizione: String){
         _ricettaVuota.value!!.descrizione = descrizione
-        Log.d("doge", _ricettaVuota.value!!.descrizione )
     }
 
+    @Synchronized
     fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
         _ricettaVuota.value!!.ingredienti = ingList
-        Log.d("doge", _ricettaVuota.value!!.ingredienti.toString() )
     }
 
+    @Synchronized
     fun onFilterInsert(filterList : MutableList<Filtro>){
         _ricettaVuota.value!!.filtri = filterList
-        Log.d("doge", _ricettaVuota.value!!.filtri.toString() )
+        Log.d("FILTRI", _ricettaVuota.value!!.filtri.toString() )
     }
 
+    @Synchronized
     fun restartFilters(){
         for(filtro in _filtri.value!!){
             filtro.checked = false
@@ -170,24 +179,23 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     //inserisce in ricetta completa le informazioni della ricetta passata
     fun getRicetta(titolo:String)=viewModelScope.launch (Dispatchers.IO) {
-
         _ricettaCompleta.value!!.titolo = titolo
         _ricettaCompleta.value!!.descrizione = ricDao.showRicettaCompleta(titolo).descrizione
-        _ricettaCompleta.value!!.ingredienti = ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
-        _ricettaCompleta.value!!.uri=ricDao.getUri(titolo)
+        _ricettaCompleta.value!!.ingredienti =
+            ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
+        _ricettaCompleta.value!!.uri = ricDao.getUri(titolo)
         //conversione categoria -> filtro
         val categoriaList = ricDao.allCatFromRecipe(titolo)
         val filterList = getFilters()
         val tmp = mutableListOf<Filtro>()
 
-        for(filter in filterList) {
+        for (filter in filterList) {
             for (cat in categoriaList) {
                 if (cat.categoria.equals(filter.name)) tmp.add(filter)
             }
         }
 
         _ricettaCompleta.value!!.filtri = tmp
-
     }
 
     fun getRicettaCompleta():RicettaSample{
@@ -315,7 +323,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun modifyRecipe(){
         resetModify()
         getRicetta(_ricettaSelezionata.value!!.titolo)
-        onInvertPress()
+        if(_fromDetails.value != true) onInvertPress()  //forse potrebbe dare problemi di concorrenza?
     }
 
     fun resetModify(){
@@ -395,5 +403,15 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onClickRicerca(testo: String){
         _ricerca.value = testo
+    }
+
+    private val _fromDetails = MutableLiveData(false)
+
+    fun isFromDetails(){
+        _fromDetails.value = !_fromDetails.value!!
+    }
+
+    fun getFromDetails(): Boolean? {
+        return _fromDetails.value
     }
 }
