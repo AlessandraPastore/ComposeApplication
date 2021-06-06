@@ -2,24 +2,18 @@ package com.example.myapplication.reactingLists
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.example.myapplication.database.RicetteViewModel
 
 
 @Composable
@@ -33,7 +27,11 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
     ) {
         itemsIndexed(items = ingredientList,
             itemContent = { _, ingredient ->
-                NewIngredient(ingredientList = ingredientList, ingredient = ingredient)
+                /*NewIngredient(
+                    ingredientList = ingredientList,
+                    ingredient = ingredient,
+                    model = model
+                )*/
             }
         )
     }
@@ -43,6 +41,7 @@ fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
 fun NewIngredient(
     ingredientList: MutableList<IngredienteRIcetta>,
     ingredient: IngredienteRIcetta,
+    model: RicetteViewModel,
 ) {
 
     // Stato interno, gestisce il pop up dell'ingrediente per l'inserimento dei dati da parte dell'utente
@@ -63,7 +62,10 @@ fun NewIngredient(
         ) {
             Text(ingredient.ingrediente)
         }
-        IconButton(onClick =  {ingredientList.remove(ingredient)}){
+        IconButton(onClick =  {
+            ingredientList.remove(ingredient)
+            model.onIngredientsInsert(ingredientList)
+        }){
             Icon(Icons.Rounded.Delete, contentDescription = "")
         }
     }

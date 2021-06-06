@@ -1,9 +1,6 @@
 package com.example.myapplication.screens
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -19,9 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,12 +30,7 @@ import com.example.myapplication.RicettaImage
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.NewIngredient
-import com.example.myapplication.reactingLists.addIngredientCard
 import com.example.myapplication.reactingLists.dialogIngredient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.withLock
 
 
 // Cornice per lo schermo
@@ -176,7 +166,7 @@ fun Content(
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
     ){
@@ -296,7 +286,7 @@ fun Content(
         //lista reattiva degli ingredienti
         itemsIndexed(items = ingredientList,
             itemContent = { _, ingredient ->
-                NewIngredient(ingredientList = ingredientList, ingredient = ingredient)
+                NewIngredient(ingredientList = ingredientList, ingredient = ingredient, model)
             }
         )
             //addIngredientCard(ingredientList)
