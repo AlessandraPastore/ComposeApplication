@@ -201,7 +201,7 @@ fun FadingTopBar(
                     )
                 )
                 .height(56.dp)
-                .background(color = MaterialTheme.colors.primary),
+                .background(color = MaterialTheme.colors.primary)
         )
         IconButton(
             onClick = {
@@ -234,7 +234,8 @@ fun FadingTopBar(
                 contentDescription = "",
                 modifier = Modifier
                     .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-                    .padding(8.dp)
+                    .padding(8.dp),
+                tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
             )
         }
 
@@ -270,7 +271,8 @@ fun FadingTopBar(
                     contentDescription = "",
                     modifier = Modifier
                         .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
                 )
             }
 
@@ -302,7 +304,8 @@ fun FadingTopBar(
                     contentDescription = "",
                     modifier = Modifier
                         .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
                 )
             }
         }
