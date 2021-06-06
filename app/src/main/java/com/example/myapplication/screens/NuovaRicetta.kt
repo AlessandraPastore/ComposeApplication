@@ -68,7 +68,12 @@ fun NuovaRicetta(
     if(modify) {
         titolo = stringResource(R.string.modifica)
         model.onTitoloInsert(ricettaCompleta.titolo)
-
+        //aspetta che si carichino i campi, non riesco a testarlo
+        while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
+            Column(Modifier.fillMaxSize()) {
+                CircularProgressIndicator()
+            }
+        }
     }
 
 

@@ -35,6 +35,7 @@ import com.example.myapplication.database.RicetteViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
@@ -53,6 +54,13 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
     //val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
     val ricettaCompleta = model.getRicettaCompleta()
+
+    //aspetta che si carichino i campi, non riesco a testarlo
+    while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
+        Column(Modifier.fillMaxSize()) {
+            CircularProgressIndicator()
+        }
+    }
 
     val scrollState = rememberScrollState()
 
@@ -234,7 +242,9 @@ fun FadingTopBar(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth().height(56.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         ){
             // Bottone della matita
             IconButton(onClick = {
