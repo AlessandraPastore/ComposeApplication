@@ -46,6 +46,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     }
 
+
+
     private val lock= Mutex()
     //aggiunge la ricetta salvata in _ricettaVuota
     @Synchronized
@@ -137,6 +139,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
+
+    fun resetRicettaVuota(){
+        _ricettaVuota.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
+    }
 
     @Synchronized
     fun onImageInsert(uri:String?)

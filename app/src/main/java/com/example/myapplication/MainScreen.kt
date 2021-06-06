@@ -65,6 +65,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
         onClick = {
 
             if(currentRoute != Screen.NuovaRicetta.route) {
+                model.resetRicettaVuota()
                 navController.navigate(Screen.NuovaRicetta.route){
 
                     popUpTo = navController.graph.startDestination

@@ -64,7 +64,6 @@ fun NuovaRicetta(
     val ricettaCompleta = model.getRicettaCompleta()
 
 
-
     if(modify) {
         titolo = stringResource(R.string.modifica)
         model.onTitoloInsert(ricettaCompleta.titolo)
