@@ -3,14 +3,11 @@ package com.example.myapplication.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DarkMode
-import androidx.compose.material.icons.rounded.GridView
-import androidx.compose.material.icons.rounded.LightMode
-import androidx.compose.material.icons.rounded.ViewList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,7 +75,7 @@ fun ListView(listView: MutableState<Boolean>){
 
             IconButton(onClick = { listView.value = false }) {
                 CompositionLocalProvider(LocalContentAlpha provides contentAlpha.value) {
-                    Icon(Icons.Rounded.GridView, "", modifier = Modifier.scale(2F))
+                    Icon(painterResource(R.drawable.ic_round_grid_view_24), "", modifier = Modifier.scale(2F))
                 }
             }
         }
@@ -101,7 +98,7 @@ fun ListView(listView: MutableState<Boolean>){
 
             IconButton(onClick = { listView.value = true }) {
                 CompositionLocalProvider(LocalContentAlpha provides contentAlpha.value) {
-                    Icon(Icons.Rounded.ViewList, "", modifier = Modifier.scale(2F))
+                    Icon(painterResource(R.drawable.ic_round_view_list_24), "", modifier = Modifier.scale(2F))
                 }
             }
         }
@@ -127,9 +124,9 @@ fun DarkMode(enableDarkMode: MutableState<Boolean>){
         Spacer(modifier = Modifier.height(15.dp))
 
         if(enableDarkMode.value)   {
-            Icon(Icons.Rounded.DarkMode, contentDescription = "", modifier = Modifier.size(64.dp))}
+            Icon(painterResource(R.drawable.ic_round_dark_mode_24), contentDescription = "", modifier = Modifier.size(64.dp))}
         else {
-            Icon(Icons.Rounded.LightMode, contentDescription = "", modifier = Modifier.size(64.dp))}
+            Icon(painterResource(R.drawable.ic_round_light_mode_24), contentDescription = "", modifier = Modifier.size(64.dp))}
 
         Spacer(modifier = Modifier.height(30.dp))
 

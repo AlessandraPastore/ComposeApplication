@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,10 +68,7 @@ fun NuovaRicetta(
     if(modify) {
         titolo = stringResource(R.string.modifica)
         model.onTitoloInsert(ricettaCompleta.titolo)
-        model.onDescrizioneInsert(ricettaCompleta.descrizione)
-        model.onIngredientsInsert(ricettaCompleta.ingredienti)
-        //model.onFilterInsert(ricettaCompleta.filtri)
-        model.onImageInsert(ricettaCompleta.uri)
+
     }
 
 
@@ -83,7 +81,7 @@ fun NuovaRicetta(
                 navigationIcon = {
                     IconButton(onClick = {
 
-                        main?.resetUri()
+                        main?.resetUri()    //resetta l'uri se scelto
 
                         model.restartFilters()  //toglie i check dai filtri
 
@@ -136,6 +134,10 @@ fun NuovaRicetta(
         if(modify)
         {
             model.onFilterInsert(ricettaCompleta.filtri)
+            model.onDescrizioneInsert(ricettaCompleta.descrizione)
+            model.onIngredientsInsert(ricettaCompleta.ingredienti)
+            model.onImageInsert(ricettaCompleta.uri)
+
             filterList = ricettaCompleta.filtri
             //model.onFilterInsert(filterList)
         }
@@ -202,7 +204,7 @@ fun Content(
                     main?.loadImage()
 
                 }) {
-                    Icon(Icons.Rounded.PhotoCamera, "", tint = Color.White, modifier = Modifier.size(30.dp))
+                    Icon(painterResource(R.drawable.ic_baseline_add_photo_alternate_24), "", tint = Color.White, modifier = Modifier.size(30.dp))
                 }
 
             }
@@ -239,12 +241,14 @@ fun Content(
 
 
         val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
+        val empty = remember { mutableStateOf(true) }
 
         //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
-        if(modify){
+        if(modify && empty.value){
             for(item in ricettaCompleta!!.ingredienti){
                 ingredientList.add(item)
             }
+            empty.value = false
         }
 
         Column(
@@ -386,60 +390,7 @@ fun MyTextField(
     )
 }
 
-// Funzione che gestisce l'icona del filtro
-@Composable
-fun ShowFilters(
-    model: RicetteViewModel,
-    filtri: List<Filtro>,
-    filterList: MutableList<Filtro>,
-    expanded: Boolean,
-    onDeExpand: () -> Unit
-) {
 
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDeExpand,
-        modifier = Modifier
-            .wrapContentSize()
-            .background(MaterialTheme.colors.background)
-
-    ) {
-
-
-
-        filtri.forEach{
-
-
-            for (filtro in filterList) {
-                if(filtro.name.equals(it.name)) it.checked = true
-            }
-
-            val checked = remember { mutableStateOf(it.checked) }
-
-
-
-            DropdownMenuItem(onClick = {
-                checked.value = !checked.value
-                it.checked = checked.value
-                if(!checked.value) filterList.remove(it)
-                else filterList.add(it)
-                model.onFilterInsert(filterList)
-
-
-
-            }) {
-                Row{
-                    if(checked.value)
-                        Icon(Icons.Rounded.CheckBox, "")
-                    else
-                        Icon(Icons.Rounded.CropSquare, "")
-
-                    Text(it.name)
-                }
-            }
-        }
-    }
-}
 
 @ExperimentalFoundationApi
 @Composable

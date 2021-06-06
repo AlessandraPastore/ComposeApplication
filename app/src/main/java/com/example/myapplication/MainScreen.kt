@@ -85,24 +85,36 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
                     //se era una modifica bisogna resettare le variabili e cancellarla prima
                     if(model.getModify()){
-                        model.addModify()
+                        model.addModify()   //viene cancellata qua dentro
                         Log.d("test","cancellata")
                     }
 
+
                     scope.launch {
                         delay(1000)  //aspetto che faccia il delete, non so ancora un modo migliore
-                        model.onRicettaAdd()                //ERRORE su dispositivi lenti
+                        model.onRicettaAdd()
+                    }
+
+
+                    //resetta le variabili
+                    if(model.getFromDetails() == true) {
+                        model.isFromDetails()
+                        model.onInvertPress()
                     }
 
                     model.restartFilters()
                     model.updateTipologia(false)
                     model.onHomeClick()
+
                     navController.navigate(Screen.Home.route){
 
                         popUpTo = navController.graph.startDestination
                         launchSingleTop = true
 
                     }
+
+
+
                 }
 
 

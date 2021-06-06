@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -93,7 +94,7 @@ fun TopBar(
                 Icon(Icons.Rounded.Search, contentDescription = "")
             }
             IconButton(onClick = onExpand) {
-                Icon(Icons.Rounded.FilterAlt, contentDescription = "")
+                Icon(painterResource(R.drawable.ic_round_filter_alt_24), contentDescription = "")
             }
             DropDown(
                 model,
@@ -144,9 +145,9 @@ fun DropDown(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         if (selected)
-                            Icon(Icons.Rounded.CheckBox, "")
+                            Icon(painterResource(R.drawable.ic_round_check_box_24), "")
                         else
-                            Icon(Icons.Rounded.CropSquare, "")
+                            Icon(painterResource(R.drawable.ic_round_check_box_outline_blank_24), "")
 
                         Text(filtro.name, modifier = Modifier.padding(5.dp))
                     }
@@ -212,7 +213,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 modifier = Modifier.padding(top = 5.dp)
                 )
             {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = null)
+                Icon(Icons.Rounded.ArrowBack, "")
             }
 
             // TextField in cui memorizzare il testo digitato dall'utente
