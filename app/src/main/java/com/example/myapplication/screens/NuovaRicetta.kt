@@ -1,6 +1,7 @@
 package com.example.myapplication.screens
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -67,6 +68,35 @@ fun NuovaRicetta(
 
 
     val main=MainActivity.get()
+
+    BackHandler {
+        main?.resetUri()    //resetta l'uri se esce
+
+        model.restartFilters()  //toglie i check dai filtri
+
+
+        if(modify)
+            model.resetModify()   //resetta la variabile
+
+        if(model.getFromDetails() == true) {
+            model.isFromDetails()
+            navController.navigate("${Screen.RicettaDetail.route}/${titolo}") {
+
+                popUpTo = navController.graph.startDestination
+                launchSingleTop = true
+
+            }
+        }
+        else {
+            model.updateTipologia(false)
+            model.onHomeClick()
+            navController.navigate(Screen.Home.route) {
+
+                popUpTo = navController.graph.startDestination
+                launchSingleTop = true
+            }
+        }
+    }
 
     Scaffold(
         topBar = {

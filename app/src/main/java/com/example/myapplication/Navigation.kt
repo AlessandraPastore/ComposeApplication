@@ -1,13 +1,14 @@
 package com.example.myapplication
 
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.*
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.screens.*
 
@@ -15,9 +16,9 @@ import com.example.myapplication.screens.*
 @ExperimentalFoundationApi
 @Composable
 fun NavConfig(
+    model: RicetteViewModel,
     navController: NavHostController,
     enableDarkMode: MutableState<Boolean>,
-    model: RicetteViewModel,
     listView: MutableState<Boolean>,
 ){
     NavHost(navController, startDestination = Screen.Home.route) {

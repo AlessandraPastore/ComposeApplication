@@ -18,6 +18,12 @@
     // Testo del bottone Applica nel menù dei filtri
     <string name="Applica">Applica</string>
 
+    // Stringhe usate in Modalità
+    <string name="Visualizzazione">Visualizzazione</string>
+    <string name="GridView">GridView</string>
+    <string name="ListView">ListView</string>
+    <string name="Darkmode">Darkmode</string>
+
     <string name="selected">Ricetta selezionata</string>
 
     <string name="titolo">Titolo</string>

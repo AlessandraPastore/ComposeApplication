@@ -35,31 +35,33 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
-
-
     Scaffold(
         floatingActionButton = {
+
+            // Negli schermi che mostrano i dettagli delle singole ricette non si mostra il FAB
             if(currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
                 FAB(model, navController, currentRoute)
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
+
+            // La bottom bar non si mostra su NuovaRicetta e su RicettaDetail
             if(currentRoute != Screen.NuovaRicetta.route && currentRoute != "${Screen.RicettaDetail.route}/{ricetta}")
-                BottomBar(model,navController, currentRoute)  //la bottom bar non si mostra su NuovaRicetta e su RicettaDetail
+                BottomBar(model,navController, currentRoute)
         },
     ){
-        NavConfig(navController, enableDarkMode, model, listView)
+        NavConfig(model, navController, enableDarkMode,  listView)
     }
 }
 
-// Funzione che gestisce il bottone centrale
+// Funzione che gestisce il bottone centrale "fluttuante"
 @Composable
 private fun FAB(model: RicetteViewModel, navController: NavHostController, currentRoute: String?) {
 
     val openDialog = remember { mutableStateOf(false)  }
     val scope = rememberCoroutineScope()
-    var error = remember { mutableStateOf("")  }
+    val error = remember { mutableStateOf("")  }
 
     FloatingActionButton(
         onClick = {
@@ -156,7 +158,7 @@ fun AlertError(openDialog: MutableState<Boolean>, error: String) {
     )
 }
 
-// Funzione che gestisce la BottomBar e la navigazione delle icone
+// Funzione che gestisce la BottomBar e la navigazione delle relative icone
 @Composable
 private fun BottomBar(model: RicetteViewModel, navController: NavHostController, currentRoute: String?){
 
@@ -255,7 +257,6 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                             softWrap = false,
                             overflow = TextOverflow.Visible,
                             textAlign = TextAlign.Justify,
-                            //modifier = Modifier.offset(x = (-15).dp)  //non mi piace
                         )
                     },
                     selected =  currentRoute == impostazioni,

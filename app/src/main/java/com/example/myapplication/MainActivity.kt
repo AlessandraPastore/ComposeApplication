@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-        private val pickImgCode = 100
+    private val pickImgCode = 100
     fun loadImage()
     {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
@@ -50,22 +50,23 @@ class MainActivity : ComponentActivity() {
 
     }
 
-fun getUri():Uri?
-{
-    return imageUri.value
-}
+    fun getUri():Uri?
+    {
+       return imageUri.value
+    }
 
-companion object  {
-    var inst: MainActivity? = null
-        fun get(): MainActivity? {
-            return inst
-        }
+    companion object {
+        var inst: MainActivity? = null
+          fun get(): MainActivity? {
+                return inst
+          }
 
     }
-fun resetUri()
-{
-    imageUri.value=null
-}
+
+    fun resetUri()
+    {
+        imageUri.value=null
+    }
 
     lateinit var enableDarkMode: MutableState<Boolean>
     lateinit var listView: MutableState<Boolean>

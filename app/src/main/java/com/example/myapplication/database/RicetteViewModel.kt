@@ -287,7 +287,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     // Chiamata al click del bottone Applica nel menù dei filtri
     fun onApplicaClick(tipologia: String){
 
-        if(tipologia.equals("home"))
+        if(tipologia == "Home")
             onHomeClick()
         else
             onPreferitiClick()
@@ -385,14 +385,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun updateCarrello(ingrediente: String, status: Boolean)=viewModelScope.launch (Dispatchers.IO) {
         ricDao.updateCarrello(Ingrediente(ingrediente, status))
-    }
-
-    fun addCarrello(ingrediente: String)=viewModelScope.launch (Dispatchers.IO){
-        ricDao.updateCarrello(Ingrediente(ingrediente, true))
-    }
-
-    fun removeCarrello(ingrediente: String)=viewModelScope.launch (Dispatchers.IO){
-        ricDao.updateCarrello(Ingrediente(ingrediente, false))
     }
 
     private val _permission = MutableLiveData(false)

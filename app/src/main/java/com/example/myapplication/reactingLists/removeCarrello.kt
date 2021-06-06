@@ -22,26 +22,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import com.example.myapplication.ShowEmpty
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.database.Ingrediente
-import com.example.myapplication.showEmpty
 
 @Composable
 fun RemoveCarrello(model: RicetteViewModel) {
 
-    val ingredientList = model.listaCarrello.observeAsState()    //me la dovrà dare il viewModel
+    val ingredientList = model.listaCarrello.observeAsState()
 
     if(ingredientList.value != null) {
         if(ingredientList.value!!.isEmpty())
-            showEmpty(stringResource(R.string.carrello))
+            ShowEmpty(stringResource(R.string.carrello))
         else
-            showList(model, ingredientList)
+            ShowList(model, ingredientList)
     }
 
 }
 
 @Composable
-fun showList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>) {
+fun ShowList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -78,7 +78,7 @@ fun showList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>)
                     }
                 }
             })
-        item() {
+        item {
             Box(
                 modifier = Modifier
                     .background(Color.Transparent)

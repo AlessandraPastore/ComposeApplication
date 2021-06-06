@@ -58,15 +58,15 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
         topBar = {
             when{
                 longPressed -> LongPress(navController, onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()}, onModify = {model.modifyRecipe()})
-                searching -> Searching(model, navController, tipologia as String) { model.onDisplaySearch(tipologia) }
-                else -> TopBar(navController , model, tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
+                searching -> Searching(model, navController, tipologia as String, onSearch = {model.onDisplaySearch(tipologia)}, onBack = {model.onBackFromSearch(tipologia)})
+                else -> TopBar(model, navController , tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
         },
     )
     {
         if(ricette != null) {
             if(ricette!!.isEmpty())
-                tipologia?.let { it1 -> showEmpty(str = it1) }
+                tipologia?.let { it1 -> ShowEmpty(str = it1) }
             else
                 ScrollableList(model, navController, ricette as List<RicettePreview>, longPressed, listView)
         }
@@ -76,8 +76,8 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
 // Funzione che gestisce l'AppBar "ad alto livello"
 @Composable
 fun TopBar(
-    navController: NavController,
     model: RicetteViewModel,
+    navController: NavController,
     tipologia: String,
     expanded: Boolean,
     onExpand: () -> Unit,
@@ -159,13 +159,11 @@ fun DropDown(
         ) {
             Button(onClick = {
 
-                //onApplicaClick()
+                onApplicaClick()
 
                 if (tipologia == "Home") {
-                    model.onHomeClick()
                     navController.navigate(Screen.Home.route)
                 } else {
-                    model.onPreferitiClick()
                     navController.navigate(Screen.Preferiti.route)
                 }
 
@@ -184,9 +182,8 @@ fun DropDown(
 
 // Funzione che gestisce l'icona della ricerca
 @Composable
-fun Searching(model: RicetteViewModel, navController: NavController,  tipologia: String, onSearch: () -> Unit) {
+fun Searching(model: RicetteViewModel, navController: NavController,  tipologia: String, onSearch: () -> Unit, onBack: () -> Unit) {
 
-    //val input = remember{ mutableStateOf(TextFieldValue())}
     val ricerca by model.ricerca.observeAsState("")
 
     val openDialog = remember { mutableStateOf(false)  }
@@ -203,16 +200,17 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
             IconButton(
                 onClick = {
 
-                model.onBackFromSearch(tipologia)
+                    onBack()
 
-                if(tipologia == "Home")
-                    navController.navigate(Screen.Home.route)
-                else
-                    navController.navigate(Screen.Preferiti.route)
+                    //model.onBackFromSearch(tipologia)
+
+                    if(tipologia == "Home")
+                        navController.navigate(Screen.Home.route)
+                    else
+                        navController.navigate(Screen.Preferiti.route)
                 },
                 modifier = Modifier.padding(top = 5.dp)
-                )
-            {
+                ) {
                 Icon(Icons.Rounded.ArrowBack, "")
             }
 
@@ -222,7 +220,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 onValueChange = {
                         if(it.length <= 20)
                             model.onClickRicerca(it)
-                                },
+                        },
                 placeholder = { Text(stringResource(R.string.Cerca)) },
                 singleLine = true,
                 modifier = Modifier.weight(3f)
@@ -232,12 +230,10 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
             IconButton(
                 onClick = {
 
-                    //model.onClickRicerca(input.value.text)
-
+                    // Il carattere % non può essere inserito poichè causa problemi
+                    // con la query della ricerca
                     if(!ricerca.contains("%")) {
                         onSearch()
-                        //model.onDisplaySearch(tipologia)
-
 
                     if (tipologia == "Home")
                         navController.navigate(Screen.Home.route)
@@ -305,12 +301,9 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
                     delay(1000)
                 }
 
-
                 navController.navigate(Screen.NuovaRicetta.route){
-
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
-
                 }
 
             }) {

@@ -2,6 +2,7 @@ package com.example.myapplication.screens
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -64,6 +65,30 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 
     val scrollState = rememberScrollState()
 
+    /*
+    BackHandler {
+        model.resetSelection()
+        model.resetComplete()
+
+        if(tipologia == "Home") {
+            model.onHomeClick()
+            navController.navigate(Screen.Home.route){
+                popUpTo = navController.graph.startDestination
+                launchSingleTop = true
+            }
+
+        }
+        else {
+            model.onPreferitiClick()
+            navController.navigate(Screen.Preferiti.route){
+                popUpTo = navController.graph.startDestination
+                launchSingleTop = true
+            }
+        }
+    }
+
+     */
+
     Scaffold{
         Box(modifier = Modifier.fillMaxSize()){
             Column(
@@ -87,8 +112,6 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     else
                         RicettaImage(urStr = Uri.parse(ricettaCompleta.uri))
                 }
-
-                //Spacer(modifier = Modifier.height(10.dp))
 
                 //contiene tutti i detail della ricetta
                 Column(

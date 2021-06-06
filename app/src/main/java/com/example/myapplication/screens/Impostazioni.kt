@@ -45,7 +45,7 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>, listView: MutableState<B
 fun ListView(listView: MutableState<Boolean>){
 
     Text(
-        text = "Visualizzazione",
+        text = stringResource(R.string.Visualizzazione),
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.h6
     )
@@ -61,7 +61,7 @@ fun ListView(listView: MutableState<Boolean>){
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
-                text = "GridView",
+                text = stringResource(R.string.GridView),
                 textAlign = TextAlign.Center,
             )
 
@@ -84,7 +84,7 @@ fun ListView(listView: MutableState<Boolean>){
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
-                text = "ListView",
+                text = stringResource(R.string.ListView),
                 textAlign = TextAlign.Center,
             )
 
@@ -116,7 +116,7 @@ fun DarkMode(enableDarkMode: MutableState<Boolean>){
     ){
 
         Text(
-            text = "Darkmode",
+            text = stringResource(R.string.Darkmode),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.h6
         )
