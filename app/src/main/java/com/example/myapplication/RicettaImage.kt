@@ -64,42 +64,52 @@ fun  RicettaImage (urStr:Uri?){
 
     var img:ImageView
 
+    val scope = rememberCoroutineScope()
 
-    AndroidView(
-        { context -> ImageView(context).apply{
-            try
-            {
-                setImageURI(urinew)
-                Log.d("image22", this.contentDescription.toString())
-            }
-            catch (e: java.lang.Exception) {
-                Log.d("image","bene")
+        AndroidView(
+            { context ->
+                ImageView(context).apply {
+                    try {
+                        scope.launch {
+                            setImageURI(urinew)
+                        }
+                            Log.d("image22", this.contentDescription.toString())
 
-                setImageDrawable(
-                    (AppCompatResources.getDrawable(
-                        MainActivity.get()?.applicationContext!!,
-                        R.drawable.foto)
+                    } catch (e: java.lang.Exception) {
+                        Log.d("image", "bene")
+
+                        setImageDrawable(
+                            (AppCompatResources.getDrawable(
+                                MainActivity.get()?.applicationContext!!,
+                                R.drawable.foto
+                            )
+                                    )
+                        )
+                    }
+
+                    this.scaleType = ImageView.ScaleType.CENTER_CROP
+
+                }
+            },
+
+            modifier = Modifier.fillMaxSize(),
+
+
+            update = { imageView ->
+                try {
+                    scope.launch {
+                        imageView.setImageURI(urinew)
+                    }
+                } catch (e: java.lang.Exception) {
+                    imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.foto
+                        )
                     )
-                )
-            }
+                }
+            })
 
-            this.scaleType = ImageView.ScaleType.CENTER_CROP
-
-        }
-        },
-
-        modifier = Modifier.fillMaxSize(),
-
-
-        update={  imageView ->
-            try{imageView.setImageURI(urinew)  } catch (e: java.lang.Exception){
-                imageView.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        MainActivity.get()?.applicationContext!!,
-                        R.drawable.foto
-                    )
-                )}
-        } )
 
 
 }

@@ -80,7 +80,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 )
             }
 
-            Log.d("nuovo",_ricettaVuota.value!!.ingredienti.toString() )
             _ricettaVuota.value!!.filtri.forEach { filtro ->
                 ricDao.insertRicetteCategoria(
                     RicettaCategorie(
@@ -92,12 +91,12 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
 
             _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
-                //ingrediente.titolo = _ricettaVuota.value!!.titolo
 
                 ricDao.insertIngrediente(Ingrediente(ingrediente.ingrediente, false))
                 ricDao.insertIngredienteRicetta(ingrediente)
 
             }
+
             val main=MainActivity.get()
             if (main != null) {
                 main.resetUri()
@@ -144,7 +143,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaVuota.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
     }
 
-    @Synchronized
     fun onImageInsert(uri:String?)
     {
         _ricettaVuota.value!!.uri=uri

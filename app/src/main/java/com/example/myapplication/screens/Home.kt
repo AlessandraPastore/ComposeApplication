@@ -202,8 +202,6 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
 
                     onBack()
 
-                    //model.onBackFromSearch(tipologia)
-
                     if(tipologia == "Home")
                         navController.navigate(Screen.Home.route)
                     else
