@@ -107,4 +107,7 @@ interface DaoRicette {
 
     @Query("select uri from RicettePreview ")
     suspend  fun getUriPreview():List<String?>
+
+    @Query("Select count(*) from Ricettepreview where titolo=:titolo")
+    suspend fun titoloExist(titolo: String):Int
 }
