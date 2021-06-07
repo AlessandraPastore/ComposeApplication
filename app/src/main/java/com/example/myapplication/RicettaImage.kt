@@ -93,7 +93,7 @@ fun  RicettaImage (urStr:Uri?){
 
 
         update={  imageView ->
-            GlobalScope.launch {
+            GlobalScope.launch(Dispatchers.IO) {
             try{//imageView.setImageURI(urinew)
                 val bit=MainActivity.get()!!.map[urinew]
                 Log.d("imageUpdate",bit.toString())
