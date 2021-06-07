@@ -105,4 +105,6 @@ interface DaoRicette {
     @Query("select uri from RicettaCompleta where titolo=:titolo")
     suspend fun getUri(titolo:String):String
 
+    @Query("select uri from RicettePreview ")
+    suspend  fun getUriPreview():List<String?>
 }

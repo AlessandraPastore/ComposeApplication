@@ -43,6 +43,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import java.io.IOException
 import java.io.InputStream
+import java.lang.NullPointerException
 
 
 @Composable
@@ -61,56 +62,55 @@ fun  RicettaImage (urStr:Uri?){
         Log.d("image2", File(urinew.encodedPath!!).canRead().toString())
     }
 
-    Log.d("image22", "entrato")
-    //Log.d("Image2", File(urinew!!.encodedPath).toString())
+
 
     var img:ImageView
+    AndroidView(
+        { context -> ImageView(context).apply{
+            try
+            {
+                //setImageURI(urinew)
+                    //setImageBitmap(MainActivity.get()?.map?.get(urinew))
+                Log.d("imageapply", this.contentDescription.toString())
+            }
+            catch (e: java.lang.Exception) {
+                Log.d("image","bene")
 
-    val scope = rememberCoroutineScope()
-
-        AndroidView(
-            { context ->
-                ImageView(context).apply {
-                    GlobalScope.launch(Dispatchers.IO) {
-                        try {
-                            setImageURI(urinew)
-                            //Log.d("image22", this.contentDescription.toString())
-
-                        } catch (e: java.lang.Exception) {
-                            Log.d("image", "bene")
-
-                            setImageDrawable(
-                                (AppCompatResources.getDrawable(
-                                    MainActivity.get()?.applicationContext!!,
-                                    R.drawable.foto
-                                ))
+                setImageDrawable(
+                    (AppCompatResources.getDrawable(
+                        MainActivity.get()?.applicationContext!!,
+                        R.drawable.foto)
                             )
-                        }
-                    }
-                        this.scaleType = ImageView.ScaleType.CENTER_CROP
+                )
+            }
+
+            this.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        }
+        },
+
+        modifier = Modifier.fillMaxSize(),
 
 
-                }
-            },
-
-            modifier = Modifier.fillMaxSize(),
-
-
-            update = { imageView ->
-                GlobalScope.launch(Dispatchers.IO) {
-                    try {
-                        imageView.setImageURI(urinew)
-                    } catch (e: java.lang.Exception) {
-                        imageView.setImageDrawable(
-                            AppCompatResources.getDrawable(
-                                MainActivity.get()?.applicationContext!!,
-                                R.drawable.foto
-                            )
-                        )
-                    }
-                }
-            })
-
+        update={  imageView ->
+            GlobalScope.launch {
+            try{//imageView.setImageURI(urinew)
+                val bit=MainActivity.get()!!.map[urinew]
+                Log.d("imageUpdate",bit.toString())
+                if(bit!=null)
+                imageView.setImageBitmap(MainActivity.get()!!.map[urinew])
+                else
+                    throw NullPointerException()
+               }
+            catch (e: java.lang.Exception){
+                Log.d("imageUpdatecatch","null")
+                imageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        MainActivity.get()?.applicationContext!!,
+                        R.drawable.foto
+                    )
+                )}
+        } })
 
 
 }

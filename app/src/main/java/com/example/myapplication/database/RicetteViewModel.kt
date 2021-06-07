@@ -2,14 +2,12 @@ package com.example.myapplication.database
 
 import android.app.Application
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.res.TypedArrayUtils.getString
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.myapplication.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -409,5 +407,16 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun getFromDetails(): Boolean? {
         return _fromDetails.value
+    }
+    fun setBitmap()=viewModelScope.launch (Dispatchers.IO){
+        val m= MainActivity.get()?.map
+        ricDao.getUriPreview().forEach {
+            if(it!=null)
+                try{
+            m?.set(Uri.parse(it),  MediaStore.Images.Media.getBitmap(MainActivity.get()?.contentResolver,Uri.parse(it)))}
+                catch (e: java.lang.Exception) {
+                    m?.set(Uri.parse(it),  null)
+                }
+        }
     }
 }
