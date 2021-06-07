@@ -39,6 +39,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import java.io.IOException
 import java.io.InputStream
 
@@ -69,25 +71,24 @@ fun  RicettaImage (urStr:Uri?){
         AndroidView(
             { context ->
                 ImageView(context).apply {
-                    try {
-                        scope.launch {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        try {
                             setImageURI(urinew)
-                        }
-                            Log.d("image22", this.contentDescription.toString())
+                            //Log.d("image22", this.contentDescription.toString())
 
-                    } catch (e: java.lang.Exception) {
-                        Log.d("image", "bene")
+                        } catch (e: java.lang.Exception) {
+                            Log.d("image", "bene")
 
-                        setImageDrawable(
-                            (AppCompatResources.getDrawable(
-                                MainActivity.get()?.applicationContext!!,
-                                R.drawable.foto
+                            setImageDrawable(
+                                (AppCompatResources.getDrawable(
+                                    MainActivity.get()?.applicationContext!!,
+                                    R.drawable.foto
+                                ))
                             )
-                                    )
-                        )
+                        }
                     }
+                        this.scaleType = ImageView.ScaleType.CENTER_CROP
 
-                    this.scaleType = ImageView.ScaleType.CENTER_CROP
 
                 }
             },
@@ -96,17 +97,17 @@ fun  RicettaImage (urStr:Uri?){
 
 
             update = { imageView ->
-                try {
-                    scope.launch {
+                GlobalScope.launch(Dispatchers.IO) {
+                    try {
                         imageView.setImageURI(urinew)
-                    }
-                } catch (e: java.lang.Exception) {
-                    imageView.setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            MainActivity.get()?.applicationContext!!,
-                            R.drawable.foto
+                    } catch (e: java.lang.Exception) {
+                        imageView.setImageDrawable(
+                            AppCompatResources.getDrawable(
+                                MainActivity.get()?.applicationContext!!,
+                                R.drawable.foto
+                            )
                         )
-                    )
+                    }
                 }
             })
 
