@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -54,10 +56,13 @@ fun NuovaRicetta(
     //val ricettaCompleta by model.ricettaCompleta.observeAsState()
     val ricettaCompleta = model.getRicettaCompleta()
 
+    val ricettaVuota = model.getRicettaVuota()
+
+
 
     if(modify) {
         titolo = stringResource(R.string.modifica)
-        model.onTitoloInsert(ricettaCompleta.titolo)
+
         //aspetta che si carichino i campi, non riesco a testarlo
         while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
             Column(Modifier.fillMaxSize()) {
@@ -154,18 +159,21 @@ fun NuovaRicetta(
             )
         },
     ){
-
-        if(modify)
+        val empty = rememberSaveable { mutableStateOf(true) }
+        if(modify && empty.value)
         {
+            empty.value = false
+            model.onTitoloInsert(ricettaCompleta.titolo)
             model.onFilterInsert(ricettaCompleta.filtri)
             model.onDescrizioneInsert(ricettaCompleta.descrizione)
             model.onIngredientsInsert(ricettaCompleta.ingredienti)
             model.onImageInsert(ricettaCompleta.uri)
+            Log.d("WOWOWO", ricettaVuota.uri!!)
 
             filterList = ricettaCompleta.filtri
             //model.onFilterInsert(filterList)
         }
-        Content(model, ricettaCompleta, modify, filtri, filterList, main)
+        Content(model, ricettaCompleta, ricettaVuota, modify, filtri, filterList, main)
     }
 }
 private var imageUriState =  mutableStateOf<Uri?>(null)
@@ -176,7 +184,8 @@ private val pickImgCode = 100
 @Composable
 fun Content(
     model: RicetteViewModel,
-    ricettaCompleta: RicettaSample?,
+    ricettaCompleta: RicettaSample,
+    ricettaVuota: RicettaSample,
     modify: Boolean,
     filtri: List<Filtro>,
     filterList: MutableList<Filtro>,
@@ -184,15 +193,20 @@ fun Content(
 ) {
 
     val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
-    val empty = remember { mutableStateOf(true) }
+    for(item in ricettaVuota.ingredienti)
+        ingredientList.add(item)
 
+    //val empty = rememberSaveable { mutableStateOf(true) }
+/*
     //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
     if (modify && empty.value) {
-        for (item in ricettaCompleta!!.ingredienti) {
+        for (item in ricettaCompleta.ingredienti) {
             ingredientList.add(item)
         }
         empty.value = false
     }
+
+ */
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -212,17 +226,26 @@ fun Content(
 
                 //scope per selezionare l'immagine
 
-                var uri = main?.getUri()
+                val changed = remember { mutableStateOf(false)}
+                var uri = Uri.parse(ricettaVuota.uri)
 
-                val change = remember { mutableStateOf(false)}
+
+                val tmp = main?.getUri()
+                if(tmp != null) model.onImageInsert(tmp.toString())
 
 
-                if (modify && !ricettaCompleta?.uri.isNullOrEmpty() && !change.value) {
-                    uri = Uri.parse(ricettaCompleta?.uri) //uri è quello vecchio
-                    change.value = true
+                //if(modify) uri = Uri.parse(ricettaCompleta.uri)
+/*
+                val changed = rememberSaveable { mutableStateOf(false)}
+
+                if (modify && !ricettaCompleta.uri.isNullOrEmpty() && !changed.value) {
+                    uri = Uri.parse(ricettaCompleta.uri) //uri è quello vecchio
+                    changed.value = true
                 }
 
-                model.onImageInsert(uri.toString())
+ */
+
+                //model.onImageInsert(uri.toString())
 
                 Box(
                     modifier = Modifier
@@ -235,7 +258,8 @@ fun Content(
                     Box(
                         modifier = Modifier.alpha(0.85f)
                     ) {
-                        RicettaImage(uri)
+                        RicettaImage(Uri.parse(ricettaVuota.uri))
+                        //RicettaImage(uri)
                         //RicettaImage(urStr = main?.getUri())
                     }
 
@@ -261,6 +285,7 @@ fun Content(
                     25,
                     true,
                     ricettaCompleta,
+                    ricettaVuota,
                     modify
                 )
             }
@@ -375,6 +400,7 @@ fun Content(
                     300,
                     false,
                     ricettaCompleta,
+                    ricettaVuota,
                     modify
                 )
             }
@@ -393,7 +419,7 @@ fun Content(
 @Composable
 fun NewDialog(
     model: RicetteViewModel,
-    ingredientList: SnapshotStateList<IngredienteRIcetta>,
+    ingredientList: MutableList<IngredienteRIcetta>,
     openDialog: MutableState<Boolean>,
     ingredient: IngredienteRIcetta
 ) {
@@ -425,7 +451,8 @@ fun MyTextField(
     str: String,
     max: Int,
     singleLine: Boolean,
-    ricettaCompleta: RicettaSample?,
+    ricettaCompleta: RicettaSample,
+    ricettaVuota: RicettaSample,
     modify: Boolean
 ){
 
@@ -434,9 +461,13 @@ fun MyTextField(
     var readOnly = false
 
     //val title = remember{ mutableStateOf(TextFieldValue()) }
-    var title = remember{mutableStateOf("")}
+    val title =
+        if(str == titolo)
+            remember { mutableStateOf(ricettaVuota.titolo) }
+        else
+            remember{mutableStateOf(ricettaVuota.descrizione)}
 
-    if(modify) {
+    /*if(modify) {
         if(str.equals(titolo)){
             //title.value = TextFieldValue(ricettaCompleta!!.titolo)
             title = remember {mutableStateOf(ricettaCompleta!!.titolo)}
@@ -448,6 +479,17 @@ fun MyTextField(
 
     }
 
+     */
+
+
+    if(modify && str == titolo)
+        readOnly = true
+
+
+
+
+
+
 
     OutlinedTextField(
         value = title.value,
@@ -455,10 +497,12 @@ fun MyTextField(
             if(it.length <= max)
                 title.value = it
 
-            if(str.equals(titolo))
+            if(str == titolo)
                 model.onTitoloInsert(title.value)
             else
                 model.onDescrizioneInsert(title.value)
+
+            Log.d("ricettaVuota", ricettaVuota.descrizione)
         },
         readOnly = readOnly,  //readOnly se siamo in Modifica
         placeholder = {Text(text = "Inserire $str")},

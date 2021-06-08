@@ -137,6 +137,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
 
+    fun getRicettaVuota(): RicettaSample {
+        return _ricettaVuota.value!!
+    }
+
     fun resetRicettaVuota(){
         _ricettaVuota.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
     }
@@ -146,23 +150,23 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaVuota.value!!.uri=uri
     }
 
-    @Synchronized
+
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
         Log.d("doge", _ricettaVuota.value!!.titolo )
     }
 
-    @Synchronized
+
     fun onDescrizioneInsert(descrizione: String){
         _ricettaVuota.value!!.descrizione = descrizione
     }
 
-    @Synchronized
+
     fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
         _ricettaVuota.value!!.ingredienti = ingList
     }
 
-    @Synchronized
+
     fun onFilterInsert(filterList : MutableList<Filtro>){
         _ricettaVuota.value!!.filtri = filterList
         Log.d("FILTRI", _ricettaVuota.value!!.filtri.toString() )
