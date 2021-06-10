@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaImage
 import com.example.myapplication.Screen
 import com.example.myapplication.SimpleFlowRow
@@ -107,13 +108,13 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                 )
                 {
                     var categoria=""
-                    val filtri= listOf<String>("Antipasto","Primo piatto","Secondo piatto","Dolce")
+                    val filtri= listOf<Filtro>(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
                     filtri.forEach{
                         if(ricettaCompleta.filtri.contains(it))
-                        categoria=it
+                        categoria=it.name
                     }
 
-                    Log.d("foto",ricettaCompleta.toString())
+                    Log.d("foto",categoria)
                    if(ricettaCompleta.uri.isNullOrEmpty())
                        RicettaImage(null,true,categoria)
                     else
