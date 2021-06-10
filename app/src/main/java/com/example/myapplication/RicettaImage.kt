@@ -47,24 +47,12 @@ import java.lang.NullPointerException
 
 
 @Composable
-fun  RicettaImage (urStr:Uri?){
+fun  RicettaImage (uri:Uri?,Detail:Boolean,categoria: String){
 
-    var urinew= urStr
+    var urinew= uri
+    if(!Detail)
+        urinew=null
 
-    if(urinew == null){
-        Log.d("null","lo vedo")
-    }
-
-    if(urinew!=null)
-        //Log.d("Image",urinew.toString())
-
-    if (urinew != null) {
-        Log.d("image2", File(urinew.encodedPath!!).canRead().toString())
-    }
-
-
-
-    var img:ImageView
     AndroidView(
         { context -> ImageView(context).apply{
             try
@@ -94,8 +82,10 @@ fun  RicettaImage (urStr:Uri?){
 
         update={  imageView ->
             GlobalScope.launch(Dispatchers.IO) {
-            try{//imageView.setImageURI(urinew)
+            try{
+                //imageView.setImageURI(urinew)
                 val bit=MainActivity.get()!!.map[urinew]
+                Log.d("prova aggiornamento",(bit==null).toString())
                 Log.d("imageUpdate",bit.toString())
                 if(bit!=null)
                 imageView.setImageBitmap(MainActivity.get()!!.map[urinew])
@@ -104,12 +94,40 @@ fun  RicettaImage (urStr:Uri?){
                }
             catch (e: java.lang.Exception){
                 Log.d("imageUpdatecatch","null")
-                imageView.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        MainActivity.get()?.applicationContext!!,
-                        R.drawable.foto
+                when (categoria) {
+                    "Antipasto" -> imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.antipasto
+                        )
                     )
-                )}
+                    "Primo piatto" -> imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.primo
+                        )
+                    )
+                    "Secondo piatto" -> imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.secondo
+                        )
+                    )
+                    "Dolce" -> imageView.setImageDrawable(
+                        AppCompatResources.getDrawable(
+                            MainActivity.get()?.applicationContext!!,
+                            R.drawable.dessert
+                        )
+                    )
+                    else ->
+                        imageView.setImageDrawable(
+                            AppCompatResources.getDrawable(
+                                MainActivity.get()?.applicationContext!!,
+                                R.drawable.foto
+                            )
+                        )
+                }
+            }
         } })
 
 

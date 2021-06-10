@@ -45,12 +45,10 @@ fun GridVariant(
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier.height(250.dp).fillMaxWidth()
         ) {
-            if(ricetta.uri!=null) {
-                RicettaImage(Uri.parse(ricetta.uri))
-                Log.d("Testuri",Uri.parse(ricetta.uri).toString())
-            }
-            else
-                RicettaImage(urStr = null)
+
+                RicettaImage(null,false,"Dolce")
+
+
         }
 
         Row(
@@ -93,12 +91,8 @@ fun ListVariant(
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier.size(130.dp),
         ) {
-            if(ricetta.uri!=null) {
-                RicettaImage(Uri.parse(ricetta.uri))
-                Log.d("Testuri",Uri.parse(ricetta.uri).toString())
-            }
-            else
-                RicettaImage(urStr = null)
+
+                RicettaImage(null,false,"Dolce")
         }
         Column(
             modifier = Modifier

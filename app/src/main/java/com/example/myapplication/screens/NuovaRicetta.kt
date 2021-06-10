@@ -257,7 +257,7 @@ fun Content(
                     Box(
                         modifier = Modifier.alpha(0.85f)
                     ) {
-                        RicettaImage(Uri.parse(ricettaVuota.uri))
+                        RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
                         //RicettaImage(uri)
                         //RicettaImage(urStr = main?.getUri())
                     }
