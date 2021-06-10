@@ -547,11 +547,10 @@ fun FilterGrid(
 
 
 
-
             if(index == 4) {
-                Divider(modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp))
+                Divider(modifier = Modifier.padding(top = 3.dp, start = 15.dp, end = 15.dp, bottom = 3.dp))
                 Text(
-                    text = stringResource(R.string.Adds),
+                    text = stringResource(R.string.Adds)+":",
                     style = MaterialTheme.typography.subtitle2,
                     color = MaterialTheme.colors.primary,
                     modifier = Modifier
@@ -560,10 +559,6 @@ fun FilterGrid(
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
             }
-
-
-
-
 
 
             val bgColor = remember { mutableStateOf(primary) }
@@ -626,7 +621,7 @@ fun FilterGrid(
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(10.dp),
-                        color = txtColor
+                        //color = txtColor
                     )
                 }
             }

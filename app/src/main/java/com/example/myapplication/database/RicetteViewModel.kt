@@ -139,9 +139,9 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 Filtro.Secondo.name -> count++
                 Filtro.Dessert.name -> count++
             }
-            if(count != 1) return "(inserisci almeno un filtro)"
-
         }
+
+        if(count != 1) return "(inserisci almeno un filtro)"
 
         if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "(inserisci degli ingredienti)"
 

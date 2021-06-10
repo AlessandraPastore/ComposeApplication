@@ -10,7 +10,7 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)*/
 
 
-
+val Gray = Color(0xFF505050)
 val Gray800 = Color(0xFF424242)
 val Gray900 = Color(0xFF212121)
 
@@ -48,7 +48,8 @@ val LightColors = lightColors(
     primary = Red500,
     primaryVariant = Red700,
     secondary = Amber600,
-    surface = DeepOrange100
+    surface = DeepOrange100,
+
 
 
 
@@ -64,9 +65,10 @@ val LightColors = lightColors(
 
 
 val DarkColors = darkColors(
-    primary = Gray800,
+    primary = Amber600,
     primaryVariant = Gray900,
     secondary = Amber600,
-    onPrimary = Color.White,
-    onSecondary = Color.Black
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    surface = Color.Black
 )
