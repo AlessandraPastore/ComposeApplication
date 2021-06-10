@@ -114,8 +114,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                 )
                 {
                     val cat = model.getCategoria(ricettaCompleta.titolo)
-
-                    Log.d("foto",categoria)
+                    
                    if(ricettaCompleta.uri.isNullOrEmpty())
                        RicettaImage(null,true,cat)
                     else
