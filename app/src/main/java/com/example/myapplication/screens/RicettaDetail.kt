@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.example.myapplication.Filtro
 import com.example.myapplication.RicettaImage
 import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
@@ -114,7 +115,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                 {
                     val cat = model.getCategoria(ricettaCompleta.titolo)
 
-                    Log.d("foto",ricettaCompleta.toString())
+                    Log.d("foto",categoria)
                    if(ricettaCompleta.uri.isNullOrEmpty())
                        RicettaImage(null,true,cat)
                     else

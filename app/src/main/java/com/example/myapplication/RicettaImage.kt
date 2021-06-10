@@ -81,7 +81,7 @@ fun  RicettaImage (uri:Uri?,Detail:Boolean,categoria: String){
 
 
         update={  imageView ->
-            GlobalScope.launch(Dispatchers.IO) {
+
             try{
                 //imageView.setImageURI(urinew)
                 val bit=MainActivity.get()!!.map[urinew]
@@ -128,7 +128,7 @@ fun  RicettaImage (uri:Uri?,Detail:Boolean,categoria: String){
                         )
                 }
             }
-        } })
+        })
 
 
 }
