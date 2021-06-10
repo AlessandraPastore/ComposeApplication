@@ -106,18 +106,13 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         .height(300.dp)
                 )
                 {
-                    var categoria=""
-                    val filtri= listOf<String>("Antipasto","Primo piatto","Secondo piatto","Dolce")
-                    filtri.forEach{
-                        if(ricettaCompleta.filtri.contains(it))
-                        categoria=it
-                    }
+                    val cat = model.getCategoria(ricettaCompleta.titolo)
 
                     Log.d("foto",ricettaCompleta.toString())
                    if(ricettaCompleta.uri.isNullOrEmpty())
-                       RicettaImage(null,true,categoria)
+                       RicettaImage(null,true,cat)
                     else
-                        RicettaImage( Uri.parse(ricettaCompleta.uri),true,categoria )
+                        RicettaImage( Uri.parse(ricettaCompleta.uri),true,cat )
                 }
 
                 //contiene tutti i detail della ricetta

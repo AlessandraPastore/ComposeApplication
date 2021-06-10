@@ -38,6 +38,10 @@ fun GridVariant(
     ricetta: RicettePreview,
     checked : Boolean
 ){
+
+    val cat = model.getCategoria(ricetta.titolo)
+    Log.d("categoria", cat)
+
     Column(){
 
         //contiene l'immagine
@@ -46,8 +50,7 @@ fun GridVariant(
             modifier = Modifier.height(250.dp).fillMaxWidth()
         ) {
 
-                RicettaImage(null,false,"Dolce")
-
+                RicettaImage(null,false,cat)
 
         }
 

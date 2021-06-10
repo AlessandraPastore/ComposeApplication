@@ -215,6 +215,25 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
 
+    fun getCategoria(titolo: String): String {
+
+        var category : List<Categoria>
+        runBlocking {
+            category = ricDao.allCatFromRecipe(titolo)
+        }
+
+        var list = listOf<Filtro>(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
+        var ftl = ""
+        for (filter in list){
+            for (cat in category) {
+                if (cat.categoria.equals(filter.name))  ftl = filter.name
+            }
+        }
+
+        return ftl
+
+    }
+
     private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
     val ricettaCompleta: LiveData<RicettaSample> = _ricettaCompleta
 
@@ -456,4 +475,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 }
         }
     }
+
+
 }
