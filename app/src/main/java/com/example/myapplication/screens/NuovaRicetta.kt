@@ -34,6 +34,7 @@ import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.NewIngredient
 import com.example.myapplication.reactingLists.dialogIngredient
+import kotlinx.coroutines.runBlocking
 
 
 // Cornice per lo schermo
@@ -53,10 +54,16 @@ fun NuovaRicetta(
     val scope = rememberCoroutineScope()
 
     val modify = model.getModify()
-    //val ricettaCompleta by model.ricettaCompleta.observeAsState()
-    val ricettaCompleta = model.getRicettaCompleta()
 
-    val ricettaVuota = model.getRicettaVuota()
+    val ricettaCompleta : RicettaSample
+
+    val ricettaVuota : RicettaSample
+
+    runBlocking {
+         ricettaCompleta = model.getRicettaCompleta()
+         ricettaVuota = model.getRicettaVuota()
+    }
+
 
 
 

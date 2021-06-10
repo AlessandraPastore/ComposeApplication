@@ -29,12 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.RicettaImage
+import com.example.myapplication.RicettaSample
 import com.example.myapplication.Screen
 import com.example.myapplication.SimpleFlowRow
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
@@ -54,7 +56,11 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
 
     //val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
-    val ricettaCompleta = model.getRicettaCompleta()
+    val ricettaCompleta :RicettaSample
+    runBlocking {
+         ricettaCompleta = model.getRicettaCompleta()
+    }
+
 
     //aspetta che si carichino i campi, non riesco a testarlo
     while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
