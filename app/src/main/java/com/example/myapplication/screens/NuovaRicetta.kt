@@ -245,7 +245,6 @@ fun Content(
 
  */
 
-                //model.onImageInsert(uri.toString())
 
                 Box(
                     modifier = Modifier
@@ -537,19 +536,48 @@ fun FilterGrid(
         horizontalGap = 10.dp,
         verticalGap = 5.dp
     ){
-        filtri.forEach { filtro ->
+        filtri.forEachIndexed { index, filtro ->
 
-
+            //aggiorna i checked in modifica
             for (flt in filterList) {
-                if(flt.name.equals(filtro.name)) filtro.checked = true
+                if (flt.name.equals(filtro.name)) filtro.checked = true
             }
 
             val checked = remember { mutableStateOf(filtro.checked) }
-            val bgColor = remember{ mutableStateOf(primary)}
-            if(checked.value) bgColor.value = MaterialTheme.colors.surface
+
+
+
+
+            if(index == 4) {
+                Divider(modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp))
+                Text(
+                    text = stringResource(R.string.Adds),
+                    style = MaterialTheme.typography.subtitle2,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(start = 15.dp)
+                        .fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.padding(2.dp))
+            }
+
+
+
+
+
+
+            val bgColor = remember { mutableStateOf(primary) }
+            if (checked.value) bgColor.value = MaterialTheme.colors.surface
             else bgColor.value = Color.Transparent
 
-            Log.d("test", filtro.checked.toString())
+            checked.value = filtro.checked
+
+
+            var txtColor = Color.Unspecified.copy(alpha = ContentAlpha.high)
+            if(index < 4 && !checked.value)
+                txtColor = Color.Unspecified.copy(alpha = ContentAlpha.medium)
+
+
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = bgColor.value,
@@ -560,10 +588,24 @@ fun FilterGrid(
                 modifier = Modifier
                     //.padding(5.dp)
                     .clickable {
+
                         checked.value = !checked.value
                         filtro.checked = checked.value
                         if (!checked.value) filterList.remove(filtro)
                         else filterList.add(filtro)
+
+
+                        if(checked.value && index < 4) {
+                            Log.d("filtri", index.toString())
+                            for( i in 0..3) {
+                                filtri[i].checked = false
+                                Log.d("filtro $i", filtri[i].toString())
+                                filterList.remove(filtri[i])
+                            }
+
+                            filtro.checked = true
+                            filterList.add(filtro)
+                        }
                         model.onFilterInsert(filterList)
                     }
                     .wrapContentWidth()
@@ -575,7 +617,7 @@ fun FilterGrid(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 )
                 {
-                    if(checked.value)
+                    if (checked.value)
                         Icon(Icons.Rounded.Check, "", modifier = Modifier.padding(start = 5.dp))
 
                     Text(
@@ -583,13 +625,12 @@ fun FilterGrid(
                         style = MaterialTheme.typography.caption,
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier/*.background(
-                            color = MaterialTheme.colors.secondary,
-                            shape = RoundedCornerShape(15.dp),
-                        )*/.padding(10.dp)
+                        modifier = Modifier.padding(10.dp),
+                        color = txtColor
                     )
                 }
             }
+
         }
     }
 }

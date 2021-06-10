@@ -4,17 +4,20 @@ import android.app.Application
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
-import androidx.core.content.res.TypedArrayUtils.getString
-import androidx.lifecycle.*
-import com.example.myapplication.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.Filtro
+import com.example.myapplication.MainActivity
+import com.example.myapplication.RicettaSample
+import com.example.myapplication.getFilters
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 // AndroidViewModel è sottoclasse di ViewModel
 class RicetteViewModel(application: Application):AndroidViewModel(application) {
@@ -80,10 +83,11 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
             _ricettaVuota.value!!.filtri.forEach { filtro ->
                 ricDao.insertRicetteCategoria(
-                    RicettaCategorie(
-                        _ricettaVuota.value!!.titolo,
-                        filtro.name
-                    )
+                        RicettaCategorie(
+                            _ricettaVuota.value!!.titolo,
+                            filtro.name
+                        )
+
                 )
             }
 
@@ -105,9 +109,40 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun onRicettaAddVerify():String{
 
         if(_ricettaVuota.value!!.titolo.isBlank()) return "(inserisci il titolo)"
+
+        var titoloExist = -1
+
+        viewModelScope.launch {
+            runBlocking {
+                titoloExist = ricDao.titoloExist(_ricettaVuota.value!!.titolo)
+            }
+        }
+
+
+
+
+        if(titoloExist == 1) return "(il titolo è già esistente!!)"
+
         if(_ricettaVuota.value!!.titolo.contains("%")) return "(non puoi usare il carattere % per il titolo)"
         if(_ricettaVuota.value!!.descrizione.isBlank()) return "(inserisci una descrizione)"
+
         if(_ricettaVuota.value!!.filtri.isEmpty()) return "(inserisci uno o più filtri)"
+
+        var count = 0
+
+        _ricettaVuota.value!!.filtri.forEach{ filtro ->
+
+            Log.d("filtro", filtro.name)
+            when(filtro.name){
+                Filtro.Antipasto.name -> count++
+                Filtro.Primo.name -> count++
+                Filtro.Secondo.name -> count++
+                Filtro.Dessert.name -> count++
+            }
+            if(count != 1) return "(inserisci almeno un filtro)"
+
+        }
+
         if(_ricettaVuota.value!!.ingredienti.isEmpty()) return "(inserisci degli ingredienti)"
 
         _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
@@ -222,12 +257,10 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun selectRicetta(ricetta : RicettePreview){
         resetSelection()
         _ricettaSelezionata.value = ricetta
-        Log.d("test", _ricettaSelezionata.value.toString() )
     }
 
     fun resetSelection(){
         _ricettaSelezionata.value = RicettePreview("",false)
-        Log.d("test", "reset"+_ricettaSelezionata.value.toString())
     }
 
 

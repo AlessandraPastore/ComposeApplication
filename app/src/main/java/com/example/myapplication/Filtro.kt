@@ -1,13 +1,15 @@
 package com.example.myapplication
 
-sealed class Filtro (val name : String, var checked: Boolean = false ){
-    object Antipasto : Filtro("Antipasto")
-    object Primo : Filtro("Primo piatto")
-    object Secondo : Filtro("Secondo piatto")
-    object Dessert : Filtro("Dolce")
-    object Vegetariano : Filtro("Vegetariano")
-    object Vegano : Filtro("Vegano")
-    object GlutenFree : Filtro("Gluten free")
+
+
+sealed class Filtro(val name: String, var checked: Boolean = false ){
+    object Antipasto : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.antipasto)!!)
+    object Primo : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.primo)!!)
+    object Secondo : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.secondo)!!)
+    object Dessert : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.dolce)!!)
+    object Vegetariano : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.veg)!!)
+    object Vegano : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.vegano)!!)
+    object GlutenFree : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.gfree)!!)
 }
 
 fun getFilters() : List<Filtro>{
