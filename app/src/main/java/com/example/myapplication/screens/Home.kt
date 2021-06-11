@@ -278,7 +278,10 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
 
     TopAppBar(
         title = {
-            Text(text = stringResource(R.string.selected))
+            Text(
+                text = stringResource(R.string.selected),
+                color = Color.White
+            )
         },
         backgroundColor = MaterialTheme.colors.primaryVariant,
         contentColor = MaterialTheme.colors.onPrimary,
@@ -286,7 +289,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
         // Bottone X
         navigationIcon = {
             IconButton(onClick = onLongPress) {
-                Icon(Icons.Rounded.Close, contentDescription = "")
+                Icon(Icons.Rounded.Close, contentDescription = "", tint = Color.White)
             }
         },
         actions = {
@@ -305,7 +308,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
                 }
 
             }) {
-                Icon(Icons.Rounded.Create, contentDescription = "")
+                Icon(Icons.Rounded.Create, contentDescription = "", tint = Color.White.copy(alpha = LocalContentAlpha.current))
             }
 
             // Bottone del cestino
@@ -314,7 +317,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
                 onBinClick()
 
             }) {
-                Icon(Icons.Rounded.Delete, contentDescription = "")
+                Icon(Icons.Rounded.Delete, contentDescription = "", tint = Color.White.copy(alpha = LocalContentAlpha.current))
             }
         }
     )
