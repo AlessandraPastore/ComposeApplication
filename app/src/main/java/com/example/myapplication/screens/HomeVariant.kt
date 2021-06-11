@@ -1,59 +1,40 @@
 package com.example.myapplication.screens
 
-import android.net.Uri
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.example.myapplication.RicettaImage
-import com.example.myapplication.Screen
 import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
 
+//Funzione composable che permette la vista GridView degli elementi della lista in Home e Preferiti
 @Composable
 fun GridVariant(
     model: RicetteViewModel,
     ricetta: RicettePreview,
     checked : Boolean
 ){
-
     val cat = model.getCategoria(ricetta.titolo)
-    Log.d("categoria", cat)
 
-    Column(){
+    Column{
 
         //contiene l'immagine
         Surface(
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier.height(250.dp).fillMaxWidth()
         ) {
-
                 RicettaImage(null,false,cat)
-
         }
 
+        //contiene titolo e pulsante per l'aggiunta ai preferiti
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -79,6 +60,7 @@ fun GridVariant(
     }
 }
 
+//Funzione composable che permette la vista ListView degli elementi della lista in Home e Preferiti
 @Composable
 fun ListVariant(
     model: RicetteViewModel,
@@ -101,6 +83,8 @@ fun ListVariant(
 
                 RicettaImage(null,false,cat)
         }
+
+        //contiene il titolo
         Column(
             modifier = Modifier
                 .padding(start = 12.dp)
@@ -114,6 +98,8 @@ fun ListVariant(
                 modifier = Modifier.padding(15.dp),
             )
         }
+
+        //contiene il pulsante per l'aggiunta ai preferiti
         Column(
             modifier = Modifier
                 .padding(end = 12.dp)

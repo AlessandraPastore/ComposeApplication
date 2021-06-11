@@ -1,19 +1,22 @@
 package com.example.myapplication.screens
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -22,14 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
 import com.example.myapplication.R
-import com.example.myapplication.RicettaImage
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.NewIngredient
@@ -37,8 +38,9 @@ import com.example.myapplication.reactingLists.dialogIngredient
 import kotlinx.coroutines.runBlocking
 
 
-// Cornice per lo schermo
-@ExperimentalFoundationApi
+/*
+Composable che gestisce l'interfaccia di Nuova Ricetta o Modifica Ricetta
+ */
 @Synchronized
 @Composable
 fun NuovaRicetta(
@@ -46,12 +48,10 @@ fun NuovaRicetta(
     navController: NavHostController,
 ) {
     val filtri by model.filtri.observeAsState(getFilters())
-    val expanded by model.expanded.observeAsState(false)
 
     var filterList = mutableListOf<Filtro>()
     var titolo = stringResource(R.string.nuova)
 
-    val scope = rememberCoroutineScope()
 
     val modify = model.getModify()
 
@@ -65,50 +65,18 @@ fun NuovaRicetta(
     }
 
 
-
-
     if(modify) {
         titolo = stringResource(R.string.modifica)
-
-        //aspetta che si carichino i campi, non riesco a testarlo
-        while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
-            Column(Modifier.fillMaxSize()) {
-                CircularProgressIndicator()
-            }
-        }
     }
 
 
     val main=MainActivity.get()
 
+    //gestisce il caso in cui l'utente utilizzi il tasto indietro del telefono
     BackHandler {
-        main?.resetUri()    //resetta l'uri se esce
-
-        model.restartFilters()  //toglie i check dai filtri
-
-
-        if(modify)
-            model.resetModify()   //resetta la variabile
-
-        if(model.getFromDetails() == true) {
-            model.isFromDetails()
-            navController.navigate("${Screen.RicettaDetail.route}/${ricettaCompleta.titolo}") {
-
-                popUpTo = navController.graph.startDestination
-                launchSingleTop = true
-
-            }
-        }
-        else {
-            model.updateTipologia(false)
-            model.onHomeClick()
-            navController.navigate(Screen.Home.route) {
-
-                popUpTo = navController.graph.startDestination
-                launchSingleTop = true
-            }
-        }
+        backPress(main, model, navController, modify, ricettaCompleta.titolo)
     }
+
 
     Scaffold(
         topBar = {
@@ -116,56 +84,16 @@ fun NuovaRicetta(
                 title = { Text(text = titolo) },
                 navigationIcon = {
                     IconButton(onClick = {
-
-                        main?.resetUri()    //resetta l'uri se esce
-
-                        model.restartFilters()  //toglie i check dai filtri
-
-
-                        if(modify)
-                            model.resetModify()   //resetta la variabile
-
-                        if(model.getFromDetails() == true) {
-                            model.isFromDetails()
-                            navController.navigate("${Screen.RicettaDetail.route}/${ricettaCompleta.titolo}") {
-
-                                popUpTo = navController.graph.startDestination
-                                launchSingleTop = true
-
-                            }
-                        }
-                        else {
-                            model.updateTipologia(false)
-                            model.onHomeClick()
-                            navController.navigate(Screen.Home.route) {
-
-                                popUpTo = navController.graph.startDestination
-                                launchSingleTop = true
-                            }
-                        }
+                        backPress(main, model, navController, modify, ricettaCompleta.titolo)
                     })
                     {
                     Icon(Icons.Rounded.ArrowBack, contentDescription = "")
                     }
                 },
-                //scope per i filtri
-                /*actions = {
-                    IconButton(onClick = { model.onExpand(true) }) {
-                        Icon(Icons.Rounded.FilterAlt,"")
-                    }
-                    if(modify)
-                    {
-                        filterList = ricettaCompleta.filtri
-                        //model.onFilterInsert(filterList)
-                    }
-
-                    Log.d("test", ricettaCompleta.filtri.toString())
-                    ShowFilters(model, filtri,filterList, expanded) { model.onExpand(false) }
-                } */
-
             )
         },
     ){
+        //inizializzazione delle variabili
         val empty = rememberSaveable { mutableStateOf(true) }
         if(modify && empty.value)
         {
@@ -177,20 +105,51 @@ fun NuovaRicetta(
             model.onImageInsert(ricettaCompleta.uri)
 
             filterList = ricettaCompleta.filtri
-            //model.onFilterInsert(filterList)
         }
-        Content(model, ricettaCompleta, ricettaVuota, modify, filtri, filterList, main)
+        Content(model, ricettaVuota, modify, filtri, filterList, main)
     }
 }
-private var imageUriState =  mutableStateOf<Uri?>(null)
-private val pickImgCode = 100
-//, titolo: String, ingrediente: String, quantità: String
-// Funzione che gestisce il contenuto
-@ExperimentalFoundationApi
+
+//funzione che gestisce le backPress
+fun backPress(
+    main: MainActivity?,
+    model: RicetteViewModel,
+    navController: NavHostController,
+    modify: Boolean,
+    titolo: String
+) {
+    main?.resetUri()    //resetta l'uri se esce
+
+    model.restartFilters()  //toglie i check dai filtri
+
+
+    if(modify)
+        model.resetModify()   //resetta la variabile
+
+    if(model.getFromDetails() == true) {
+        model.isFromDetails()
+        navController.navigate("${Screen.RicettaDetail.route}/${titolo}") {
+
+            popUpTo = navController.graph.startDestination
+            launchSingleTop = true
+
+        }
+    }
+    else {
+        model.updateTipologia(false)
+        model.onHomeClick()
+        navController.navigate(Screen.Home.route) {
+
+            popUpTo = navController.graph.startDestination
+            launchSingleTop = true
+        }
+    }
+}
+
+//Funzione che gestisce la UI di NuovaRicetta
 @Composable
 fun Content(
     model: RicetteViewModel,
-    ricettaCompleta: RicettaSample,
     ricettaVuota: RicettaSample,
     modify: Boolean,
     filtri: List<Filtro>,
@@ -198,21 +157,11 @@ fun Content(
     main: MainActivity?
 ) {
 
+    //mantiene lo stato
     val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
     for(item in ricettaVuota.ingredienti)
         ingredientList.add(item)
 
-    //val empty = rememberSaveable { mutableStateOf(true) }
-/*
-    //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
-    if (modify && empty.value) {
-        for (item in ricettaCompleta.ingredienti) {
-            ingredientList.add(item)
-        }
-        empty.value = false
-    }
-
- */
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -221,85 +170,12 @@ fun Content(
             .fillMaxSize()
     ){
 
-        // titolo e immagine
-        item()
-        {
-            Row(
-                modifier = Modifier.padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
 
-                //scope per selezionare l'immagine
+        item{
+            // titolo e immagine
+            TitleAndImage(main, model, modify, ricettaVuota)
 
-
-
-                val tmp = main?.getUri()
-                if(tmp != null) model.onImageInsert(tmp.toString())
-
-
-                //if(modify) uri = Uri.parse(ricettaCompleta.uri)
-/*
-                val changed = rememberSaveable { mutableStateOf(false)}
-
-                if (modify && !ricettaCompleta.uri.isNullOrEmpty() && !changed.value) {
-                    uri = Uri.parse(ricettaCompleta.uri) //uri è quello vecchio
-                    changed.value = true
-                }
-
- */
-
-
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(color = MaterialTheme.colors.surface)
-                        .size(55.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Box(
-                        modifier = Modifier.alpha(0.85f)
-                    ) {
-                        if(ricettaVuota.uri.isNullOrEmpty())
-                            RicettaImage(null,true,"")
-                        else
-                            RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
-
-                    }
-
-
-
-                    IconButton(onClick = {
-
-                        main?.loadImage()
-
-                    }) {
-                        Icon(
-                            painterResource(R.drawable.ic_baseline_add_photo_alternate_24),
-                            "",
-                            tint = Color.White,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-
-                }
-                MyTextField(
-                    model,
-                    stringResource(R.string.titolo),
-                    25,
-                    true,
-                    ricettaCompleta,
-                    ricettaVuota,
-                    modify
-                )
-            }
-
-
-
-        //filtri
-
-            //filtri a chips selezionabili
+            //header dei filtri a chips selezionabili
             Divider(
                 modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
             )
@@ -313,11 +189,11 @@ fun Content(
             )
             Spacer(modifier = Modifier.padding(2.dp))
 
-
+            //chips dei filtri
             FilterGrid(model, filtri, filterList)
 
 
-        //header ingredienti
+            //header ingredienti
             Divider(
                 modifier = Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 5.dp)
             )
@@ -331,58 +207,29 @@ fun Content(
             )
         }
 
-/*
-            val ingredientList = remember { mutableStateListOf<IngredienteRIcetta>() }
-            val empty = remember { mutableStateOf(true) }
-
-            //se siamo in funzione di modifica, aggiorna la lista degli ingredienti
-            if (modify && empty.value) {
-                for (item in ricettaCompleta!!.ingredienti) {
-                    ingredientList.add(item)
-                }
-                empty.value = false
-            }
-
- */
-
-
         //lista reattiva degli ingredienti
         itemsIndexed(items = ingredientList,
             itemContent = { _, ingredient ->
                 NewIngredient(ingredientList = ingredientList, ingredient = ingredient, model)
             }
         )
-            //addIngredientCard(ingredientList)
-            /*LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                    //.weight(2f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-            ){
-                    addIngredientCard(ingredientList)
-            }
-
-             */
 
 
-
-        //bottone ADD
-        item(){
+        item{
             val openDialog = remember { mutableStateOf(false) }
-            val ingrediente = IngredienteRIcetta("", "empty", "")
+            val ingrediente = IngredienteRIcetta("", "", "")
 
-            // Tasto +
+            // Tasto + (aggiunge gli ingredienti)
             IconButton(
                 // Aggiunge un elemento a ingredientList
                 onClick = {
-                    //listState.add(ingrediente)
-                    //model.onIngredientsInsert(listState)    //va fatto dopo?
                     openDialog.value = true
                 }
             ) {
                 Icon(Icons.Rounded.Add, "")
             }
+
+            //dialog dell'aggiunta ingrediente
             if (openDialog.value)
                 NewDialog(model, ingredientList, openDialog, ingrediente)
 
@@ -404,12 +251,12 @@ fun Content(
                     stringResource(R.string.descrizione),
                     300,
                     false,
-                    ricettaCompleta,
                     ricettaVuota,
                     modify
                 )
             }
-            //non so a cora serva questa box, forse come scrollable list
+
+            //Box trasparente che permette lo scroll degli item fino a sopra la BottomBar, rendendoli tutti visibili
             Box(
                 modifier = Modifier
                     .background(Color.Transparent)
@@ -421,6 +268,69 @@ fun Content(
     }
 }
 
+@Composable
+fun TitleAndImage(
+    main: MainActivity?,
+    model: RicetteViewModel,
+    modify: Boolean,
+    ricettaVuota: RicettaSample,
+) {
+    Row(
+        modifier = Modifier.padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        //scope per l'immagine
+        val tmp = main?.getUri()
+        if(tmp != null) model.onImageInsert(tmp.toString())
+
+        //Box rotonda contenente il pulsante inserisci immagine
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(color = MaterialTheme.colors.surface)
+                .size(55.dp),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Box(
+                modifier = Modifier.alpha(0.85f)
+            ) {
+                if(ricettaVuota.uri.isNullOrEmpty())
+                    RicettaImage(null,true,"")
+                else
+                    RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
+
+            }
+
+
+            IconButton(onClick = {
+
+                main?.loadImage()
+
+            }) {
+                Icon(
+                    painterResource(R.drawable.ic_baseline_add_photo_alternate_24),
+                    "",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+        }
+        MyTextField(
+            model,
+            stringResource(R.string.titolo),
+            25,
+            true,
+            ricettaVuota,
+            modify
+        )
+    }
+}
+
+//Dialog per l'aggiunta degli ingredienti
 @Composable
 fun NewDialog(
     model: RicetteViewModel,
@@ -442,21 +352,20 @@ fun NewDialog(
                     model.onIngredientsInsert(ingredientList)
                     openDialog.value = false
                 }) {
-                Text("Fatto")
+                Text(stringResource(R.string.fatto))
             }
         },
         backgroundColor = MaterialTheme.colors.background
     )
 }
 
-
+//TextField per il titolo e la descrizione
 @Composable
 fun MyTextField(
     model: RicetteViewModel,
     str: String,
     max: Int,
     singleLine: Boolean,
-    ricettaCompleta: RicettaSample,
     ricettaVuota: RicettaSample,
     modify: Boolean
 ){
@@ -465,35 +374,16 @@ fun MyTextField(
     val titolo = stringResource(R.string.titolo)
     var readOnly = false
 
-    //val title = remember{ mutableStateOf(TextFieldValue()) }
+    //capisce se è chiamato per il titolo o la descrizione
     val title =
         if(str == titolo)
             remember { mutableStateOf(ricettaVuota.titolo) }
         else
             remember{mutableStateOf(ricettaVuota.descrizione)}
 
-    /*if(modify) {
-        if(str.equals(titolo)){
-            //title.value = TextFieldValue(ricettaCompleta!!.titolo)
-            title = remember {mutableStateOf(ricettaCompleta!!.titolo)}
-            //model.onTitoloInsert(title.value.text)
-            readOnly = true
-        }
-        else
-            title = remember {mutableStateOf(ricettaCompleta!!.descrizione)}
-
-    }
-
-     */
-
-
+    //Il titolo nella modifica è solo readOnly
     if(modify && str == titolo)
         readOnly = true
-
-
-
-
-
 
 
     OutlinedTextField(
@@ -506,11 +396,9 @@ fun MyTextField(
                 model.onTitoloInsert(title.value)
             else
                 model.onDescrizioneInsert(title.value)
-
-            Log.d("ricettaVuota", ricettaVuota.descrizione)
         },
         readOnly = readOnly,  //readOnly se siamo in Modifica
-        placeholder = {Text(text = "Inserire $str")},
+        placeholder = {Text(text = stringResource(R.string.inserire)+" $str")},
         label = {Text(str)},
         modifier = Modifier
             .padding(start = 10.dp)
@@ -526,17 +414,17 @@ fun MyTextField(
 
 
 
-@ExperimentalFoundationApi
+//Scope di visualizzazione e managing dei filtri
 @Composable
 fun FilterGrid(
     model: RicetteViewModel,
     filtri: List<Filtro>,
     filterList: MutableList<Filtro>,
-    //onDeExpand: () -> Unit
 ){
     val primary = Color.Transparent
 
 
+    //Row che va a capo in automatico
     SimpleFlowRow(
         alignment = Alignment.CenterHorizontally,
         horizontalGap = 10.dp,
@@ -546,13 +434,13 @@ fun FilterGrid(
 
             //aggiorna i checked in modifica
             for (flt in filterList) {
-                if (flt.name.equals(filtro.name)) filtro.checked = true
+                if (flt.name == filtro.name) filtro.checked = true
             }
 
             val checked = remember { mutableStateOf(filtro.checked) }
 
 
-
+            //SUperato "Dolce" ci troviamo tra gli Add-on
             if(index == 4) {
                 Divider(modifier = Modifier.padding(top = 3.dp, start = 15.dp, end = 15.dp, bottom = 3.dp))
                 Text(
@@ -567,16 +455,12 @@ fun FilterGrid(
             }
 
 
+            //Gestione dei colori di background delle chip a seconda dello stato
             val bgColor = remember { mutableStateOf(primary) }
             if (checked.value) bgColor.value = MaterialTheme.colors.surface
             else bgColor.value = Color.Transparent
 
             checked.value = filtro.checked
-
-
-            var txtColor = Color.Unspecified.copy(alpha = ContentAlpha.high)
-            if(index < 4 && !checked.value)
-                txtColor = Color.Unspecified.copy(alpha = ContentAlpha.medium)
 
 
             Surface(
@@ -587,7 +471,6 @@ fun FilterGrid(
                     color = MaterialTheme.colors.primary,
                 ),
                 modifier = Modifier
-                    //.padding(5.dp)
                     .clickable {
 
                         checked.value = !checked.value
@@ -596,11 +479,9 @@ fun FilterGrid(
                         else filterList.add(filtro)
 
 
-                        if(checked.value && index < 4) {
-                            Log.d("filtri", index.toString())
-                            for( i in 0..3) {
+                        if (checked.value && index < 4) {
+                            for (i in 0..3) {
                                 filtri[i].checked = false
-                                Log.d("filtro $i", filtri[i].toString())
                                 filterList.remove(filtri[i])
                             }
 
@@ -627,7 +508,6 @@ fun FilterGrid(
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(10.dp),
-                        //color = txtColor
                     )
                 }
             }

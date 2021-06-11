@@ -1,53 +1,52 @@
 package com.example.myapplication.screens
 
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.example.myapplication.*
 import com.example.myapplication.R
+import com.example.myapplication.Screen
+import com.example.myapplication.ShowEmpty
 import com.example.myapplication.database.RicettePreview
 import com.example.myapplication.database.RicetteViewModel
+import com.example.myapplication.getFilters
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/*
+Composable che gestisce l'interfaccia della Home e dei Preferiti
+ */
 @Composable
 fun Home(model: RicetteViewModel, navController: NavController, listView: MutableState<Boolean>) {
 
-    val ricette by model.ricette.observeAsState()
+    val ricette by model.ricette.observeAsState()   //lista delle ricette
 
-    val isPreferiti = model.getTipologia()
+    val isPreferiti = model.getTipologia()      //capisce se ci troviamo in Home o nei Preferiti
 
-    var tipologia: String? = "tmp"
+    var tipologia: String? = ""
 
+    //assegna il titolo mostrato nella TopBar
     if(isPreferiti != null) {
-        if (isPreferiti)
-            tipologia = "Preferiti"
+        tipologia = if (isPreferiti)
+            stringResource(R.string.preferiti)
         else
-            tipologia = "Home"
+            stringResource(R.string.home)
     }
 
     val expanded by model.expanded.observeAsState(false)
@@ -89,6 +88,8 @@ fun TopBar(
         title = {
             Text(text = tipologia)
         },
+
+        //pulsanti della TopBar, ricerca e filtri
         actions = {
             IconButton(onClick = onSearch) {
                 Icon(Icons.Rounded.Search, contentDescription = "")
@@ -96,6 +97,7 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(painterResource(R.drawable.ic_round_filter_alt_24), contentDescription = "")
             }
+            //menù a tendina, viene mostrato al click dei filtri
             DropDown(
                 model,
                 navController,
@@ -121,6 +123,7 @@ fun DropDown(
 
     val filtri by model.filtri.observeAsState(getFilters())
 
+    //menù a tendina contenente i filtri
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDeExpand,
@@ -154,14 +157,16 @@ fun DropDown(
                 }
             }
 
+        //contiene il pulsante per applicare i filtri
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
+            val home = stringResource(R.string.home)
             Button(onClick = {
 
                 onApplicaClick()
 
-                if (tipologia == "Home") {
+                if (tipologia == home) {
                     navController.navigate(Screen.Home.route)
                 } else {
                     navController.navigate(Screen.Preferiti.route)
@@ -196,13 +201,14 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 .fillMaxWidth()
         ){
 
+            val home = stringResource(R.string.home)
             // Bottone <-: premendolo si esce dalla ricerca
             IconButton(
                 onClick = {
 
                     onBack()
 
-                    if(tipologia == "Home")
+                    if(tipologia == home)
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
@@ -251,17 +257,18 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 Icon(Icons.Rounded.Search,"")
             }
 
+            //dialog che viene visualizzato in caso l'utente inserisca il carattere %
             if(openDialog.value) {
                 AlertDialog(
                     onDismissRequest = { openDialog.value = false },
-                    title = { Text(text = "Errore nei caratteri inseriti") },
-                    text = { Text(text = "Non è possibile usare il carattere % per la ricerca") },
+                    title = { Text(text = stringResource(R.string.erroreSearch)) },
+                    text = { Text(text = stringResource(R.string.erroreSearchDes)) },
                     confirmButton = {
                         Button(
                             onClick = {
                                 openDialog.value = false
                             }) {
-                            Text("Capito")
+                            Text(text = stringResource(R.string.capito))
                         }
                     },
                     backgroundColor = MaterialTheme.colors.background
@@ -364,6 +371,7 @@ fun ScrollableList(
                         .padding(10.dp)
                         .pointerInput(Unit) {
                             detectTapGestures(
+                                //Funzione che viene chiamata al Tap, mostrerà la ricetta in dettaglio
                                 onTap = {
 
                                     if (!model.getLongPressed()) {
@@ -372,12 +380,11 @@ fun ScrollableList(
 
                                         navController.navigate("${Screen.RicettaDetail.route}/${ricetta.titolo}")
                                     } else {
-                                        //if(!ricettaSelezionata?.titolo.equals(ricetta.titolo)){
                                         model.onInvertPress()
                                         model.resetSelection()
-                                        //}
                                     }
                                 },
+                                //Funzione chiamata al longPress, permetterà l'eliminazione o la modifica della ricetta
                                 onLongPress = {
 
                                     if (!model.getLongPressed()) {
@@ -394,6 +401,8 @@ fun ScrollableList(
                         }
                 ) {
 
+                    //Funzioni che gestiscono i casi in cui l'utente voglia avere una lista a ListView o a GridView
+
                     if(listView.value)
                         ListVariant(
                             model = model,
@@ -409,6 +418,8 @@ fun ScrollableList(
                 }
             }
         }
+
+        //Box trasparente che permette lo scroll degli item fino a sopra la BottomBar, rendendoli tutti visibili
         item{
             Box(modifier = Modifier
                 .background(Color.Transparent)

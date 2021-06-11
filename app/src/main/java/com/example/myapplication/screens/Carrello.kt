@@ -1,6 +1,5 @@
 package com.example.myapplication.screens
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -10,7 +9,9 @@ import com.example.myapplication.R
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.reactingLists.RemoveCarrello
 
-
+/*
+Composable che gestisce l'interfaccia del carrello
+ */
 @Composable
 fun Carrello(model: RicetteViewModel){
     Scaffold(
@@ -20,7 +21,7 @@ fun Carrello(model: RicetteViewModel){
             })
         }
     ){
-        RemoveCarrello(model)
+        RemoveCarrello(model) //chiamata alla gestione della lista nel carrello
     }
 }
 

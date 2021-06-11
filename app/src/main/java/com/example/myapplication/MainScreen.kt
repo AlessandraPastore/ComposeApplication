@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 
 
-@ExperimentalFoundationApi
 @Composable
 fun MainScreen(
     model: RicetteViewModel,

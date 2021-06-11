@@ -79,7 +79,6 @@ class MainActivity : ComponentActivity() {
     lateinit var listView: MutableState<Boolean>
 
 
-    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         map.put(null,null)
@@ -117,7 +116,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@ExperimentalFoundationApi
 @Composable
 fun GeneralManager(
     model: RicetteViewModel,

@@ -1,12 +1,13 @@
 package com.example.myapplication.screens
 
 import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
@@ -17,84 +18,51 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.example.myapplication.Filtro
-import com.example.myapplication.RicettaImage
-import com.example.myapplication.RicettaSample
-import com.example.myapplication.Screen
-import com.example.myapplication.SimpleFlowRow
+import com.example.myapplication.*
+import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-
+/*
+Composable che gestisce l'interfaccia delle ricette in Dettaglio
+ */
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
 
     val isPreferiti = model.getTipologia()
 
-    var tipologia: String? = "Home"
+    var tipologia: String? = stringResource(R.string.home)
 
     if(isPreferiti != null) {
-        if (isPreferiti)
-            tipologia = "Preferiti"
+        tipologia = if (isPreferiti)
+            stringResource(R.string.preferiti)
         else
-            tipologia = "Home"
+            stringResource(R.string.home)
     }
 
-    //val ricettaCompleta by model.ricettaCompleta.observeAsState()
 
+    //carica la ricetta da mostrare
     val ricettaCompleta :RicettaSample
     runBlocking {
          ricettaCompleta = model.getRicettaCompleta()
     }
 
-
-    //aspetta che si carichino i campi, non riesco a testarlo
-    while(ricettaCompleta.ingredienti.isEmpty() || ricettaCompleta.filtri.isEmpty())  {
-        Column(Modifier.fillMaxSize()) {
-            CircularProgressIndicator()
-        }
-    }
-
     val scrollState = rememberScrollState()
-
-    /*
-    BackHandler {
-        model.resetSelection()
-        model.resetComplete()
-
-        if(tipologia == "Home") {
-            model.onHomeClick()
-            navController.navigate(Screen.Home.route){
-                popUpTo = navController.graph.startDestination
-                launchSingleTop = true
-            }
-
-        }
-        else {
-            model.onPreferitiClick()
-            navController.navigate(Screen.Preferiti.route){
-                popUpTo = navController.graph.startDestination
-                launchSingleTop = true
-            }
-        }
-    }
-
-     */
 
     Scaffold{
         Box(modifier = Modifier.fillMaxSize()){
@@ -102,9 +70,9 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .fillMaxSize()
-                    .background(MaterialTheme.colors.background)
+                    .background(colors.background)
             ){
-                //al posto della box andrà l'immagine
+                //contiene l'immagine
                 Box(
                     modifier = Modifier
                         .clip(RectangleShape)
@@ -125,8 +93,9 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                 Column(
                     modifier = Modifier.padding(25.dp)
                 ){
+                    //titolo
                     Text(
-                        text ="${ricetta}",
+                        text ="$ricetta",
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -134,6 +103,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     )
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    //filtri
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -147,7 +117,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                                 ){
                                     Text(
                                         text = item.name,
-                                        color = MaterialTheme.colors.onSecondary,
+                                        color = colors.onSecondary,
                                         style = MaterialTheme.typography.caption,
                                         fontWeight = FontWeight.Bold,
                                         overflow = TextOverflow.Ellipsis,
@@ -167,7 +137,7 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text ="Ingredienti",
+                        text = stringResource(R.string.ingredienti),
                         style = MaterialTheme.typography.h5
                     )
 
@@ -182,15 +152,16 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                         ) {
 
                             for(item in ricettaCompleta.ingredienti){
-                                IngredientItem(model, navController, item)
+                                IngredientItem(model, item)
                             }
                         }
                     }
 
 
+                    //Preparazione della ricetta
                     Spacer(modifier = Modifier.height(32.dp))
                     Text(
-                        text ="Preparazione",
+                        text = stringResource(R.string.preparazione),
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -205,6 +176,8 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
                     )
                 }
             }
+
+            //Custom TopBar che parte trasparente ma torna visibile allo scroll dell'utente
             FadingTopBar(model, scrollState, navController, tipologia as String)
         }
 
@@ -220,6 +193,9 @@ fun FadingTopBar(
     navController: NavController,
     tipologia:String
 ){
+
+    val home = stringResource(R.string.home)
+
     Box{
         Box(
             modifier = Modifier
@@ -232,15 +208,16 @@ fun FadingTopBar(
                     )
                 )
                 .height(56.dp)
-                .background(color = MaterialTheme.colors.primary)
+                .background(color = colors.primary)
         )
+
+        //Pulsante back
         IconButton(
             onClick = {
-                //model.selectRicetta(RicettePreview("",false))
                 model.resetSelection()
                 model.resetComplete()
 
-                if(tipologia == "Home") {
+                if(tipologia == home) {
                     model.onHomeClick()
                     navController.navigate(Screen.Home.route){
                         popUpTo = navController.graph.startDestination
@@ -264,12 +241,13 @@ fun FadingTopBar(
                 Icons.Rounded.ArrowBack,
                 contentDescription = "",
                 modifier = Modifier
-                    .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                    .background(color = colors.primary, shape = CircleShape)
                     .padding(8.dp),
-                tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
+                tint = colors.onPrimary.copy(alpha = LocalContentAlpha.current)
             )
         }
 
+        //Pulsanti Action della TopBar
         val scope = rememberCoroutineScope()
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -278,7 +256,7 @@ fun FadingTopBar(
                 .fillMaxWidth()
                 .height(56.dp)
         ){
-            // Bottone della matita
+            // Pulsante di modifica
             IconButton(onClick = {
 
                 scope.launch{
@@ -301,18 +279,19 @@ fun FadingTopBar(
                     Icons.Rounded.Create,
                     contentDescription = "",
                     modifier = Modifier
-                        .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                        .background(color = colors.primary, shape = CircleShape)
                         .padding(8.dp),
-                    tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
+                    tint = colors.onPrimary.copy(alpha = LocalContentAlpha.current)
                 )
             }
 
+            //Pulsante di elimina
             IconButton(
                 onClick = {
                     model.onRicettaDelete()
                     model.resetComplete()
 
-                    if(tipologia == "Home") {
+                    if(tipologia == home) {
                         model.onHomeClick()
                         navController.navigate(Screen.Home.route){
                             popUpTo = navController.graph.startDestination
@@ -334,9 +313,9 @@ fun FadingTopBar(
                     Icons.Rounded.Delete,
                     contentDescription = "",
                     modifier = Modifier
-                        .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+                        .background(color = colors.primary, shape = CircleShape)
                         .padding(8.dp),
-                    tint = MaterialTheme.colors.onPrimary.copy(alpha = LocalContentAlpha.current)
+                    tint = colors.onPrimary.copy(alpha = LocalContentAlpha.current)
                 )
             }
         }
@@ -344,9 +323,9 @@ fun FadingTopBar(
     }
 }
 
-//mostra il singolo ingrediente comprendendo l'icona aggiungi a carrello
+//mostra il singolo ingrediente e l'icona aggiungi a carrello
 @Composable
-fun IngredientItem(model: RicetteViewModel, navController: NavController, item: IngredienteRIcetta) {
+fun IngredientItem(model: RicetteViewModel, item: IngredienteRIcetta) {
 
     val checked = remember{ mutableStateOf(false)}
 
@@ -366,8 +345,6 @@ fun IngredientItem(model: RicetteViewModel, navController: NavController, item: 
                 checked.value = !checked.value
                 model.updateCarrello(item.ingrediente, checked.value)
         }) {
-            Log.d("Checked", checked.toString() + item.ingrediente)
-
             if(checked.value) {
                 Icon(Icons.Rounded.Check, "")
             }

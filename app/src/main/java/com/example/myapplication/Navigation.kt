@@ -13,7 +13,6 @@ import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.screens.*
 
 
-@ExperimentalFoundationApi
 @Composable
 fun NavConfig(
     model: RicetteViewModel,

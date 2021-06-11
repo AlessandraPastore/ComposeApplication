@@ -2,7 +2,6 @@ package com.example.myapplication.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +12,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.R
 
-
+/*
+Composable che gestisce l'interfaccia delle impostazioni
+ */
 @Composable
 fun Impostazioni(enableDarkMode: MutableState<Boolean>, listView: MutableState<Boolean>) {
     Scaffold(
@@ -41,6 +42,7 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>, listView: MutableState<B
     }
 }
 
+//Funzione che permette la scelta tra GridView e ListView
 @Composable
 fun ListView(listView: MutableState<Boolean>){
 
@@ -65,7 +67,7 @@ fun ListView(listView: MutableState<Boolean>){
                 textAlign = TextAlign.Center,
             )
 
-            //modifica la visibilità del pulsante selezionato o non
+            //modifica la visibilità del pulsante selezionato o meno
             val gridState = ContentAlpha.disabled
             val contentAlpha = remember { mutableStateOf(gridState) }
             if(!listView.value)
@@ -88,7 +90,7 @@ fun ListView(listView: MutableState<Boolean>){
                 textAlign = TextAlign.Center,
             )
 
-            //modifica la visibilità del pulsante selezionato o non
+            //modifica la visibilità del pulsante selezionato o meno
             val listState = ContentAlpha.disabled
             val contentAlpha = remember { mutableStateOf(listState) }
             if(listView.value)
@@ -105,6 +107,7 @@ fun ListView(listView: MutableState<Boolean>){
     }
 }
 
+//Funzione che permette la scelta tra DarkMode o LightMode
 @Composable
 fun DarkMode(enableDarkMode: MutableState<Boolean>){
     Column(
