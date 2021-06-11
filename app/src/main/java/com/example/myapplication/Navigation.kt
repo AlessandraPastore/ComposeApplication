@@ -1,14 +1,12 @@
 package com.example.myapplication
 
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.screens.*
 
@@ -24,7 +22,7 @@ fun NavConfig(
         composable(Screen.Home.route) { Home(model, navController, listView) }
         composable(Screen.Preferiti.route) { Preferiti(model, navController, listView) }
         composable(Screen.Carrello.route) { Carrello(model) }
-        composable(Screen.Modalità.route) { Impostazioni(enableDarkMode, listView) }
+        composable(Screen.Modality.route) { Impostazioni(enableDarkMode, listView) }
         composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController) }
         composable("${Screen.RicettaDetail.route}/{ricetta}",
             arguments = listOf(navArgument("ricetta") { type = NavType.StringType }))

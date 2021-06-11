@@ -1,7 +1,7 @@
 package com.example.myapplication
 
 
-
+//Classe che contiene i filtri
 sealed class Filtro(val name: String, var checked: Boolean = false ){
     object Antipasto : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.antipasto)!!)
     object Primo : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.primo)!!)
@@ -12,9 +12,16 @@ sealed class Filtro(val name: String, var checked: Boolean = false ){
     object GlutenFree : Filtro(MainActivity.get()?.applicationContext?.getString(R.string.gfree)!!)
 }
 
-fun getFilters() : List<Filtro>{
-    val list = listOf(Filtro.Antipasto , Filtro.Primo, Filtro.Secondo, Filtro.Dessert, Filtro.Vegetariano, Filtro.Vegano, Filtro.GlutenFree);
+fun getFilters(): List<Filtro> {
 
-    return list
+    return listOf(
+        Filtro.Antipasto,
+        Filtro.Primo,
+        Filtro.Secondo,
+        Filtro.Dessert,
+        Filtro.Vegetariano,
+        Filtro.Vegano,
+        Filtro.GlutenFree
+    )
 }
 

@@ -1,8 +1,6 @@
 package com.example.myapplication
 
 
-import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
@@ -11,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
@@ -23,7 +22,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-
+/*
+Funzione principale che gestisce la navigation tramite la BottomBar
+ */
 @Composable
 fun MainScreen(
     model: RicetteViewModel,
@@ -78,22 +79,21 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
             else{
 
                 error.value = model.onRicettaAddVerify()
-                Log.d("error", error.value)
 
                 //se error è qualcosa di diverso da "" si è presentato un errore
                 if(error.value != "") openDialog.value = true
                 else {
 
-                    //se era una modifica bisogna resettare le variabili e cancellarla prima
+
                     if(model.getModify()){
-                        model.addModify()   //viene cancellata qua dentro
-                        Log.d("test","cancellata")
+                        model.addModify()   //la ricetta viene aggiornata
                     }
 
 
+
                     scope.launch {
-                        delay(1000)  //aspetto che faccia il delete, non so ancora un modo migliore
-                        model.onRicettaAdd()
+                        delay(1000)  //lascia il tempo al delete di essere eseguito in caso di modifica
+                        model.onRicettaAdd()    //la ricetta viene aggiunta
                     }
 
 
@@ -107,22 +107,15 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
                     model.updateTipologia(false)
                     model.onHomeClick()
 
+                    //torna alla home
                     navController.navigate(Screen.Home.route){
 
                         popUpTo = navController.graph.startDestination
                         launchSingleTop = true
 
                     }
-
-
-
                 }
-
-
-
             }
-
-
         },
     )
     {
@@ -130,17 +123,19 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
         else Icon( Icons.Rounded.Check, "")
     }
 
+    //Dialog per informare l'utente di eventuali errori nella ricetta inserita
     if(openDialog.value) AlertError(openDialog, error.value)
 }
 
+//Dialog per informare l'utente di eventuali errori nella ricetta inserita
 @Composable
 fun AlertError(openDialog: MutableState<Boolean>, error: String) {
     AlertDialog(
         onDismissRequest = { openDialog.value = false },
-        title = { Text(text = "Errore nei dati inseriti") },
+        title = { Text(text = stringResource(R.string.erroreRic)) },
         text = {
-            Column(){
-                Text(text="Uno o più campi risultano vuoti")
+            Column {
+                Text(text=stringResource(R.string.erroreRicDes))
                 Text(text=error)
             }
 
@@ -150,7 +145,7 @@ fun AlertError(openDialog: MutableState<Boolean>, error: String) {
                 onClick = {
                     openDialog.value = false
                 }) {
-                Text("Capito")
+                Text(stringResource(R.string.capito))
             }
         },
         backgroundColor = MaterialTheme.colors.background
@@ -164,7 +159,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
     val home = Screen.Home.route
     val preferiti = Screen.Preferiti.route
     val carrello = Screen.Carrello.route
-    val impostazioni = Screen.Modalità.route
+    val impostazioni = Screen.Modality.route
 
     BottomAppBar(
         cutoutShape = CircleShape,

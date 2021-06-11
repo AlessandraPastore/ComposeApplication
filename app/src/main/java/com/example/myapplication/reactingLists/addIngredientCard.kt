@@ -1,8 +1,6 @@
 package com.example.myapplication.reactingLists
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
@@ -11,32 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
 
-
-@Composable
-fun addIngredientCard(ingredientList: MutableList<IngredienteRIcetta>) {
-
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-    ) {
-        itemsIndexed(items = ingredientList,
-            itemContent = { _, ingredient ->
-                /*NewIngredient(
-                    ingredientList = ingredientList,
-                    ingredient = ingredient,
-                    model = model
-                )*/
-            }
-        )
-    }
-}
-
+/*
+Composable che gestisce la lista degli ingredienti in NuovaRicetta
+ */
 @Composable
 fun NewIngredient(
     ingredientList: MutableList<IngredienteRIcetta>,
@@ -47,6 +28,7 @@ fun NewIngredient(
     // Stato interno, gestisce il pop up dell'ingrediente per l'inserimento dei dati da parte dell'utente
     val openDialog = remember { mutableStateOf(false)  }
 
+    //Pulsante contenente il nome dell'ingrediente e icona di elimina
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -69,6 +51,8 @@ fun NewIngredient(
             Icon(Icons.Rounded.Delete, contentDescription = "")
         }
     }
+
+    //AlertDialog che si mostra per modificare gli ingredienti inseriti
     if (openDialog.value) {
 
         AlertDialog(
@@ -76,13 +60,13 @@ fun NewIngredient(
                 openDialog.value = false
             },
             title = { Text(text = "") },
-            text = { dialogIngredient(ingredient) },
+            text = { DialogIngredient(ingredient) },    //contenuto dell'alertDialog
             confirmButton = {
                 Button(
                     onClick = {
                         openDialog.value = false
                     }) {
-                    Text("Fatto")
+                    Text(stringResource(R.string.fatto))
                 }
             },
             backgroundColor = MaterialTheme.colors.background
@@ -90,24 +74,27 @@ fun NewIngredient(
     }
 }
 
-//al posto di str prob ci andrà un oggetto di tipo ingrediente o la lista stessa degli ingredienti? una ref
+//AlertDialog per la modifica dell'ingrediente
 @Composable
-fun dialogIngredient(ingrediente: IngredienteRIcetta) {
+fun DialogIngredient(ingrediente: IngredienteRIcetta) {
 
     val ingVal = remember { mutableStateOf(ingrediente.ingrediente) }
     val quantity = remember { mutableStateOf(ingrediente.qta) }
+
+
     Column(
         verticalArrangement = Arrangement.Center
     )
     {
+        //Nome dell'ingrediente
         OutlinedTextField(
             value = ingVal.value,
             onValueChange = {
                 if (it.length <= 20) ingVal.value = it
                 ingrediente.ingrediente = ingVal.value
             },
-            placeholder = { Text(text = "Inserire ingrediente") },
-            label = { Text("Ingrediente") },
+            placeholder = { Text(stringResource(R.string.inserireIngrediente)) },
+            label = { Text(stringResource(R.string.ingrediente)) },
             modifier = Modifier
                 .padding(start = 10.dp)
                 .fillMaxWidth(),
@@ -118,14 +105,15 @@ fun dialogIngredient(ingrediente: IngredienteRIcetta) {
             )
         )
 
+        //Quantità dell'ingrediente
         OutlinedTextField(
             value = quantity.value,
             onValueChange = {
                 if (it.length <= 15) quantity.value = it
                 ingrediente.qta = quantity.value
             },
-            placeholder = { Text(text = "Inserire quantità") },
-            label = { Text("Quantità") },
+            placeholder = { Text(stringResource(R.string.inserireQuantity)) },
+            label = { Text(stringResource(R.string.quantity)) },
             modifier = Modifier
                 .padding(start = 10.dp)
                 .fillMaxWidth(),

@@ -1,14 +1,11 @@
 package com.example.myapplication
 //crediti a icesmith https://github.com/icesmith/android-samples/tree/master/SimpleComposeFlowRow
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
@@ -79,27 +76,3 @@ private data class MeasuredRow(
     var width: Int,
     var height: Int
 )
-
-
-
-@Preview
-@Composable
-fun PreviewCenteredSimpleFlowRow(
-) {
-
-    val sampleTags = listOf<String>("primo piatto", "secondo piatto", "dolce", "vegetariano", "vegano", "antipasto")
-
-    SimpleFlowRow(
-        alignment = Alignment.End,
-        horizontalGap = 16.dp,
-        verticalGap = 8.dp
-    ) {
-        for (tag in sampleTags) {
-            Text(
-                text = "#$tag",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}

@@ -52,4 +52,11 @@
     <string name="fatto">Fatto</string>
     <string name="inserire">Inserire</string>
     <string name="preparazione">Preparazione</string>
+    <string name="ingrediente">Ingrediente</string>
+    <string name="inserireIngrediente">Inserire ingrediente</string>
+    <string name="inserireQuantity">Inserire quantità</string>
+    <string name="quantity">Quantità</string>
+    <string name="vuoto">è vuoto</string>
+    <string name="erroreRic">Errore nei dati inseriti</string>
+    <string name="erroreRicDes">Uno o più campi risultano vuoti</string>
 </resources>

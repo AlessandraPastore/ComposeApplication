@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 
-// Perchè State<Boolean?> in darkTheme
 @Composable
 fun MyApplicationTheme(
     darkTheme: MutableState<Boolean>,

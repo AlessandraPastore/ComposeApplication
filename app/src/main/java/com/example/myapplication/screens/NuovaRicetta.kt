@@ -33,8 +33,8 @@ import com.example.myapplication.*
 import com.example.myapplication.R
 import com.example.myapplication.database.IngredienteRIcetta
 import com.example.myapplication.database.RicetteViewModel
+import com.example.myapplication.reactingLists.DialogIngredient
 import com.example.myapplication.reactingLists.NewIngredient
-import com.example.myapplication.reactingLists.dialogIngredient
 import kotlinx.coroutines.runBlocking
 
 
@@ -344,7 +344,7 @@ fun NewDialog(
             model.onIngredientsInsert(ingredientList)
             openDialog.value = false },
         title = { Text(text = "") },
-        text = { dialogIngredient(ingredient) },
+        text = { DialogIngredient(ingredient) },
         confirmButton = {
             Button(
                 onClick = {

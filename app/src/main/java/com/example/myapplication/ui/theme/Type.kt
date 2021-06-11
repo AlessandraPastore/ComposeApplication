@@ -27,7 +27,3 @@ val Typography = Typography(
     )
     */
 )
-
-val MyTypography = Typography(
-
-)

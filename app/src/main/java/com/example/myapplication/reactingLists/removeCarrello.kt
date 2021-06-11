@@ -5,17 +5,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.List
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -23,9 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.ShowEmpty
-import com.example.myapplication.database.RicetteViewModel
 import com.example.myapplication.database.Ingrediente
+import com.example.myapplication.database.RicetteViewModel
 
+/*
+Composable che gestisce la lista degli ingredienti nel Carrello
+ */
 @Composable
 fun RemoveCarrello(model: RicetteViewModel) {
 
@@ -40,6 +44,7 @@ fun RemoveCarrello(model: RicetteViewModel) {
 
 }
 
+//Lista degli ingredienti nel carrello
 @Composable
 fun ShowList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>) {
     LazyColumn(
@@ -48,6 +53,7 @@ fun ShowList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>)
         itemsIndexed(items = ingredientList.value!!,
             itemContent = { _, ingredient ->
 
+                //Mostra il nome dell'ingrediente e il pulsante elimina
                 Card(
                     elevation = 5.dp,
                     shape = RoundedCornerShape(4.dp),
