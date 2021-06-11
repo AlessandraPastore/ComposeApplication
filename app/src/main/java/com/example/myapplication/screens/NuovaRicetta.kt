@@ -92,7 +92,7 @@ fun NuovaRicetta(
 
         if(model.getFromDetails() == true) {
             model.isFromDetails()
-            navController.navigate("${Screen.RicettaDetail.route}/${titolo}") {
+            navController.navigate("${Screen.RicettaDetail.route}/${ricettaCompleta.titolo}") {
 
                 popUpTo = navController.graph.startDestination
                 launchSingleTop = true
