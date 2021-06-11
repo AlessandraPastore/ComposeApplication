@@ -63,7 +63,7 @@ fun GridVariant(
                 text = ricetta.titolo,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(15.dp),
+                modifier = Modifier.padding(15.dp)
             )
 
             IconToggleButton(
@@ -85,8 +85,12 @@ fun ListVariant(
     ricetta: RicettePreview,
     checked : Boolean
 ){
+
+    val cat = model.getCategoria(ricetta.titolo)
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
     ) {
 
         //contiene l'immagine
@@ -95,12 +99,13 @@ fun ListVariant(
             modifier = Modifier.size(130.dp),
         ) {
 
-                RicettaImage(null,false,"Dolce")
+                RicettaImage(null,false,cat)
         }
         Column(
             modifier = Modifier
                 .padding(start = 12.dp)
                 .align(Alignment.CenterVertically)
+                .weight(2f)
         ) {
             Text(
                 text = ricetta.titolo,
@@ -113,6 +118,7 @@ fun ListVariant(
             modifier = Modifier
                 .padding(end = 12.dp)
                 .align(Alignment.CenterVertically)
+                .weight(1f)
         ) {
             IconToggleButton(
                 checked = checked,

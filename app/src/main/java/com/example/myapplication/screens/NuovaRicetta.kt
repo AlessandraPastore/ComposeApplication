@@ -175,7 +175,6 @@ fun NuovaRicetta(
             model.onDescrizioneInsert(ricettaCompleta.descrizione)
             model.onIngredientsInsert(ricettaCompleta.ingredienti)
             model.onImageInsert(ricettaCompleta.uri)
-            Log.d("WOWOWO", ricettaVuota.uri!!)
 
             filterList = ricettaCompleta.filtri
             //model.onFilterInsert(filterList)
@@ -233,8 +232,6 @@ fun Content(
 
                 //scope per selezionare l'immagine
 
-                val changed = remember { mutableStateOf(false)}
-                var uri = Uri.parse(ricettaVuota.uri)
 
 
                 val tmp = main?.getUri()
@@ -264,9 +261,11 @@ fun Content(
                     Box(
                         modifier = Modifier.alpha(0.85f)
                     ) {
-                        RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
-                        //RicettaImage(uri)
-                        //RicettaImage(urStr = main?.getUri())
+                        if(ricettaVuota.uri.isNullOrEmpty())
+                            RicettaImage(null,true,"")
+                        else
+                            RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
+
                     }
 
 
@@ -557,8 +556,8 @@ fun FilterGrid(
             if(index == 4) {
                 Divider(modifier = Modifier.padding(top = 3.dp, start = 15.dp, end = 15.dp, bottom = 3.dp))
                 Text(
-                    text = stringResource(R.string.Adds)+":",
-                    style = MaterialTheme.typography.subtitle2,
+                    text = stringResource(R.string.Adds),
+                    style = MaterialTheme.typography.subtitle1,
                     color = MaterialTheme.colors.primary,
                     modifier = Modifier
                         .padding(start = 15.dp)

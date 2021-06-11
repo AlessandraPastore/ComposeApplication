@@ -112,9 +112,17 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         var titoloExist = -1
 
+
+
         viewModelScope.launch {
-            runBlocking {
-                titoloExist = ricDao.titoloExist(_ricettaVuota.value!!.titolo)
+            if(_modify.value == true)
+                titoloExist = 0
+
+            else
+            {
+                runBlocking {
+                    titoloExist = ricDao.titoloExist(_ricettaVuota.value!!.titolo)
+                }
             }
         }
 
