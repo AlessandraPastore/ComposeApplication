@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 // AndroidViewModel è sottoclasse di ViewModel
 class RicetteViewModel(application: Application):AndroidViewModel(application) {
@@ -28,6 +27,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao = RicetteDataBase.getDataBase(application,viewModelScope).dao()
     }
 
+    //lista delle ricette da mostrare
     var ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
 
     // Viene premuto il cuore -> Ricetta aggiunta o eliminata dai preferiti
@@ -35,6 +35,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.updateRicettaPreview(ric)
     }
 
+    //eliminazione di una ricetta
     fun onRicettaDelete() =viewModelScope.launch (Dispatchers.IO) {
         val listing=ricDao.IngrOfRecipe(_ricettaSelezionata.value!!.titolo)
 
@@ -50,7 +51,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
 
     private val lock= Mutex()
-    //aggiunge la ricetta salvata in _ricettaVuota
+    //aggiunge la ricetta salvata al database
     @Synchronized
     fun onRicettaAdd()=viewModelScope.launch (Dispatchers.IO) {
         lock.withLock {
@@ -106,6 +107,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
+    //verifica i pre requisiti per inserire la ricetta nel database
     fun onRicettaAddVerify():String{
 
         if(_ricettaVuota.value!!.titolo.isBlank()) return "(inserisci il titolo)"
@@ -177,44 +179,47 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onFiltroChecked(true)
     }
 
+    //ricettaVuota contiene la nuova ricetta da inserire nel database
     private var _ricettaVuota = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
-    //val ricettaVuota: LiveData<RicettaSample> = _ricettaVuota
 
+    //restituisce la ricettaVuota
     fun getRicettaVuota(): RicettaSample {
         return _ricettaVuota.value!!
     }
 
+    //resetta la ricettaVuota
     fun resetRicettaVuota(){
         _ricettaVuota.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
     }
 
+    //inserisce l'immagine
     fun onImageInsert(uri:String?)
     {
         _ricettaVuota.value!!.uri=uri
     }
 
-
+    //inserisce il titolo
     fun onTitoloInsert(titolo: String){
         _ricettaVuota.value!!.titolo = titolo
-        Log.d("doge", _ricettaVuota.value!!.titolo )
     }
 
-
+    //inserisce la descrizione
     fun onDescrizioneInsert(descrizione: String){
         _ricettaVuota.value!!.descrizione = descrizione
     }
 
-
+    //inserisce gli ingredienti
     fun onIngredientsInsert(ingList : MutableList<IngredienteRIcetta>){
         _ricettaVuota.value!!.ingredienti = ingList
     }
 
-
+    //inserisce i filtri
     fun onFilterInsert(filterList : MutableList<Filtro>){
         _ricettaVuota.value!!.filtri = filterList
         Log.d("FILTRI", _ricettaVuota.value!!.filtri.toString() )
     }
 
+    //resetta i filtri a false
     @Synchronized
     fun restartFilters(){
         for(filtro in _filtri.value!!){
@@ -223,6 +228,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
 
+    //resituisce la categoria di una data ricetta
     fun getCategoria(titolo: String): String {
 
         var category : List<Categoria>
@@ -242,8 +248,9 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     }
 
+    //ricettaCompleta contiene le informazioni di una ricetta nel dettaglio
     private val _ricettaCompleta = MutableLiveData(RicettaSample("","", mutableListOf(), mutableListOf(),""))
-    val ricettaCompleta: LiveData<RicettaSample> = _ricettaCompleta
+
 
     //inserisce in ricetta completa le informazioni della ricetta passata
     fun getRicetta(titolo:String)=viewModelScope.launch (Dispatchers.IO) {
@@ -252,6 +259,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaCompleta.value!!.ingredienti =
             ricDao.IngrOfRecipe(titolo) as MutableList<IngredienteRIcetta>
         _ricettaCompleta.value!!.uri = ricDao.getUri(titolo)
+
         //conversione categoria -> filtro
         val categoriaList = ricDao.allCatFromRecipe(titolo)
         val filterList = getFilters()
@@ -266,10 +274,12 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricettaCompleta.value!!.filtri = tmp
     }
 
+    //restituisce la ricettaCompleta
     fun getRicettaCompleta():RicettaSample{
         return _ricettaCompleta.value!!
     }
 
+    //resetta la ricettaCompleta
     fun resetComplete(){
         _ricettaCompleta.value = RicettaSample("","", mutableListOf(), mutableListOf(),"")
     }
@@ -281,11 +291,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     private val _ricettaSelezionata = MutableLiveData(RicettePreview("",false))
     val ricettaSelezionata: LiveData<RicettePreview> = _ricettaSelezionata
 
+    //seleziona la nuova ricetta
     fun selectRicetta(ricetta : RicettePreview){
         resetSelection()
         _ricettaSelezionata.value = ricetta
     }
 
+    //resetta selezione
     fun resetSelection(){
         _ricettaSelezionata.value = RicettePreview("",false)
     }
@@ -297,6 +309,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     private val _filtri = MutableLiveData(getFilters())
     val filtri: LiveData<List<Filtro>> = _filtri
 
+    //mostra solo le ricette con dei dati filtri
     fun onFiltroChecked(preferiti: Boolean){
         val lista: MutableList<String> = mutableListOf()
 
