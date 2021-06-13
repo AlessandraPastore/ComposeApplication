@@ -73,7 +73,7 @@ fun NuovaRicetta(
     // Recupero la reference a MainActivity
     val main=MainActivity.get()
 
-    //gestisce il caso in cui l'utente utilizzi il tasto indietro del telefono
+    //gestisce il caso in cui l'utente utilizzi il tasto back del telefono
     BackHandler {
         backPress(main, model, navController, modify, ricettaCompleta.titolo)
     }

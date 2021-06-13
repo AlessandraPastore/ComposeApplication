@@ -1,6 +1,7 @@
 package com.example.myapplication.screens
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.example.myapplication.*
 import com.example.myapplication.R
@@ -54,10 +56,20 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
             stringResource(R.string.home)
     }
 
+    val modify = model.getModify()
+
+    // Recupero la reference a MainActivity
+    val main=MainActivity.get()
+
     //carica la ricetta da mostrare
     val ricettaCompleta :RicettaSample
     runBlocking {
          ricettaCompleta = model.getRicettaCompleta()
+    }
+
+    //gestisce il caso in cui l'utente utilizzi il tasto back del telefono
+    BackHandler {
+        backPress(main, model, navController as NavHostController, modify, ricettaCompleta.titolo)
     }
 
     val scrollState = rememberScrollState()
