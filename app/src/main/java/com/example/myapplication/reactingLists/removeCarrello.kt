@@ -87,6 +87,8 @@ fun ShowList(model: RicetteViewModel, ingredientList: List<Ingrediente>) {
                     }
                 }
             })
+
+        // Box trasparente che permette lo scroll degli item fino a sopra la BottomBar, rendendoli tutti visibili
         item {
             Box(
                 modifier = Modifier

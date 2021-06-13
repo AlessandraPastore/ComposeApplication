@@ -122,6 +122,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
         },
     )
     {
+        // In NuovaRicetta il FAB è una spunta, altrimenti è un +
         if(currentRoute != Screen.NuovaRicetta.route)   Icon( Icons.Rounded.Add, "")
         else Icon( Icons.Rounded.Check, "")
     }

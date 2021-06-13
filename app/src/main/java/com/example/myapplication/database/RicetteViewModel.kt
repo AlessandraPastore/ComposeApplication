@@ -3,7 +3,6 @@ package com.example.myapplication.database
 import android.app.Application
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,10 +44,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             if(ricDao.numberIngInIngreRicetta(it.ingrediente)==0)
                 ricDao.deleteIngrFromName(it.ingrediente)
         }
-
     }
-
-
 
     private val lock= Mutex()
     //aggiunge la ricetta salvata al database
@@ -140,7 +136,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         _ricettaVuota.value!!.filtri.forEach{ filtro ->
 
-            Log.d("filtro", filtro.name)
             when(filtro.name){
                 Filtro.Antipasto.name -> count++
                 Filtro.Primo.name -> count++
@@ -214,7 +209,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     //inserisce i filtri
     fun onFilterInsert(filterList : MutableList<Filtro>){
         _ricettaVuota.value!!.filtri = filterList
-        Log.d("FILTRI", _ricettaVuota.value!!.filtri.toString() )
     }
 
     //resetta i filtri a false
@@ -476,6 +470,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     fun getFromDetails(): Boolean? {
         return _fromDetails.value
     }
+
     fun setBitmap()=viewModelScope.launch (Dispatchers.IO){
         val m= MainActivity.get()?.map
         ricDao.getUriPreview().forEach {
