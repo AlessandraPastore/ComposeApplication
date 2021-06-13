@@ -1,8 +1,6 @@
 package com.example.myapplication
 
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
@@ -38,7 +36,7 @@ fun MainScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-    
+
     Scaffold(
         floatingActionButton = {
 

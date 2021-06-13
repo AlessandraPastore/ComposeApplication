@@ -101,9 +101,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             }
 
             val main=MainActivity.get()
-            if (main != null) {
-                main.resetUri()
-            }
+            main?.resetUri()
         }
     }
 
@@ -236,11 +234,11 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             category = ricDao.allCatFromRecipe(titolo)
         }
 
-        val list = listOf<Filtro>(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
+        val list = listOf(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
         var ftl = ""
         for (filter in list){
             for (cat in category) {
-                if (cat.categoria.equals(filter.name))  ftl = filter.name
+                if (cat.categoria == filter.name)  ftl = filter.name
             }
         }
 
@@ -267,7 +265,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         for (filter in filterList) {
             for (cat in categoriaList) {
-                if (cat.categoria.equals(filter.name)) tmp.add(filter)
+                if (cat.categoria == filter.name) tmp.add(filter)
             }
         }
 
@@ -376,7 +374,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
     fun onDisplaySearch(tipologia: String) {
 
-        if (tipologia.equals("Home"))
+        if (tipologia == "Home")
             ricette = ricDao.getRicByName("%" + _ricerca.value!! + "%")
         else
             ricette = ricDao.getRicPreferitiByName("%" + _ricerca.value!! + "%")
@@ -387,7 +385,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         resetRicerca()
 
-        if(tipologia.equals("Home"))
+        if(tipologia == "Home")
             onHomeClick()
         else
             onPreferitiClick()
