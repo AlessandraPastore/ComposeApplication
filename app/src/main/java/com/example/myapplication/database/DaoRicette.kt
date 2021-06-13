@@ -83,7 +83,6 @@ interface DaoRicette {
     @Query("Select Distinct Categoria.* from Categoria where Categoria.categoria in(Select RicettaCategorie.categoria from RicettePreview Inner Join RicettaCategorie on RicettaCategorie.titolo=RicettePreview.titolo where RicettePreview.titolo=:ricetta)")
     suspend fun allCatFromRecipe(ricetta: String):List<Categoria>
 
-
     @Query ("SELECT Distinct RicettePreview.*  from RicettePreview Inner Join RicettaCategorie on RicettePreview.titolo=RicettaCategorie.titolo where RicettaCategorie.categoria in (:lista)")
     fun getFilterRic(lista:List<String>):LiveData<List<RicettePreview>>
 

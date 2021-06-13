@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
 
+// Funzione per gestire le icone dei filtri in NuovaRicetta e RicettaDetail
 @Composable
 fun SimpleFlowRow(
     modifier: Modifier = Modifier,

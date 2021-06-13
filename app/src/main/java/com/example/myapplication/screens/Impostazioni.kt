@@ -149,6 +149,7 @@ fun DarkMode(enableDarkMode: MutableState<Boolean>){
 
         Spacer(modifier = Modifier.height(15.dp))
 
+        // Se DarkMode luna, altrimenti sole
         if(enableDarkMode.value)   {
             Icon(painterResource(R.drawable.ic_round_dark_mode_24), contentDescription = "", modifier = Modifier.size(64.dp))}
         else {

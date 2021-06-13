@@ -2,7 +2,7 @@ package com.example.myapplication
 
 import com.example.myapplication.database.IngredienteRIcetta
 
-//Data class per la ricetta
+//Data class per la ricetta, contenente tutti i campi utili per una ricetta
 data class RicettaSample(
     var titolo: String,
     var descrizione: String,

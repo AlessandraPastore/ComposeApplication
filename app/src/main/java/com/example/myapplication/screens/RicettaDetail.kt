@@ -43,7 +43,6 @@ Composable che gestisce l'interfaccia delle ricette in Dettaglio
 @Composable
 fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta: String?){
 
-
     val isPreferiti = model.getTipologia()
 
     var tipologia: String? = stringResource(R.string.home)
@@ -54,7 +53,6 @@ fun RicettaDetail(model: RicetteViewModel ,navController: NavController, ricetta
         else
             stringResource(R.string.home)
     }
-
 
     //carica la ricetta da mostrare
     val ricettaCompleta :RicettaSample

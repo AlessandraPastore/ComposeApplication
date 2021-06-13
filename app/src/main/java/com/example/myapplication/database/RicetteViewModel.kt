@@ -61,7 +61,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                     )
                 )
             }
-                else {
+            else {
                 ricDao.insertRicettaPreview(
                     RicettePreview(
                         _ricettaVuota.value!!.titolo,
@@ -84,10 +84,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                             _ricettaVuota.value!!.titolo,
                             filtro.name
                         )
-
                 )
             }
-
 
             _ricettaVuota.value!!.ingredienti.forEach { ingrediente ->
 
@@ -108,8 +106,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
         var titoloExist = -1
 
-
-
         viewModelScope.launch {
             if(_modify.value == true)
                 titoloExist = 0
@@ -121,9 +117,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
                 }
             }
         }
-
-
-
 
         if(titoloExist == 1) return "(il titolo è già esistente!!)"
 
@@ -219,7 +212,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         }
     }
 
-
     //resituisce la categoria di una data ricetta
     fun getCategoria(titolo: String): String {
 
@@ -277,7 +269,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     /*
-    Instance state per gestire i dati della ricetta selezionata
+    Statoper gestire i dati della ricetta selezionata
     nella scrollable list di Home e Preferiti
      */
     private val _ricettaSelezionata = MutableLiveData(RicettePreview("",false))
@@ -296,7 +288,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
 
 
     /*
-    Instance state per la gestione dei filtri in Home e Preferiti
+    Stato per la gestione dei filtri in Home e Preferiti
      */
     private val _filtri = MutableLiveData(getFilters())
     val filtri: LiveData<List<Filtro>> = _filtri
@@ -321,8 +313,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
     }
 
     /*
-     Instance state per la gestione della App Bar in schermate Home e Preferiti
-     e relative funzioni per la gestione degli eventi (non richiedono uso di coroutine)
+     Stato per la gestione della App Bar in schermate Home e Preferiti
+     e relative funzioni per la gestione degli eventi
      */
     private val _expanded = MutableLiveData(false)
     val expanded: LiveData<Boolean> = _expanded
@@ -366,6 +358,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onInvertPress()
     }
 
+    // Funzione che gestisce la ricerca delle ricette
     fun onDisplaySearch(tipologia: String) {
 
         if (tipologia == "Home")
@@ -374,6 +367,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             ricette = ricDao.getRicPreferitiByName("%" + _ricerca.value!! + "%")
     }
 
+    // Funzione che gestisce l'uscita dalla ricerca
     fun onBackFromSearch(tipologia: String){
         onSearch(false)
 
@@ -385,16 +379,13 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             onPreferitiClick()
     }
 
-
-
-
+    // Variabile che gestisce le modifiche ad una data ricetta
     private val _modify = MutableLiveData(false)
-    val modify: LiveData<Boolean> = _modify
 
     fun modifyRecipe(){
         resetModify()
         getRicetta(_ricettaSelezionata.value!!.titolo)
-        if(_fromDetails.value != true) onInvertPress()  //forse potrebbe dare problemi di concorrenza?
+        if(_fromDetails.value != true) onInvertPress()
     }
 
     fun resetModify(){
@@ -412,7 +403,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onInvertPress()
     }
 
-
+    // Variabile che memorizza la tipologia di schermata (Home o Preferiti)
     private val _isPreferiti = MutableLiveData(false)
     val isPreferiti: LiveData<Boolean> = _isPreferiti
 
@@ -425,11 +416,8 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _isPreferiti.value = status
     }
 
+    // Variabile che memorizza la lista di ingredienti da mostrare nel carrello
     val listaCarrello: LiveData<List<Ingrediente>?> = ricDao.getAllIngrIncarrello()
-
-    fun getCarrello(): List<Ingrediente>? {
-        return listaCarrello.value!!
-    }
 
     fun isInCarrello(ingrediente:String): Boolean {
         var valore = false
@@ -445,10 +433,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao.updateCarrello(Ingrediente(ingrediente, status))
     }
 
-    private val _permission = MutableLiveData(false)
-    val permission: LiveData<Boolean> = _permission
-
-
     // Stato della barra della ricerca in Home e Preferiti
     private val _ricerca = MutableLiveData("")
     val ricerca: LiveData<String> = _ricerca
@@ -461,6 +445,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         _ricerca.value = testo
     }
 
+    // Variabile di stato per aiutare la navigazione
     private val _fromDetails = MutableLiveData(false)
 
     fun isFromDetails(){

@@ -1,4 +1,5 @@
 <resources>
+    // Nome dell'applicazione
     <string name="app_name">RecipeBook</string>
 
     // Chiavi per la darkmode e per la tipologia di lista, da utilizzare nelle preferences
@@ -9,9 +10,19 @@
     <string name="home">Home</string>
     <string name="preferiti">Preferiti</string>
     <string name="carrello">Carrello</string>
-    <string name="impostazioni">Mode</string>
+    <string name="modalità">Modalità</string>
     <string name="ricetta">Ricetta</string>
     <string name="nuova">Nuova Ricetta</string>
+
+    // Nomi dei filtri
+    <string name="Filtri">Filtri</string>
+    <string name="antipasto">Antipasto</string>
+    <string name="primo">Primo piatto</string>
+    <string name="secondo">Secondo piatto</string>
+    <string name="dolce">Dolce</string>
+    <string name="veg">Vegetariano</string>
+    <string name="vegano">Vegano</string>
+    <string name="gfree">Gluten free</string>
 
     // Placeholder della textfield per la ricerca
     <string name="Cerca">Search</string>
@@ -25,30 +36,22 @@
     <string name="ListView">ListView</string>
     <string name="Darkmode">Darkmode</string>
 
+    // Stringhe usate nella AppBar
     <string name="selected">Ricetta selezionata</string>
+    <string name="modifica">Modifica ricetta</string>
 
+    // Stringhe usate in NuovaRicetta e RicettaDetail
     <string name="titolo">Titolo</string>
     <string name="ingredienti">Ingredienti</string>
-    <string name="grammi">gr</string>
-    <string name="ml">ml</string>
-    <string name="unità">unità</string>
     <string name="descrizione">Descrizione</string>
-    <string name="modifica">Modifica ricetta</string>
-    <string name="modalità">Modalità</string>
-    <string name="Filtri">Filtri</string>
-    <string name="titoloEmpty">Il titolo risulta vuoto</string>
     <string name="Adds">Add-on</string>
-    <string name="antipasto">Antipasto</string>
-    <string name="primo">Primo piatto</string>
-    <string name="secondo">Secondo piatto</string>
-    <string name="dolce">Dolce</string>
-    <string name="veg">Vegetariano</string>
-    <string name="vegano">Vegano</string>
-    <string name="gfree">Gluten free</string>
+    <string name="empty">Empty</string>
+
+    // Stringhe usate nei Dialog
     <string name="erroreSearch">Errore nei caratteri inseriti</string>
     <string name="erroreSearchDes">Non è possibile usare il carattere % per la ricerca</string>
     <string name="capito">Capito</string>
-    <string name="empty">empty</string>
+    <string name="titoloEmpty">Il titolo risulta vuoto</string>
     <string name="fatto">Fatto</string>
     <string name="inserire">Inserire</string>
     <string name="preparazione">Preparazione</string>

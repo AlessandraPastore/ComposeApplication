@@ -42,7 +42,8 @@ fun NewIngredient(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            Text(ingredient.ingrediente)
+            if(ingredient.ingrediente == "") Text(stringResource(R.string.empty))
+            else Text(ingredient.ingrediente)
         }
         IconButton(onClick =  {
             ingredientList.remove(ingredient)

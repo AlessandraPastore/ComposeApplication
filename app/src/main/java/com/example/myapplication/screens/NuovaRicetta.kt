@@ -47,6 +47,8 @@ fun NuovaRicetta(
     model: RicetteViewModel,
     navController: NavHostController,
 ) {
+
+    // Lista dei filtri
     val filtri by model.filtri.observeAsState(getFilters())
 
     var filterList = mutableListOf<Filtro>()
@@ -64,19 +66,17 @@ fun NuovaRicetta(
          ricettaVuota = model.getRicettaVuota()
     }
 
-
     if(modify) {
         titolo = stringResource(R.string.modifica)
     }
 
-
+    // Recupero la reference a MainActivity
     val main=MainActivity.get()
 
     //gestisce il caso in cui l'utente utilizzi il tasto indietro del telefono
     BackHandler {
         backPress(main, model, navController, modify, ricettaCompleta.titolo)
     }
-
 
     Scaffold(
         topBar = {
@@ -268,6 +268,7 @@ fun Content(
     }
 }
 
+// Funzione che gestisce TextField del titolo e Box per l'immagine
 @Composable
 fun TitleAndImage(
     main: MainActivity?,
@@ -303,7 +304,6 @@ fun TitleAndImage(
                     RicettaImage(Uri.parse(ricettaVuota.uri),true,"")
 
             }
-
 
             IconButton(onClick = {
 

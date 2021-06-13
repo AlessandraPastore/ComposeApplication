@@ -152,6 +152,7 @@ fun DropDown(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ){
+                    // Se selezionato spunta, altrimenti quadrato vuoto
                     if (selected)
                         Icon(painterResource(R.drawable.ic_round_check_box_24), "")
                     else
@@ -213,14 +214,12 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
             IconButton(
                 onClick = {
 
-
                     onBack()
 
                     if(tipologia == home)
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
-
                 },
                 modifier = Modifier.padding(top = 5.dp)
                 ) {
@@ -231,7 +230,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
             OutlinedTextField(
                 value = ricerca ,
                 onValueChange = {
-                        if(it.length <= 20)
+                        if(it.length <= 25)
                             model.onClickRicerca(it)
                         },
                 placeholder = { Text(stringResource(R.string.Cerca)) },
@@ -314,6 +313,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
             // Bottone della matita, permette di modificare la ricetta selezionata
             IconButton(onClick = {
 
+                // Coroutine lanciata per dare tempo alle query di terminare
                 scope.launch{
                     onModify()
                     delay(1000)
@@ -350,7 +350,9 @@ fun ScrollableList(
     listView: MutableState<Boolean>
 ) {
 
+    // Variabile che si riempie in base alla ricetta selezionata
     val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
+
     var color : Color
 
     // Funzione che crea la lista scrollabile di elementi
@@ -395,6 +397,7 @@ fun ScrollableList(
                                         model.resetSelection()
                                     }
                                 },
+
                                 //Funzione chiamata al longPress, permetterà l'eliminazione o la modifica della ricetta
                                 onLongPress = {
 
