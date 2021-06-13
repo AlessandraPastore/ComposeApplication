@@ -38,9 +38,7 @@ fun MainScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-
-    Log.d("Route", "${currentRoute}")
-
+    
     Scaffold(
         floatingActionButton = {
 
@@ -277,9 +275,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     alwaysShowLabel = false
                 )
             }
-
         }
-
     )
 }
 

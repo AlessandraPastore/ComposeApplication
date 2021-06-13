@@ -40,8 +40,6 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
 
     val isPreferiti by model.isPreferiti.observeAsState(false)     //capisce se ci troviamo in Home o nei Preferiti
 
-    Log.d("Pref", isPreferiti.toString())
-
     var tipologia: String? = ""
 
     // Assegna il titolo mostrato nella TopBar di Home e Preferiti
