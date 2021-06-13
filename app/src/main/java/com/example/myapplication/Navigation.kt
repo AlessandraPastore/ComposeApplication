@@ -18,12 +18,16 @@ fun NavConfig(
     enableDarkMode: MutableState<Boolean>,
     listView: MutableState<Boolean>,
 ){
+    // Funzione che crea il Navigation Graph dell'applicazione
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) { Home(model, navController, listView) }
         composable(Screen.Preferiti.route) { Preferiti(model, navController, listView) }
-        composable(Screen.Carrello.route) { Carrello(model) }
-        composable(Screen.Modality.route) { Impostazioni(enableDarkMode, listView) }
+        composable(Screen.Carrello.route) { Carrello(model, navController) }
+        composable(Screen.Modality.route) { Impostazioni(model, navController, enableDarkMode, listView) }
         composable(Screen.NuovaRicetta.route) { NuovaRicetta(model, navController) }
+
+        // Navigazione con argomenti, in quanto RicettaDetail necessita di un parametro, il titolo
+        // della ricetta, che le deve essere passato quando si effettua la navigazione
         composable("${Screen.RicettaDetail.route}/{ricetta}",
             arguments = listOf(navArgument("ricetta") { type = NavType.StringType }))
         {

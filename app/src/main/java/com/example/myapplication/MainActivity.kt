@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
             val model: RicetteViewModel = ViewModelProvider(this).get(RicetteViewModel::class.java)
             model.setBitmap()
             val preferences = getPreferences(MODE_PRIVATE)
+
             val starState = preferences.getBoolean(stringResource(R.string.darkMode_key),false)
             val listState = preferences.getBoolean(stringResource(R.string.listView_key),false)
 
@@ -98,6 +99,8 @@ class MainActivity : ComponentActivity() {
         ViewModelProvider(this).get(RicetteViewModel::class.java).setBitmap()
 
     }
+
+    // override di onPause() per salvare lo stato persistente
     override fun onPause() {
         super.onPause()
 
@@ -119,6 +122,7 @@ fun GeneralManager(
     listView: MutableState<Boolean>
 )
 {
+    // Applico il tema definito in Colors.kt all'applicazione
     MyApplicationTheme (enableDarkMode){
         MainScreen(model,enableDarkMode, listView)
     }

@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
@@ -23,7 +25,7 @@ import kotlinx.coroutines.launch
 
 
 /*
-Funzione principale che gestisce la navigation tramite la BottomBar
+Funzione principale che gestisce la navigation tramite la BottomBar e il FAB
  */
 @Composable
 fun MainScreen(
@@ -31,9 +33,13 @@ fun MainScreen(
     enableDarkMode: MutableState<Boolean>,
     listView: MutableState<Boolean>
 ) {
+
+    // Istanzio il NavController e recupero la reference alla route in cui si trova
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+
+    Log.d("Route", "${currentRoute}")
 
     Scaffold(
         floatingActionButton = {
@@ -51,6 +57,7 @@ fun MainScreen(
                 BottomBar(model,navController, currentRoute)
         },
     ){
+        // Istanzio il Navigation Graph
         NavConfig(model, navController, enableDarkMode,  listView)
     }
 }
@@ -80,7 +87,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
 
                 error.value = model.onRicettaAddVerify()
 
-                //se error è qualcosa di diverso da "" si è presentato un errore
+                // Se error è qualcosa di diverso da "" si è presentato un errore
                 if(error.value != "") openDialog.value = true
                 else {
 
@@ -127,7 +134,7 @@ private fun FAB(model: RicetteViewModel, navController: NavHostController, curre
     if(openDialog.value) AlertError(openDialog, error.value)
 }
 
-//Dialog per informare l'utente di eventuali errori nella ricetta inserita
+// Dialog per informare l'utente di eventuali errori nella ricetta inserita
 @Composable
 fun AlertError(openDialog: MutableState<Boolean>, error: String) {
     AlertDialog(
@@ -140,6 +147,8 @@ fun AlertError(openDialog: MutableState<Boolean>, error: String) {
             }
 
                },
+
+        // Bottone che permette all'utente di chiudere il Dialog
         confirmButton = {
             Button(
                 onClick = {
@@ -165,6 +174,8 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
         cutoutShape = CircleShape,
         content = {
             BottomNavigation {
+
+                // Bottone Home
                 BottomNavigationItem(
                     icon = {
                         Icon(Icons.Rounded.Home , "")
@@ -192,6 +203,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     alwaysShowLabel = false
                 )
 
+                // Bottone Preferiti
                 BottomNavigationItem(
                     icon = {
                         Icon(Icons.Rounded.Favorite , "")
@@ -219,6 +231,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
 
                 Box(modifier = Modifier.weight(1f))
 
+                // Bottone Carrello
                 BottomNavigationItem(
                     icon = {
                         Icon(Icons.Rounded.ShoppingCart , "")
@@ -241,6 +254,7 @@ private fun BottomBar(model: RicetteViewModel, navController: NavHostController,
                     alwaysShowLabel = false,
                 )
 
+                // Bottone Modalità
                 BottomNavigationItem(
                     icon = {
                         Icon(Icons.Rounded.Settings ,  "")

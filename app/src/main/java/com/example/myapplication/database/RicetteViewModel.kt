@@ -27,7 +27,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         ricDao = RicetteDataBase.getDataBase(application,viewModelScope).dao()
     }
 
-    //lista delle ricette da mostrare
+    // Lista delle ricette da mostrare
     var ricette: LiveData<List<RicettePreview>> = ricDao.getAllPreview()
 
     // Viene premuto il cuore -> Ricetta aggiunta o eliminata dai preferiti
@@ -236,7 +236,7 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
             category = ricDao.allCatFromRecipe(titolo)
         }
 
-        var list = listOf<Filtro>(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
+        val list = listOf<Filtro>(Filtro.Antipasto,Filtro.Primo,Filtro.Secondo,Filtro.Dessert)
         var ftl = ""
         for (filter in list){
             for (cat in category) {
@@ -420,13 +420,6 @@ class RicetteViewModel(application: Application):AndroidViewModel(application) {
         onInvertPress()
     }
 
-    fun insert(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
-        ricDao.insertIngrediente(ingrediente)
-    }
-
-    fun delete(ingrediente: Ingrediente)=viewModelScope.launch (Dispatchers.IO){
-        ricDao.deleteIngr(ingrediente)
-    }
 
     private val _isPreferiti = MutableLiveData(false)
     val isPreferiti: LiveData<Boolean> = _isPreferiti

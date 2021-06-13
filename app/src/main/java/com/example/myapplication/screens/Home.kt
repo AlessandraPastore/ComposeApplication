@@ -1,5 +1,6 @@
 package com.example.myapplication.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -37,17 +38,17 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
 
     val ricette by model.ricette.observeAsState()   //lista delle ricette
 
-    val isPreferiti = model.getTipologia()      //capisce se ci troviamo in Home o nei Preferiti
+    val isPreferiti by model.isPreferiti.observeAsState(false)     //capisce se ci troviamo in Home o nei Preferiti
+
+    Log.d("Pref", isPreferiti.toString())
 
     var tipologia: String? = ""
 
-    //assegna il titolo mostrato nella TopBar
-    if(isPreferiti != null) {
-        tipologia = if (isPreferiti)
-            stringResource(R.string.preferiti)
-        else
-            stringResource(R.string.home)
-    }
+    // Assegna il titolo mostrato nella TopBar di Home e Preferiti
+    tipologia = if (isPreferiti)
+        stringResource(R.string.preferiti)
+    else
+        stringResource(R.string.home)
 
     val expanded by model.expanded.observeAsState(false)
     val searching by model.searching.observeAsState(false)
@@ -57,15 +58,17 @@ fun Home(model: RicetteViewModel, navController: NavController, listView: Mutabl
         topBar = {
             when{
                 longPressed -> LongPress(navController, onLongPress = {model.onInvertPress()}, onBinClick = {model.onBinClick()}, onModify = {model.modifyRecipe()})
-                searching -> Searching(model, navController, tipologia as String, onSearch = {model.onDisplaySearch(tipologia)}, onBack = {model.onBackFromSearch(tipologia)})
-                else -> TopBar(model, navController , tipologia as String, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
+                searching -> Searching(model, navController, tipologia, onSearch = {model.onDisplaySearch(tipologia)}, onBack = {model.onBackFromSearch(tipologia)})
+                else -> TopBar(model, navController , tipologia, expanded, onExpand = {model.onExpand(true)}, onDeExpand = {model.onExpand(false)}, onSearch = {model.onSearch(true)}, onApplicaClick = {model.onApplicaClick(tipologia)})
             }
         },
     )
     {
+
+        // Se la lista di ricette è vuota, mostro il messaggio e l'immagine, altrimenti mostro la lista
         if(ricette != null) {
             if(ricette!!.isEmpty())
-                tipologia?.let { it1 -> ShowEmpty(str = it1) }
+                ShowEmpty(str = tipologia)
             else
                 ScrollableList(model, navController, ricette as List<RicettePreview>, longPressed, listView)
         }
@@ -89,7 +92,7 @@ fun TopBar(
             Text(text = tipologia)
         },
 
-        //pulsanti della TopBar, ricerca e filtri
+        // Pulsanti della TopBar, ricerca e filtri
         actions = {
             IconButton(onClick = onSearch) {
                 Icon(Icons.Rounded.Search, contentDescription = "")
@@ -97,7 +100,8 @@ fun TopBar(
             IconButton(onClick = onExpand) {
                 Icon(painterResource(R.drawable.ic_round_filter_alt_24), contentDescription = "")
             }
-            //menù a tendina, viene mostrato al click dei filtri
+
+            // Menù a tendina, viene mostrato al click dei filtri
             DropDown(
                 model,
                 navController,
@@ -121,9 +125,10 @@ fun DropDown(
     onApplicaClick: () -> Unit
 ) {
 
+    // Lista dei filtri
     val filtri by model.filtri.observeAsState(getFilters())
 
-    //menù a tendina contenente i filtri
+    // Menù a tendina contenente i filtri
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDeExpand,
@@ -132,32 +137,34 @@ fun DropDown(
             .fillMaxWidth(0.6f)
     ) {
 
-            for (filtro in filtri.listIterator()) {
+        // Istanzio i singoli elementi del menù e ne gestisco la selezione/deselezione
+        for (filtro in filtri.listIterator()) {
 
-                var selected by remember { mutableStateOf(filtro.checked) }
+            var selected by remember { mutableStateOf(filtro.checked) }
 
-                DropdownMenuItem(
-                    onClick = {
+            DropdownMenuItem(
+                onClick = {
                     selected = !selected
                     filtro.checked = selected
                     },
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        if (selected)
-                            Icon(painterResource(R.drawable.ic_round_check_box_24), "")
-                        else
-                            Icon(painterResource(R.drawable.ic_round_check_box_outline_blank_24), "")
+                modifier = Modifier.wrapContentWidth()
+                ){
 
-                        Text(filtro.name, modifier = Modifier.padding(5.dp))
-                    }
+                // Singola riga del menù, costituita da nome del filtro + icona di selezione
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ){
+                    if (selected)
+                        Icon(painterResource(R.drawable.ic_round_check_box_24), "")
+                    else
+                        Icon(painterResource(R.drawable.ic_round_check_box_outline_blank_24), "")
+                     Text(filtro.name, modifier = Modifier.padding(5.dp))
                 }
             }
+        }
 
-        //contiene il pulsante per applicare i filtri
+        // Contiene il pulsante per applicare i filtri e la relativa logica
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -189,8 +196,10 @@ fun DropDown(
 @Composable
 fun Searching(model: RicetteViewModel, navController: NavController,  tipologia: String, onSearch: () -> Unit, onBack: () -> Unit) {
 
+    // Variabile che memorizza il testo digitato dall'utente
     val ricerca by model.ricerca.observeAsState("")
 
+    // Variabile che gestisce la comparsa/scomparsa del Dialog
     val openDialog = remember { mutableStateOf(false)  }
 
         Row(
@@ -202,9 +211,11 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
         ){
 
             val home = stringResource(R.string.home)
+
             // Bottone <-: premendolo si esce dalla ricerca
             IconButton(
                 onClick = {
+
 
                     onBack()
 
@@ -212,13 +223,14 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
+
                 },
                 modifier = Modifier.padding(top = 5.dp)
                 ) {
                 Icon(Icons.Rounded.ArrowBack, "")
             }
 
-            // TextField in cui memorizzare il testo digitato dall'utente
+            // TextField in cui memorizzare il testo digitato dall'utente, lungo al massimo 20 caratteri
             OutlinedTextField(
                 value = ricerca ,
                 onValueChange = {
@@ -239,7 +251,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                     if(!ricerca.contains("%")) {
                         onSearch()
 
-                    if (tipologia == "Home")
+                    if (tipologia == home)
                         navController.navigate(Screen.Home.route)
                     else
                         navController.navigate(Screen.Preferiti.route)
@@ -257,7 +269,7 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
                 Icon(Icons.Rounded.Search,"")
             }
 
-            //dialog che viene visualizzato in caso l'utente inserisca il carattere %
+            // Dialog che viene visualizzato in caso l'utente inserisca il carattere %
             if(openDialog.value) {
                 AlertDialog(
                     onDismissRequest = { openDialog.value = false },
@@ -277,10 +289,11 @@ fun Searching(model: RicetteViewModel, navController: NavController,  tipologia:
         }
 }
 
-// Funzione che gestisce il longPress di una determinaata ricetta.
+// Funzione che gestisce il longPress di una determinaata ricetta
 @Composable
 fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick: () -> Unit, onModify: () -> Unit) {
 
+    // Coroutine utilizzata per gestire onModify()
     val scope = rememberCoroutineScope()
 
     TopAppBar(
@@ -293,7 +306,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
         backgroundColor = MaterialTheme.colors.primaryVariant,
         contentColor = MaterialTheme.colors.onPrimary,
 
-        // Bottone X
+        // Bottone X, permette di "eliminare" il longpress e di tornare alla UI standard
         navigationIcon = {
             IconButton(onClick = onLongPress) {
                 Icon(Icons.Rounded.Close, contentDescription = "", tint = Color.White)
@@ -301,7 +314,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
         },
         actions = {
 
-            // Bottone della matita
+            // Bottone della matita, permette di modificare la ricetta selezionata
             IconButton(onClick = {
 
                 scope.launch{
@@ -318,7 +331,7 @@ fun LongPress(navController: NavController, onLongPress: () -> Unit, onBinClick:
                 Icon(Icons.Rounded.Create, contentDescription = "", tint = Color.White.copy(alpha = LocalContentAlpha.current))
             }
 
-            // Bottone del cestino
+            // Bottone del cestino, permette di eliminare la ricetta selezionata
             IconButton(onClick = {
 
                 onBinClick()
@@ -343,6 +356,7 @@ fun ScrollableList(
     val ricettaSelezionata by model.ricettaSelezionata.observeAsState()
     var color : Color
 
+    // Funzione che crea la lista scrollabile di elementi
     LazyColumn {
         items(ricette){ ricetta ->
 
@@ -401,8 +415,8 @@ fun ScrollableList(
                         }
                 ) {
 
-                    //Funzioni che gestiscono i casi in cui l'utente voglia avere una lista a ListView o a GridView
-
+                    // Funzioni che gestiscono i casi in cui l'utente voglia avere una lista a ListView o a GridView,
+                    // implementate in HomeVariant.kt
                     if(listView.value)
                         ListVariant(
                             model = model,
@@ -419,7 +433,7 @@ fun ScrollableList(
             }
         }
 
-        //Box trasparente che permette lo scroll degli item fino a sopra la BottomBar, rendendoli tutti visibili
+        // Box trasparente che permette lo scroll degli item fino a sopra la BottomBar, rendendoli tutti visibili
         item{
             Box(modifier = Modifier
                 .background(Color.Transparent)

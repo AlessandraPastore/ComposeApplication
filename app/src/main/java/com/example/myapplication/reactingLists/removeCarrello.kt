@@ -12,7 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,27 +33,30 @@ Composable che gestisce la lista degli ingredienti nel Carrello
 @Composable
 fun RemoveCarrello(model: RicetteViewModel) {
 
-    val ingredientList = model.listaCarrello.observeAsState()
+    // Lista degli ingredienti
+    val ingredientList by model.listaCarrello.observeAsState()
 
-    if(ingredientList.value != null) {
-        if(ingredientList.value!!.isEmpty())
+    // Se la lista è vuota, mostro messaggio e immagine, altrimenti mostro la lista
+    if(ingredientList != null) {
+        if(ingredientList!!.isEmpty())
             ShowEmpty(stringResource(R.string.carrello))
         else
-            ShowList(model, ingredientList)
+            ShowList(model, ingredientList!!)
     }
-
 }
 
-//Lista degli ingredienti nel carrello
+// Lista degli ingredienti nel carrello
 @Composable
-fun ShowList(model: RicetteViewModel, ingredientList: State<List<Ingrediente>?>) {
+fun ShowList(model: RicetteViewModel, ingredientList: List<Ingrediente>) {
+
+    // Funzione che istanzia la lista di ingredienti
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ) {
-        itemsIndexed(items = ingredientList.value!!,
+        itemsIndexed(items = ingredientList,
             itemContent = { _, ingredient ->
 
-                //Mostra il nome dell'ingrediente e il pulsante elimina
+                // Mostra il nome dell'ingrediente e il pulsante elimina
                 Card(
                     elevation = 5.dp,
                     shape = RoundedCornerShape(4.dp),

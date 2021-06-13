@@ -1,5 +1,6 @@
 package com.example.myapplication.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -10,13 +11,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.navigate
 import com.example.myapplication.R
+import com.example.myapplication.Screen
+import com.example.myapplication.database.RicetteViewModel
 
 /*
 Composable che gestisce l'interfaccia delle impostazioni
  */
 @Composable
-fun Impostazioni(enableDarkMode: MutableState<Boolean>, listView: MutableState<Boolean>) {
+fun Impostazioni(
+    model: RicetteViewModel,
+    navController: NavHostController,
+    enableDarkMode: MutableState<Boolean>,
+    listView: MutableState<Boolean>
+) {
+
+    // Gestisco il pulsante back: se premuto si ritorna alla Home
+    BackHandler {
+
+        model.onHomeClick()     // Carico tutte le ricette
+
+        model.updateTipologia(false)   // Aggiorno la tipologia
+
+        navController.navigate(Screen.Home.route) {
+            popUpTo = navController.graph.startDestination
+            launchSingleTop = true
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -38,11 +62,10 @@ fun Impostazioni(enableDarkMode: MutableState<Boolean>, listView: MutableState<B
 
             DarkMode(enableDarkMode)
         }
-
     }
 }
 
-//Funzione che permette la scelta tra GridView e ListView
+// Funzione che permette la scelta tra GridView e ListView e che la gestisce graficamente
 @Composable
 fun ListView(listView: MutableState<Boolean>){
 
@@ -107,7 +130,7 @@ fun ListView(listView: MutableState<Boolean>){
     }
 }
 
-//Funzione che permette la scelta tra DarkMode o LightMode
+// Funzione che permette la scelta tra DarkMode o LightMode e che la gestisce graficamente
 @Composable
 fun DarkMode(enableDarkMode: MutableState<Boolean>){
     Column(

@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">RecipeBook</string>
 
-    // Chiave per la darkmode da utilizzare nelle preferences
+    // Chiavi per la darkmode e per la tipologia di lista, da utilizzare nelle preferences
     <string name="darkMode_key">DarkMode Key</string>
+    <string name="listView_key">listView</string>
 
     // Nomi delle route per la navigation tra i vari schermi
     <string name="home">Home</string>
@@ -36,7 +37,6 @@
     <string name="modalità">Modalità</string>
     <string name="Filtri">Filtri</string>
     <string name="titoloEmpty">Il titolo risulta vuoto</string>
-    <string name="listView_key">listView</string>
     <string name="Adds">Add-on</string>
     <string name="antipasto">Antipasto</string>
     <string name="primo">Primo piatto</string>
