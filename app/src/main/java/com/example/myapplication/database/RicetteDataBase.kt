@@ -5,8 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.myapplication.Filtro
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @Database(
@@ -33,7 +35,7 @@ abstract class RicetteDataBase : RoomDatabase() {
             return INSTANCE?: synchronized(this)
             {
                 val instance=Room.databaseBuilder(context.applicationContext,RicetteDataBase::class.java,
-                "ricette_database")
+                    "ricette_database")
                     .fallbackToDestructiveMigration()
                     .addCallback(RicetteDataBaseCallback(scope))
                     .build()
@@ -55,7 +57,9 @@ abstract class RicetteDataBase : RoomDatabase() {
                 INSTANCE?.let { database->
 
                     scope.launch {
-                        prepopulateDatabase(database.dao())
+                        runBlocking {
+                            prepopulateDatabase(database.dao())
+                        }
                     }
                 }
 
@@ -64,32 +68,32 @@ abstract class RicetteDataBase : RoomDatabase() {
         suspend fun prepopulateDatabase(dao:DaoRicette)
         {
             if(dao.countIngredienti()==0) {
-                dao.insertCategoria(Categoria("Antipasto"))
-                dao.insertCategoria(Categoria("Primo piatto"))
-                dao.insertCategoria(Categoria("Secondo piatto"))
-                dao.insertCategoria(Categoria("Dolce"))
-                dao.insertCategoria(Categoria("Vegetariano"))
-                dao.insertCategoria(Categoria("Vegano"))
-                dao.insertCategoria(Categoria("Gluten free"))
+                dao.insertCategoria(Categoria(Filtro.Antipasto.name))
+                dao.insertCategoria(Categoria(Filtro.Primo.name))
+                dao.insertCategoria(Categoria(Filtro.Secondo.name))
+                dao.insertCategoria(Categoria(Filtro.Dessert.name))
+                dao.insertCategoria(Categoria(Filtro.Vegetariano.name))
+                dao.insertCategoria(Categoria(Filtro.Vegano.name))
+                dao.insertCategoria(Categoria(Filtro.GlutenFree.name))
 
-                dao.insertIngrediente(Ingrediente("VONGOLA",false))
-                dao.insertIngrediente(Ingrediente("WURSTEL",false))
-                dao.insertIngrediente(Ingrediente("ZAFFERANO",false))
-                dao.insertIngrediente(Ingrediente("ZUCCHINE",false))
+                dao.insertIngrediente(Ingrediente("Pasta",false))
+                dao.insertIngrediente(Ingrediente("Sugo al Pomodoro",false))
+                dao.insertIngrediente(Ingrediente("Pollo",false))
+                dao.insertIngrediente(Ingrediente("succo di limone",false))
 
-                dao.insertRicettaPreview(RicettePreview("pietanza 1",false))
-                dao.insertRicettaCompleta(RicettaCompleta("pietanza 1","la si cucina quando si è a casa da soli"))
-                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 1","VONGOLA","2"))
-                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 1","WURSTEL","200"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","Secondo piatto"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 1","Vegano"))
+                dao.insertRicettaPreview(RicettePreview("Pasta al Pomodoro",false))
+                dao.insertRicettaCompleta(RicettaCompleta("Pasta al Pomodoro","Cuocere la pasta per 10 minuti, alla fine aggiungerci il sugo al pomodoro."))
+                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("Pasta al Pomodoro","Pasta","200g"))
+                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("Pasta al Pomodoro","Sugo al Pomodoro","200g"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("Pasta al Pomodoro",Filtro.Primo.name))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("Pasta al Pomodoro",Filtro.Vegano.name))
 
-                dao.insertRicettaPreview(RicettePreview("pietanza 2",false))
-                dao.insertRicettaCompleta(RicettaCompleta("pietanza 2","la si cucina quando si è ad una festa"))
-                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 2","ZAFFERANO","200"))
-                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("pietanza 2","ZUCCHINE","200"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","Antipasto"))
-                dao.insertRicetteCategoria(rc = RicettaCategorie("pietanza 2","Vegano"))
+                dao.insertRicettaPreview(RicettePreview("Pollo al limone",false))
+                dao.insertRicettaCompleta(RicettaCompleta("Pollo al limone","Cuocere il pollo in una padella per 10 munuti, successivamente aggiungerci il succo di limone."))
+                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("Pollo al limone","Pollo","200g"))
+                dao.insertIngredienteRicetta(ingrRic = IngredienteRIcetta("Pollo al limone","succo di limone","200ml"))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("Pollo al limone",Filtro.Secondo.name))
+                dao.insertRicetteCategoria(rc = RicettaCategorie("Pollo al limone",Filtro.GlutenFree.name))
             }
         }
     }
