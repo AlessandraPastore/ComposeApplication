@@ -24,7 +24,10 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 class MainActivity : ComponentActivity() {
 
     private var imageUri:MutableState<Uri?> = mutableStateOf(null)
+
     val map:MutableMap<Uri?,Bitmap?> =mutableMapOf()
+
+    // Gestione del salvataggio dell'immagine selezionata dall'utente
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val intent = result.data
@@ -41,6 +44,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Funzione chiamata per aprire la finestra di dialogo che permette all'utente di selezionare
+    // un'immagine dalla galleria
     fun loadImage()
     {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
@@ -50,7 +55,6 @@ class MainActivity : ComponentActivity() {
         } catch(e: ActivityNotFoundException) {
             Toast.makeText(applicationContext, "no!", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     fun getUri():Uri?
@@ -58,6 +62,8 @@ class MainActivity : ComponentActivity() {
        return imageUri.value
     }
 
+    // Oggetto che ritorna una reference a MainActivity: utilizzato quando serviva usare
+    // il contesto dell'activity in determinate funzioni
     companion object {
         var inst: MainActivity? = null
           fun get(): MainActivity? {
@@ -71,6 +77,7 @@ class MainActivity : ComponentActivity() {
         imageUri.value=null
     }
 
+    // Variabili per lo stato persistente
     private lateinit var enableDarkMode: MutableState<Boolean>
     private lateinit var listView: MutableState<Boolean>
 
@@ -94,10 +101,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Gestione dell'immagine quando l'applicazione passa in background
     override fun onPostResume() {
         super.onPostResume()
         ViewModelProvider(this).get(RicetteViewModel::class.java).setBitmap()
-
     }
 
     // override di onPause() per salvare lo stato persistente

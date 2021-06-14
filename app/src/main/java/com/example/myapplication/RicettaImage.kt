@@ -8,7 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
-//Funzione che gestisce l'immagine da visualizzare
+// Funzione che gestisce l'immagine da visualizzare: si è utilizzato AndroidView al fine di
+// mostrare l'interoperabilità tra Compose e AndroidView
 @Composable
 fun  RicettaImage (uri:Uri?,Detail:Boolean,categoria: String){
 
